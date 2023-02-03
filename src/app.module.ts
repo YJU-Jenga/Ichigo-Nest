@@ -1,0 +1,30 @@
+import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmConfig } from './configs/typeorm.comfig';
+import { UserModule } from './user/user.module';
+import { AuthMiddleware } from "./middleware/auth.middleware";
+import { UserController } from "./user/user.controller";
+import { BoardModule } from './board/board.module';
+import { PostModule } from './post/post.module';
+
+
+
+@Module({
+  imports: [
+    TypeOrmModule.forRoot(TypeOrmConfig),
+    UserModule,
+    BoardModule,
+    PostModule,
+  ],
+})
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+      consumer
+        .apply(AuthMiddleware)
+        //exclude 함수는 제외 하고싶은 라우터를 등록합니다.
+        .exclude({ path: 'user/create_user', method: RequestMethod.POST }) // 유저 생성
+        .exclude({ path: 'user/user_all', method: RequestMethod.GET }) // 유저 전체 조회
+        .forRoutes(UserController); // 1.유저 컨트롤러 등록
+        // .forRoutes('user'); // 2.유저 컨트롤러 경로 등록 -> 위 1번과 동일
+  }
+}
