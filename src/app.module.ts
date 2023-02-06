@@ -6,6 +6,7 @@ import { AuthMiddleware } from "./middleware/auth.middleware";
 import { UserController } from "./user/user.controller";
 import { BoardModule } from './board/board.module';
 import { PostModule } from './post/post.module';
+import { AuthModule } from './auth/auth.module';
 
 
 
@@ -15,6 +16,7 @@ import { PostModule } from './post/post.module';
     UserModule,
     BoardModule,
     PostModule,
+    AuthModule,
   ],
 })
 export class AppModule implements NestModule {
