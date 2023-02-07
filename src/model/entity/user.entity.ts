@@ -45,8 +45,8 @@ export class User extends BaseEntity{
   @OneToMany(() => Comment, (comment) => comment.user )
   comment: Comment[];
 
-  @OneToOne(() => Cart, (cart) => cart.user )
-  cart:Cart;
+  // @OneToOne(() => Cart, (cart) => cart.user )
+  // cart:Cart;
 
   @OneToMany(() => Order, (order) => order.user )
   order: Order[];

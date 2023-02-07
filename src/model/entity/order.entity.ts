@@ -9,6 +9,9 @@ export class Order extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  userId: number;
+
   @Column({comment: '주문 개수'})
   count: number;
 

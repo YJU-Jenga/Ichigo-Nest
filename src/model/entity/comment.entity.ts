@@ -7,6 +7,12 @@ export class Comment extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  writer: number;
+
+  @Column()
+  postId: number;
+
   @Column({type: 'varchar', length: 1000, comment: '댓글 내용'})
   board_name: string;
 

@@ -3,7 +3,7 @@ import { UserService } from "./user.service";
 import { CreateUserDto, UpdateUserDto } from "./dto/user.dto";
 import { User } from '../model/entity/user.entity';
 import { LocalAuthGuard } from '../auth/guards/local-auth.guard';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiCreatedResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { SignInDto } from './dto/sign_in.dto';
 import { Response } from 'express';

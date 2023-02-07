@@ -12,7 +12,8 @@ import { LocalStrategy } from './strategies/local.strategy';
     // 토큰 서명 값 설정
     secret: jwtConstants.secret,
     // 토큰 유효시간 (임의 60초)
-    signOptions: {expiresIn: '60s'},
+    // signOptions: {expiresIn: '60s'},
+    signOptions: {expiresIn: '1h'},
   })],
   providers: [AuthService, LocalStrategy, JwtStrategy],
   exports: [AuthService],

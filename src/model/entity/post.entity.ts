@@ -8,6 +8,13 @@ export class Post extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  writer: number;
+  
+  @Column()
+  boardId: number;
+  
+
   @Column({type: 'varchar', length: 100, comment: '제목'})
   title: string;
   
@@ -17,7 +24,7 @@ export class Post extends BaseEntity {
   @Column({type: 'varchar', length: 1000, comment: '내용'})
   content: string;
 
-  @Column({comment: '조회수'})
+  @Column({default: 0, comment: '조회수'})
   hit: number;
 
   @Column({default: false, comment: '응답상태'})

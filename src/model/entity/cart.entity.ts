@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique, OneToOne, OneToMany, BaseEntity } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique, OneToOne, OneToMany, BaseEntity, JoinColumn } from "typeorm";
 import { Product } from "./product.entity";
 import { User } from "./user.entity";
 
@@ -21,7 +21,8 @@ export class Cart extends BaseEntity {
 
   // 관계 설정
 
-  @OneToOne(() => User, (user) => user.cart )
+  @OneToOne(() => User, {nullable: false} )
+  @JoinColumn()
   user:User;
 
   @OneToMany(() => Product, (product) => product.cart )

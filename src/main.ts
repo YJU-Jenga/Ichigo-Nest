@@ -3,9 +3,17 @@ import { AppModule } from './app.module';
 import { setupSwagger } from './utils/swagger';
 import { HttpExceptionFilter } from './utils/http-exception.flter';
 import { ValidationPipe } from "@nestjs/common";
+import { existsSync, mkdirSync } from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const uploadPath = 'uploads';
+
+  if (!existsSync(uploadPath)) {
+    // uploads 폴더가 존재하지 않을시, 생성합니다.
+    mkdirSync(uploadPath);
+  }
 
   // 예외 필터 연결
   app.useGlobalFilters(new HttpExceptionFilter());

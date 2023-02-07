@@ -8,6 +8,9 @@ export class Product extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  productId: number;
+
   @Column({type: 'varchar', length: 50, comment: '상품이름'})
   name: string;
 
