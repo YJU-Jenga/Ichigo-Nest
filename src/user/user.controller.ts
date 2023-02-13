@@ -43,8 +43,8 @@ export class UserController {
 
   // 전체 유저 조회
   @Get('/user_all')
-  @UseGuards(JwtAuthGuard)  // 검증된 유저만 접근 가능 - 토큰 발행 된 유저
-  @ApiBearerAuth('access-token') //JWT 토큰 키 설정
+  // @UseGuards(JwtAuthGuard)  // 검증된 유저만 접근 가능 - 토큰 발행 된 유저
+  // @ApiBearerAuth('access-token') //JWT 토큰 키 설정
   @ApiOperation({
     summary: '전체 유저 조회',
     description: '전체 유저 조회 API',
@@ -100,35 +100,5 @@ export class UserController {
   @Delete('/delete_user')
   deleteUser(@Query('id') id: number): Promise<void> {
     return this.userService.deleteUser(id);
-  }
-
-  // 로그인
-  @Post('auth/login')
-  @UseGuards(LocalAuthGuard)
-  @ApiOperation({
-    summary: '로그인 API',
-    description: '아이디와 비밀번호를 통해 로그인을 진행',
-  })
-  @ApiCreatedResponse({
-    description: '로그인 정보',
-    schema: {
-      example: {
-        id: 1,
-        name: "client",
-        user_id: "client@gmail.com",
-        email_verified_at: null,
-        phone: "010-1234-5678",
-        permission: false,
-        remember_token: false,
-        createdAt: "2023-02-06T06:11:25.748Z",
-        updatedAt: "2023-02-06T06:11:25.748Z",
-        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6ImNrY2ljIiwidXNlcl9pZCI6ImNrY2ljaWNAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWRfYXQiOm51bGwsInBob25lIjoiMDEwLTI2MjQtOTAzMSIsInBlcm1pc3Npb24iOmZhbHNlLCJyZW1lbWJlcl90b2tlbiI6ZmFsc2UsImNyZWF0ZWRBdCI6IjIwMjMtMDItMDZUMDY6MTE6MjUuNzQ4WiIsInVwZGF0ZWRBdCI6IjIwMjMtMDItMDZUMDY6MTE6MjUuNzQ4WiIsImlhdCI6MTY3NTY4MTg4MiwiZXhwIjoxNjc1NjgxOTQyfQ.oPEoBlUXbJTtyJJZa1DUORTUDbi46o2WvNcInGgWZXY"
-    },
-    },
-  })
-  // Swageer API를 사용하기 위해 DTO적용
-  async login(@Request() req, @Body() sign_in_dto: SignInDto) {
-    console.log('Login Route');
-    return req.user;
   }
 }

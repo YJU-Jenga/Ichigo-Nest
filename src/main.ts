@@ -4,6 +4,7 @@ import { setupSwagger } from './utils/swagger';
 import { HttpExceptionFilter } from './utils/http-exception.flter';
 import { ValidationPipe } from "@nestjs/common";
 import { existsSync, mkdirSync } from 'fs';
+import * as cookieParser from 'cookie-parser'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -44,6 +45,8 @@ async function bootstrap() {
       disableErrorMessages: false,
     }),
   );
+
+  app.use(cookieParser());
 
   setupSwagger(app);
 

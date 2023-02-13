@@ -7,12 +7,28 @@ import { UserController } from "./user/user.controller";
 import { BoardModule } from './board/board.module';
 import { PostModule } from './post/post.module';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
+import * as Joi from 'joi';
 
 
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(TypeOrmConfig),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: process.env.NODE_ENV  === 'dev' ? '.env.dev' : '.env.local',
+      validationSchema: Joi.object({
+        NODE_ENV: Joi.string().valid('dev', 'local').required(),
+        ACCESS_SECRET_KEY: Joi.string().required(),
+        ACCESS_EXPIRES_IN: Joi.string().required(),
+        REFRESH_SECRET_KEY: Joi.string().required(),
+        REFRESH_EXPIRES_IN: Joi.string().required(),
+      }),
+      validationOptions: {
+        abortEarly: true
+      }
+    }),
     UserModule,
     BoardModule,
     PostModule,

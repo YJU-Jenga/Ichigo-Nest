@@ -13,12 +13,12 @@ export class UserService {
 
   async craeteUser(createUserDto: CreateUserDto): Promise<void> {
     try {
-      const { name, user_id, password, phone } = createUserDto;
+      const { name, email, password, phone } = createUserDto;
       const saltOrRounds = 10;
   
       await this.usersRepository.save({
         name,
-        user_id,
+        email,
         password : await bcrypt.hash(password, saltOrRounds),
         phone
       });
@@ -40,28 +40,8 @@ export class UserService {
     return this.usersRepository.findOneBy({id});
   }
 
-  async findUser(user_id: string): Promise<User | undefined> {
-    return this.usersRepository.findOneBy({user_id: user_id});
-  }
-
-  async findByLogin(user_id: string, password: string): Promise<User> {
-      try {
-        const user = await this.usersRepository.findOneBy({user_id});
-        if(!user) {
-          throw new HttpException("아이디와 비밀번호를 다시 확인해주세요.", HttpStatus.FORBIDDEN);
-        }
-        const isMatch = await bcrypt.compare(password, user.password);
-        if(!isMatch) {
-          throw new HttpException("아이디와 비밀번호를 다시 확인해주세요.", HttpStatus.FORBIDDEN);
-        }
-        return user;
-      } catch (error) {
-        throw new HttpException({
-          message: error.message,
-          error: error.message,
-        },
-        HttpStatus.FORBIDDEN);
-      }
+  async findUser(email: string): Promise<User | undefined> {
+    return this.usersRepository.findOneBy({email});
   }
 
   async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<void> {

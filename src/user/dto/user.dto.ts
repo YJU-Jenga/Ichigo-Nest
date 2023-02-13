@@ -9,7 +9,7 @@ export class CreateUserDto {
    })
   @IsEmail()
   @IsNotEmpty()
-  user_id: string;
+  email: string;
   
   @ApiProperty({ 
     example: '1234qweR!!',

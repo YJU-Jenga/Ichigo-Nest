@@ -5,7 +5,7 @@ import { Order } from "./order.entity";
 import { Post } from "./post.entity";
 
 @Entity({name: 'user'})
-@Unique(['user_id'])
+@Unique(['email'])
 export class User extends BaseEntity{
   @PrimaryGeneratedColumn()
   id: number;
@@ -14,7 +14,7 @@ export class User extends BaseEntity{
   name: string;
 
   @Column({type: 'varchar', length: 50, comment: '유저 아이디(이메일)'})
-  user_id: string;
+  email: string;
 
   @Column({nullable: true, comment: '이메일 인증'})
   email_verified_at: Date;
@@ -28,8 +28,8 @@ export class User extends BaseEntity{
   @Column({default: false, comment: '권한'})
   permission: boolean;
 
-  @Column({default: false, comment: '내 정보 기억 - 자동 로그인'})
-  remember_token: boolean;
+  @Column({nullable: true ,comment: 'jwt token'})
+  refreshToken?: string;
 
   @CreateDateColumn({name: 'created_at', comment: '생성일'})
   createdAt: Date;
