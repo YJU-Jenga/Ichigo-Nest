@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { response, Response } from 'express';
@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/model/entity/user.entity';
 import { Repository } from 'typeorm';
 import { LogOutDto } from './dto/logout.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Injectable()
 export class AuthService {
@@ -42,9 +43,9 @@ export class AuthService {
     // refresh token 갱신
     await this.updateRefreshToken(id, refreshToken);
 
-    response.setHeader('Authorization', 'Bearer '+ refreshToken);
+    response.setHeader('Authorization', 'Bearer '+ accessToken);
 
-    response.cookie('jwt', accessToken, { httpOnly: true, maxAge: 30 * 1000 });
+    response.cookie('jwt', accessToken, { httpOnly: true, maxAge: 30 * 60 * 1000 });
     response.cookie('jwt-refresh', refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
     return {
 		ok : true,
@@ -116,6 +117,7 @@ export class AuthService {
     return { accessToken, refreshToken }
   }
 
+  // @UseGuards(JwtAuthGuard)
   async authUser(id: number) {
     const user = await this.usersRepository.findOneBy({id});
     return user;

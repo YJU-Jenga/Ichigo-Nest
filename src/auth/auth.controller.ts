@@ -6,6 +6,7 @@ import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { LogOutDto } from './dto/logout.dto';
 import { Request, Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 
 @Controller('auth')
@@ -30,18 +31,20 @@ export class AuthController {
     return await this.authService.login(req, response);
   }
 
-  @UseGuards(JwtRefreshAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('/refreshToken')
   async refresh(@Req() req) {
     return await this.authService.refreshTokens(req);
   }
 
-  @UseGuards(JwtRefreshAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Post('/logout')
   async logout(@Req() req, @Res() res: Response): Promise<NotFoundException | Response> {
-    const { id } = req.user;
+    const cookie = req.cookies['jwt'];
+
+    const data = await this.jwtService.decode(cookie);
     
-    await this.authService.logout(id)
+    await this.authService.logout(data['id'])
     res.clearCookie('jwt');
     res.clearCookie('jwt-refresh');
     
@@ -65,12 +68,13 @@ export class AuthController {
       const data = await this.jwtService.decode(cookie);
       
       if(!data) {
-        throw new UnauthorizedException();
+        // throw new UnauthorizedException();
+        return null;
       }
 
       const user = await this.authService.authUser(data['id']);
 
-      const {password, ...result} = user;
+      const {password, refreshToken, ...result} = user;
       
       return result;
       

@@ -21,9 +21,10 @@ async function bootstrap() {
 
   // Global Middleware 설정 -> Cors 속성 활성화
   app.enableCors({
-    origin: '*',
+    origin: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     optionsSuccessStatus: 200,
+    credentials: true,
   });
 
   app.useGlobalPipes(
