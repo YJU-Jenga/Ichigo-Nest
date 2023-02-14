@@ -1,6 +1,6 @@
 import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfig } from './configs/typeorm.comfig';
+import { TypeOrmConfig } from './configs/typeorm.config';
 import { UserModule } from './user/user.module';
 import { AuthMiddleware } from "./middleware/auth.middleware";
 import { UserController } from "./user/user.controller";

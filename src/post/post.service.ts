@@ -10,16 +10,16 @@ export class PostService {
     @InjectRepository(Post) private postRepository: Repository<Post>,
   ) {}
 
-  async write(file: Express.Multer.File, writePostDto: WritePostDto): Promise<void> {
+  async write(file: Express.Multer.File, boardId, writePostDto: WritePostDto): Promise<void> {
     try {
       
       if(file) {        
-        const {secret, title, content, password} = writePostDto;
+        const { writer, secret, title, content, password} = writePostDto;
 
         if(secret) {
           await this.postRepository.save({
-            writer: 1,
-            boardId: 1,
+            writer,
+            boardId,
             title,
             content,
             password,
@@ -29,8 +29,8 @@ export class PostService {
         }
         else {
           await this.postRepository.save({
-            writer: 1,
-            boardId: 1,
+            writer,
+            boardId,
             title,
             content,
             password: null,
@@ -39,11 +39,11 @@ export class PostService {
           });
         }
       } else {
-        const { secret, title, content, password} = writePostDto;
+        const { writer, secret, title, content, password} = writePostDto;
         if(secret) {
           await this.postRepository.save({
-            writer: 1,
-            boardId: 1,
+            writer,
+            boardId,
             title,
             content,
             password,
@@ -52,8 +52,8 @@ export class PostService {
         }
         else {
           await this.postRepository.save({
-            writer: 1,
-            boardId: 1,
+            writer,
+            boardId,
             title,
             content,
             password: null,
@@ -71,4 +71,41 @@ export class PostService {
     }
   }
 
+  async findAll(boardId): Promise<Post[]> {
+    return this.postRepository.find({where: {boardId}, order: {'createdAt': 'desc'}});
+  }
+
+  async view(postId: number): Promise<Post> {
+    let hit = await this.postRepository
+    .createQueryBuilder()
+    .select("post")
+    .from(Post, "post")
+    .where("id = :id", {id: postId})
+    .getOne()
+
+    await this.postRepository
+    .createQueryBuilder()
+    .update(Post)
+    .set({hit: hit.hit++ })
+    .where("id = :id", {id: postId})
+    
+    const post = await this.postRepository.findOneBy({id: postId})
+
+    return post;
+  }
+
+  async seed() {
+    for(let i = 1; i <= 3; i++) {
+      for(let j = 0; j < 10; j++) {
+        await this.postRepository.save({
+          writer: 1,
+          boardId: i,
+          title: `제목 ${j+1}`,
+          content: `내용 ${j+1}`,
+          password: null,
+          secret: false,
+        });
+      }
+    }
+  }
 }

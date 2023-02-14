@@ -2,6 +2,16 @@ import { IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength} from "
 import { ApiProperty, PartialType } from "@nestjs/swagger";
 
 export class WritePostDto {
+
+  @ApiProperty({ 
+    example: '1',
+    description: '작성자',
+    required: true
+   })
+  @IsNotEmpty()
+  writer: number;
+
+
   @ApiProperty({ 
     example: '제목 01',
     description: '게시글 제목',

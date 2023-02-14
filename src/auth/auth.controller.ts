@@ -10,6 +10,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 
 @Controller('auth')
+@ApiTags('Auth')
 export class AuthController {
   constructor(private readonly authService: AuthService, private readonly jwtService: JwtService){}
 
@@ -31,7 +32,7 @@ export class AuthController {
     return await this.authService.login(req, response);
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get('/refreshToken')
   async refresh(@Req() req) {
     return await this.authService.refreshTokens(req);
