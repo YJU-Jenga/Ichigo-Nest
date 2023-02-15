@@ -367,6 +367,32 @@ export class PostController {
   }
 
   @Get('/view/:id')
+  @ApiOperation({
+    summary: '게시글 내용 가져오기',
+    description: '게시글 내용 불러오는 API'
+  })
+  @ApiCreatedResponse({
+    description: '성공여부',
+    schema: {
+      example: {
+        "id": 1,
+        "writer": 1,
+        "boardId": 1,
+        "title": "제목 1",
+        "password": null,
+        "content": "내용 1",
+        "hit": 31,
+        "state": false,
+        "secret": false,
+        "image": null,
+        "createdAt": "2023-02-14T11:47:54.395Z",
+        "updatedAt": "2023-02-15T06:43:06.000Z",
+        "user": {
+            "name": "작성자 이름"
+        }
+    },
+    }
+  })
   async viewPost(@Param('id', ParseIntPipe) id:number, @Res() res: Response) {
     const post = await this.postService.view(id);
     return res.json(post);
