@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength} from "class-validator";
-import { ApiProperty, PartialType } from "@nestjs/swagger";
+import { ApiProperty} from "@nestjs/swagger";
 
-export class WritePostDto {
+export class UpdatePostDto {
 
   @ApiProperty({ 
     example: '1',
@@ -10,7 +10,6 @@ export class WritePostDto {
    })
   @IsNotEmpty()
   writer: number;
-
 
   @ApiProperty({ 
     example: '제목 01',
@@ -54,5 +53,3 @@ export class WritePostDto {
   @IsNotEmpty()
   content: string;
 }
-
-export class UpdatePostDto extends PartialType(WritePostDto) {}

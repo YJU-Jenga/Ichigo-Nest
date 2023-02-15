@@ -36,7 +36,7 @@ export class UserController {
     }
   })
   async onCreateUser(@Res() res:Response ,@Body() createUserDto: CreateUserDto): Promise<void> {
-      await this.userService.craeteUser(createUserDto).then((result) => {
+      await this.userService.createUser(createUserDto).then((result) => {
         res.status(HttpStatus.OK).json({success: result})
       });
   }

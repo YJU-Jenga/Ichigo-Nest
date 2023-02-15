@@ -11,7 +11,7 @@ export class UserService {
     @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
 
-  async craeteUser(createUserDto: CreateUserDto): Promise<void> {
+  async createUser(createUserDto: CreateUserDto): Promise<void> {
     try {
       const { name, email, password, phone } = createUserDto;
       const saltOrRounds = 10;
