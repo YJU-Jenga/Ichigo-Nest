@@ -1,14 +1,14 @@
 import { IsNotEmpty, IsPhoneNumber, IsString, IsEmail, Matches, MaxLength, MinLength} from "class-validator";
-import { ApiProperty, PartialType } from "@nestjs/swagger";
+import { ApiProperty,  } from "@nestjs/swagger";
 
-export class CreateUserDto {
+export class SignUpDto {
   @ApiProperty({ 
     example: 'client@gmail.com',
     description: '유저 아이디(이메일 형식)',
     required: true
    })
-  @IsEmail()
-  @IsNotEmpty()
+   @IsEmail()
+   @IsNotEmpty()
   email: string;
   
   @ApiProperty({ 
@@ -42,12 +42,14 @@ export class CreateUserDto {
     example: '010-1111-1111',
     description: '유저 핸드폰번호',
     required: true
-   })
+  })
   @IsString()
+  @Matches(
+    /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/,
+    { 
+      message: '양식에 맞게 작성하세요.',
+    }
+  )
   @IsNotEmpty()
   phone: string;
-}
-
-export class UpdateUserDto extends PartialType(CreateUserDto) {
-
 }

@@ -1,0 +1,1 @@
+export { UpdateUserDto } from './update_user.dto';

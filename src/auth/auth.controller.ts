@@ -1,88 +1,41 @@
-import { Controller, UseGuards, Post, Req, Body, Get, NotFoundException, Query, Res, UnauthorizedException} from '@nestjs/common';
+import { Controller, Post, Body, Res, UsePipes, ValidationPipe, HttpStatus, HttpCode, UseGuards, Req} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LocalAuthGuard } from './guards/local-auth.guard';
+import { JwtAuthGuard, JwtRefreshAuthGuard } from './guards';
 import { ApiCreatedResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
-import { LogOutDto } from './dto/logout.dto';
 import { Request, Response } from 'express';
-import { JwtService } from '@nestjs/jwt';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-
+import { Tokens } from './types';
+import { SignUpDto, SignInDto } from './dto';
+import { GetCurrentUser, GetCurrentUserId } from './decorators';
 
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService, private readonly jwtService: JwtService){}
-
-  // login
-  @UseGuards(LocalAuthGuard)
-  @Post('/login')
-  @ApiOperation({
-    summary: '로그인 API',
-    description: '아이디와 비밀번호를 통해 로그인을 진행',
-  })
-  @ApiCreatedResponse({
-    description: '로그인 정보',
-    schema: {
-      example: {
-    },
-    },
-  })
-  async login(@Req() req, @Res({passthrough: true}) response) {
-    return await this.authService.login(req, response);
+  constructor(private readonly authService: AuthService){}
+  
+  @Post('/local/signup')
+  @HttpCode(HttpStatus.CREATED)
+  async singupLocal(@Body() dto: SignUpDto): Promise<Tokens> {
+    return this.authService.singupLocal(dto);
   }
-
-  // @UseGuards(JwtAuthGuard)
-  @Get('/refreshToken')
-  async refresh(@Req() req) {
-    return await this.authService.refreshTokens(req);
+  
+  @Post('/local/signin')
+  @HttpCode(HttpStatus.OK)
+  async singinLocal(@Body() dto: SignInDto): Promise<Tokens> {
+    return this.authService.singinLocal(dto);
   }
-
-  // @UseGuards(JwtAuthGuard)
+  
+  @UseGuards(JwtAuthGuard)
   @Post('/logout')
-  async logout(@Req() req, @Res() res: Response): Promise<NotFoundException | Response> {
-    const cookie = req.cookies['jwt'];
-
-    const data = await this.jwtService.decode(cookie);
-    
-    await this.authService.logout(data['id'])
-    res.clearCookie('jwt');
-    res.clearCookie('jwt-refresh');
-    
-    return res.send({
-      message:"logout"
-    });
+  @HttpCode(HttpStatus.OK)
+  async logout(@GetCurrentUserId() userId: number){
+    return this.authService.logout(userId);
   }
-
-  @Get('/cookies')
-  async getCookies(@Req() req, @Res() res: Response) {
-    const jwt = req.cookies['jwt'];
-    const jwtRefresh = req.cookies['jwt-refresh'];
-    return res.send({jwt, jwtRefresh})
+  
+  @UseGuards(JwtRefreshAuthGuard)
+  @Post('/refresh')
+  @HttpCode(HttpStatus.OK)
+  async refreshTokens(@GetCurrentUserId() userId: number, @GetCurrentUser('refreshToken') refreshToken: string){
+    return this.authService.refreshTokens(userId, refreshToken); 
   }
-
-  @Get("/user")
-  async user(@Req() req: Request) {
-    try {
-      const cookie = req.cookies['jwt'];
-
-      const data = await this.jwtService.decode(cookie);
-      
-      if(!data) {
-        // throw new UnauthorizedException();
-        return null;
-      }
-
-      const user = await this.authService.authUser(data['id']);
-
-      const {password, refreshToken, ...result} = user;
-      
-      return result;
-      
-    } catch (e) {
-      throw new UnauthorizedException();
-    }
-  }
-
 
 }

@@ -1,23 +1,21 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Injectable } from '@nestjs/common';
-import { Request } from 'express';
-// import { jwtConstants } from '../constants';
+
+type JwtPayload = {
+  sub: string,
+  email: string
+}
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor() {
     super({
       //Request에서 JWT 토큰을 추출하는 방법을 설정 -> Authorization에서 Bearer Token에 JWT 토큰을 담아 전송해야한다.
-      // jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        (request: Request) => {
-          return request?.cookies?.Authentication;
-        }
-      ]),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       //true로 설정하면 Passport에 토큰 검증을 위임하지 않고 직접 검증, false는 Passport에 검증 위임
       ignoreExpiration: false,
-      //검증 비밀 값(유출 주위)
+      //검증 비밀 값(유출 주위) 
       secretOrKey: process.env.ACCESS_SECRET_KEY,
     });
   }
@@ -27,7 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    *
    * @param payload 토큰 전송 내용
    */
-  async validate(payload: any) {
-    return { id: payload.id };
+  async validate(payload: JwtPayload) {
+    return payload;
   }
 }

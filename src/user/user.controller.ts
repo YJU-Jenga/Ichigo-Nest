@@ -1,12 +1,9 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UsePipes, ValidationPipe, UseGuards, Request, Res, HttpStatus} from '@nestjs/common';
 import { UserService } from "./user.service";
-import { CreateUserDto, UpdateUserDto } from "./dto/user.dto";
+import { UpdateUserDto } from "./dto/update_user.dto";
 import { User } from '../model/entity/user.entity';
-import { LocalAuthGuard } from '../auth/guards/local-auth.guard';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiCreatedResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { SignInDto } from './dto/sign_in.dto';
-import { Response } from 'express';
+import { JwtAuthGuard, JwtRefreshAuthGuard } from 'src/auth/guards';
 
 @Controller('user')
 @ApiTags('User')  // Swagger Tag 설정
@@ -22,29 +19,11 @@ export class UserController {
   */
   // @Body 방식 - @Body 어노테이션 여러개를 통해 요청 객체를 접근할 수 있습니다.
   
-  // 유저 생성
-  @Post('/create_user')
-  @UsePipes(ValidationPipe)
-  @ApiOperation({
-    summary: '유저 생성',
-    description: '유저 생성 API'
-  })
-  @ApiCreatedResponse({
-    description: '성공여부',
-    schema: {
-      example: { success: true },
-    }
-  })
-  async onCreateUser(@Res() res:Response ,@Body() createUserDto: CreateUserDto): Promise<void> {
-      await this.userService.createUser(createUserDto).then((result) => {
-        res.status(HttpStatus.OK).json({success: result})
-      });
-  }
 
   // 전체 유저 조회
   @Get('/user_all')
-  // @UseGuards(JwtAuthGuard)  // 검증된 유저만 접근 가능 - 토큰 발행 된 유저
-  // @ApiBearerAuth('access-token') //JWT 토큰 키 설정
+  @UseGuards(JwtAuthGuard)  // 검증된 유저만 접근 가능 - 토큰 발행 된 유저
+  @ApiBearerAuth('access-token') //JWT 토큰 키 설정
   @ApiOperation({
     summary: '전체 유저 조회',
     description: '전체 유저 조회 API',
@@ -75,18 +54,54 @@ export class UserController {
   }
 
   // @Query 방식 - 단일 유저 조회
+  @UseGuards(JwtAuthGuard)
   @Get('/user')
   findByUserOne1(@Query('id') id: number): Promise<User> {
     return this.userService.findOne(id);
   }
 
+
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token') //JWT 토큰 키 설정
+  @ApiOperation({
+    summary: '로그인 유저 조회',
+    description: '로그인 유저 조회 API',
+  })
+  @ApiCreatedResponse({
+    description: '유저의 로그인으로 확인',
+    schema: {
+      example: {
+        success: true,
+        data: [
+          {
+            id: 1,
+            name: "client",
+            user_id: "client@gmail.com",
+            email_verified_at: null,
+            phone: "010-1234-5678",
+            permission: false,
+            createdAt: "2023-02-06T06:11:25.748Z",
+            updatedAt: "2023-02-06T06:11:25.748Z",
+        },
+        ],
+      },
+    },
+  })
+  @Get('/:email')
+  findUser(@Param('email') email: string){
+    return this.userService.findUser(email);
+  }
+
   // @Param 방식 - 단일 유저 조회
+  @UseGuards(JwtAuthGuard)
   @Get('/user/:id')
   findByUserOne2(@Param('id') id: number): Promise<User> {
     return this.userService.findOne(id);
   }
 
   // @Param & @Body 혼합 방식 - 단일 유저 수정
+  @UseGuards(JwtAuthGuard)
   @Patch('/user/:id')
   @UsePipes(ValidationPipe)
   setUser(
@@ -96,6 +111,7 @@ export class UserController {
     return this.userService.updateUser(id, updateUserDto);
   }
 
+  @UseGuards(JwtRefreshAuthGuard)
   // @Query 방식 - 단일 유저 삭제
   @Delete('/delete_user')
   deleteUser(@Query('id') id: number): Promise<void> {

@@ -1,112 +1,127 @@
-import { Injectable, NotFoundException, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
-import { response, Response } from 'express';
-import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/model/entity/user.entity';
 import { Repository } from 'typeorm';
-import { LogOutDto } from './dto/logout.dto';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { User } from 'src/model/entity/user.entity';
+import { SignUpDto, SignInDto } from './dto';
+import { Tokens } from './types';
+import { Response } from 'express';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly httpService: HttpService,
     private readonly configService: ConfigService,
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     ) {}
 
-  async validateUser(email: string, password: string): Promise<any> {
-    console.log('AuthService');
-    
-    const user = await this.usersRepository.findOne({
-      where: {email},
-      select: ['email', 'password', 'id']
-    });
+  async singupLocal(dto: SignUpDto): Promise<Tokens> {
+    try {
+      const { name, email, password, phone } = dto;
+      const newUser = await this.usersRepository.save({
+        name,
+        email,
+        password: await this.hashData(password),
+        phone
+      });
 
-    // 사용자가 요청한 비밀번호와 DB에서 조회한 비밀번호 일치여부 검사
-    if(user && (await bcrypt.compare(password, user.password))) {
-      const { ...result } = user;
-      return result;
+      const tokens = await this.getTokens(newUser.id, newUser.email);
+      await this.updateRefreshToken(newUser.id, tokens.refresh_token);
+      return tokens;
+    } catch (error) {
+      throw new HttpException({
+        message: "SQL에러",
+        error: error.sqlMessage,
+      },
+      HttpStatus.FORBIDDEN);
     }
-    return null;
   }
 
-  async login(req:any, response: Response) {
-    const { id, email } = req.user;
-    const { accessToken, refreshToken } = await this.getTokens(id, email);
+  async singinLocal(dto: SignInDto): Promise<Tokens> {
+    try {
+      const { email, password } = dto;
+      const user = await this.usersRepository.findOne({where: {email}});
+      if (!user) throw new ForbiddenException("아이디와 비밀번호를 제대로 입력하십시오.");
 
-    // refresh token 갱신
-    await this.updateRefreshToken(id, refreshToken);
+      const passwordMatches = await bcrypt.compare(password, user.password);
+      if (!passwordMatches) throw new ForbiddenException("아이디와 비밀번호를 제대로 입력하십시오.");
 
-    response.setHeader('Authorization', 'Bearer '+ accessToken);
-
-    response.cookie('jwt', accessToken, { httpOnly: true, maxAge: 30 * 60 * 1000 });
-    response.cookie('jwt-refresh', refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
-    return {
-		ok : true,
-    };
+      const tokens = await this.getTokens(user.id, user.email);
+      await this.updateRefreshToken(user.id, tokens.refresh_token);
+      return tokens;
+    } catch (error) {
+      throw new HttpException({
+        message: "SQL에러",
+        error: error.sqlMessage,
+      },
+      HttpStatus.FORBIDDEN);
+    }
   }
 
-
-  async refreshTokens(req: any) {
-    const { id, email, refresh_token } = req.user;
-    const user = await this.usersRepository.findOne({
-      where: {id},
-      select: ['refreshToken']
-    });
-
-    if(!user) {
-      return new NotFoundException();
+  async logout(id: number) {
+    try {
+      const user = await this.usersRepository.findOne({where: {id},});
+      if (!user) throw new ForbiddenException("Access-Denied");
+      await this.usersRepository.update(id, {refreshToken: null});
+    } catch (error) {
+      throw new HttpException({
+        message: "인증되지 않은 접근",
+        error: error,
+      },
+      HttpStatus.FORBIDDEN);
     }
-
-    if( refresh_token !== user.refreshToken) {
-      return new UnauthorizedException();
-    }
-
-    const { accessToken, refreshToken } = await this.getTokens(id, email);
-    await this.updateRefreshToken(id, refreshToken);
-
-    response.cookie('jwt', accessToken, {httpOnly: true});
-    response.cookie('jwt-refresh', refreshToken, {httpOnly: true});
-    return {
-      ok: true,
-    };
   }
 
-  async logout(id:number): Promise<NotFoundException | LogOutDto> {
-    const user = await this.usersRepository.findOne({
-      where: {id},
-    });
-
-    if (!user) {
-      return new NotFoundException();
+  async refreshTokens(id: number, refreshToken: string): Promise<Tokens> {
+    try {
+      const user = await this.usersRepository.findOne({where: {id}});
+      if (!user) throw new ForbiddenException("Access-Denied");
+      
+      if(user.refreshToken == null) throw new ForbiddenException("Access-Denied");
+      
+      const refreshTokenMathres = bcrypt.compare(refreshToken, user.refreshToken);
+      if (!refreshTokenMathres) throw new ForbiddenException("Access-Denied");
+  
+      const tokens = await this.getTokens(user.id, user.email);
+      await this.updateRefreshToken(user.id, tokens.refresh_token);
+      return tokens;
+    } catch (error) {
+      throw new HttpException({
+        message: "인증되지 않은 접근",
+        error: error,
+      },
+      HttpStatus.FORBIDDEN);
     }
+  }
 
-    await this.usersRepository.update(id, {refreshToken: null});
-
-    return {ok: true};
+  async hashData(data: string) {
+    return bcrypt.hash(data, 10);
   }
 
   async updateRefreshToken(id: number, refreshToken: string) {
-    await this.usersRepository.update(id, { refreshToken});
+    await this.usersRepository.update(id, { refreshToken: await this.hashData(refreshToken)});
   }
 
-  async getTokens(id: number, email: string) {
+  async getTokens(id: number, email: string): Promise<Tokens> {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
-        {id},
+        {
+          sub: id,
+          email
+        },
         {
           secret: this.configService.get<string>('ACCESS_SECRET_KEY'),
           expiresIn: `${this.configService.get<string>('ACCESS_EXPIRES_IN')}m`,
         }
       ),
       this.jwtService.signAsync(
-        {id, email},
+        {
+          sub: id, 
+          email
+        },
         {
           secret: this.configService.get<string>('REFRESH_SECRET_KEY'),
           expiresIn: `${this.configService.get<string>('REFRESH_EXPIRES_IN')}d`,
@@ -114,12 +129,10 @@ export class AuthService {
       ),
     ]);
 
-    return { accessToken, refreshToken }
+    return { 
+      access_token: accessToken,
+      refresh_token: refreshToken
+    };
   }
 
-  // @UseGuards(JwtAuthGuard)
-  async authUser(id: number) {
-    const user = await this.usersRepository.findOneBy({id});
-    return user;
-  }
 }

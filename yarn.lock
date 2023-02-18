@@ -3783,9 +3783,9 @@ levn@^0.4.1:
     type-check "~0.4.0"
 
 libphonenumber-js@^1.10.14:
-  version "1.10.18"
-  resolved "https://registry.npmjs.org/libphonenumber-js/-/libphonenumber-js-1.10.18.tgz"
-  integrity sha512-NS4ZEgNhwbcPz1gfSXCGFnQm0xEiyTSPRthIuWytDzOiEG9xnZ2FbLyfJC4tI2BMAAXpoWbNxHYH75pa3Dq9og==
+  version "1.10.20"
+  resolved "https://registry.npmjs.org/libphonenumber-js/-/libphonenumber-js-1.10.20.tgz"
+  integrity sha512-kQovlKNdLcVzerbTPmJ+Fx4R+7/pYXmPDIllHjg7IxL4X6MsMG7jaT5opfYrBok0uqkByVif//JUR8e11l/V7w==
 
 lines-and-columns@^1.1.6:
   version "1.2.4"

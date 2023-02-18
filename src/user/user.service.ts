@@ -1,36 +1,15 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDto, UpdateUserDto } from "./dto/user.dto";
+import { UpdateUserDto } from "./dto";
 import { User } from '../model/entity/user.entity';
-import * as bcrypt from 'bcrypt';
+
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
-
-  async createUser(createUserDto: CreateUserDto): Promise<void> {
-    try {
-      const { name, email, password, phone } = createUserDto;
-      const saltOrRounds = 10;
-  
-      await this.usersRepository.save({
-        name,
-        email,
-        password : await bcrypt.hash(password, saltOrRounds),
-        phone
-      });
-    } catch (error) {
-      throw new HttpException({
-        message: "SQL에러",
-        error: error.sqlMessage,
-      },
-      HttpStatus.FORBIDDEN);
-      
-    }
-  }
 
   findAll(): Promise<User[]> {
     return this.usersRepository.find();
@@ -40,8 +19,10 @@ export class UserService {
     return this.usersRepository.findOneBy({id});
   }
 
-  async findUser(email: string): Promise<User | undefined> {
-    return this.usersRepository.findOneBy({email});
+  async findUser(email: string) {
+    const user = await this.usersRepository.findOneBy({email});
+    const {password,refreshToken, ...result} = user;
+    return result;
   }
 
   async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<void> {
