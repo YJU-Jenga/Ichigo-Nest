@@ -77,9 +77,10 @@ export class AuthService {
 
   async refreshTokens(id: number, refreshToken: string): Promise<Tokens> {
     try {
+      if(refreshToken == undefined) throw new ForbiddenException("Access-Denied");
+      
       const user = await this.usersRepository.findOne({where: {id}});
       if (!user) throw new ForbiddenException("Access-Denied");
-      
       if(user.refreshToken == null) throw new ForbiddenException("Access-Denied");
       
       const refreshTokenMathres = bcrypt.compare(refreshToken, user.refreshToken);
