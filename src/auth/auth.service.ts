@@ -33,7 +33,7 @@ export class AuthService {
       return tokens;
     } catch (error) {
       throw new HttpException({
-        message: "SQL에러",
+        message: "이미 등록된 이메일 입니다.",
         error: error.sqlMessage,
       },
       HttpStatus.FORBIDDEN);
@@ -54,7 +54,7 @@ export class AuthService {
       return tokens;
     } catch (error) {
       throw new HttpException({
-        message: "SQL에러",
+        message: "아이디와 비밀번호를 제대로 입력하십시오.",
         error: error.sqlMessage,
       },
       HttpStatus.FORBIDDEN);

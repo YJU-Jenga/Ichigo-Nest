@@ -9,7 +9,7 @@ export class SignInDto {
   })
   @IsNotEmpty()
   @IsString()
-  @IsEmail()
+  @IsEmail({}, { message: '이메일 형식에 맞게 작성하세요' })
   email: string;
 
   @ApiProperty({
