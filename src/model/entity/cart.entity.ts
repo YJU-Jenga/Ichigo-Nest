@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique, OneToOne, OneToMany, BaseEntity, JoinColumn } from "typeorm";
-import { Product } from "./product.entity";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToOne, BaseEntity, JoinColumn, OneToMany } from "typeorm";
+import { CartToProduct } from "./cartToProduct.entity";
 import { User } from "./user.entity";
 
 @Entity({name: 'cart'})
@@ -7,11 +7,14 @@ export class Cart extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({comment: '수량'})
-  count: number;
+  @Column()
+  userId:number;
 
-  @Column({name:"totoal_price", comment: '총 가격'})
-  totalPrice: number;
+  // @Column({comment: '수량'})
+  // count: number;
+
+  // @Column({name:"totoal_price", comment: '총 가격'})
+  // totalPrice: number;
 
   @CreateDateColumn({name: 'created_at', comment: '생성일'})
   createdAt: Date;
@@ -25,6 +28,6 @@ export class Cart extends BaseEntity {
   @JoinColumn()
   user:User;
 
-  @OneToMany(() => Product, (product) => product.cart )
-  product: Product[];
+  @OneToMany(() => CartToProduct, (cartToProduct) => cartToProduct.cart, { cascade:true, nullable: false, onDelete: 'CASCADE' })
+  cartToProducts: CartToProduct[];
 }

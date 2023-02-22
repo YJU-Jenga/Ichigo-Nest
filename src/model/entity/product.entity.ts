@@ -1,15 +1,12 @@
-import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique, OneToMany, ManyToOne } from "typeorm";
-import { Cart } from "./cart.entity";
-import { Order } from "./order.entity";
+import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique, OneToMany, ManyToOne, ManyToMany, JoinTable } from "typeorm";
+import { CartToProduct } from "./cartToProduct.entity";
+import { OrderToProduct } from "./orderToProduct.entity";
 
 @Entity()
 // @Unique([])
 export class Product extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Column()
-  productId: number;
 
   @Column({type: 'varchar', length: 50, comment: '상품이름'})
   name: string;
@@ -37,13 +34,10 @@ export class Product extends BaseEntity {
 
   // 관계 설정
 
-  @ManyToOne(
-    () => Cart,
-    (cart) => cart.product, { nullable: false, onDelete: 'CASCADE' }
-  )
-  cart:Cart;
-
-  @OneToMany(() => Order, (order) => order.product )
-  order: Order[];
+  @OneToMany(() => CartToProduct, (cartToProduct) => cartToProduct.product, { cascade:true, nullable: false, onDelete: 'CASCADE' })
+  cartToproducts: CartToProduct;
+  
+  @OneToMany(() => OrderToProduct, (orderToProduct) => orderToProduct.product, { cascade:true, nullable: false, onDelete: 'CASCADE' })
+  orderToProducts: OrderToProduct[];
 
 }

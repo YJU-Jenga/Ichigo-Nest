@@ -1,5 +1,5 @@
-import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique, ManyToOne, OneToMany, JoinColumn } from "typeorm";
-import { Product } from "./product.entity";
+import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from "typeorm";
+import { OrderToProduct } from "./orderToProduct.entity";
 import { User } from "./user.entity";
 
 
@@ -35,18 +35,9 @@ export class Order extends BaseEntity {
 
   // 관계 설정
 
-  @ManyToOne(
-    () => User,
-    (user) => user.order, { nullable: false, onDelete: 'CASCADE' }
-  )
+  @ManyToOne(() => User, (user) => user.order, { cascade:true, nullable: false, onDelete: 'CASCADE' })
   user:User;
 
-  @OneToMany(
-    () => Product,
-    (product) => product.order, { nullable: false, onDelete: 'CASCADE' }
-  )
-  product:Product[];
-
-  
-
+  @OneToMany(() => OrderToProduct, (orderToProduct) => orderToProduct.order, { cascade:true, nullable: false, onDelete: 'CASCADE' })
+  orderToProducts:OrderToProduct[];
 }

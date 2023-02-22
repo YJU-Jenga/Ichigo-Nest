@@ -47,14 +47,14 @@ export class Post extends BaseEntity {
 
   @ManyToOne(
     () => User,
-    (user) => user.post, { nullable: false, onDelete: 'CASCADE' }
+    (user) => user.post, { cascade:true, nullable: false, onDelete: 'CASCADE' }
   )
   @JoinColumn({name: 'writer'})
   user:User;
 
   @ManyToOne(
     () => Board,
-    (board) => board.post, { nullable: false, onDelete: 'CASCADE' }
+    (board) => board.post, { cascade:true, nullable: false, onDelete: 'CASCADE' }
   )
   board:Board;
 

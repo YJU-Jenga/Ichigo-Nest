@@ -14,7 +14,7 @@ export class Comment extends BaseEntity {
   postId: number;
 
   @Column({type: 'varchar', length: 1000, comment: '댓글 내용'})
-  board_name: string;
+  content: string;
 
   @CreateDateColumn({name: 'created_at', comment: '생성일'})
   createdAt: Date;
@@ -26,14 +26,14 @@ export class Comment extends BaseEntity {
 
   @ManyToOne(
     () => User,
-    (user) => user.comment, { nullable: false, onDelete: 'CASCADE' }
+    (user) => user.comment, { cascade:true, nullable: false, onDelete: 'CASCADE' }
   )
   @JoinColumn({name: 'writer'})
   user:User;
 
   @ManyToOne(
     () => Post,
-    (post) => post.comment, { nullable: false, onDelete: 'CASCADE' }
+    (post) => post.comment, { cascade:true, nullable: false, onDelete: 'CASCADE' }
   )
   post:Post;
 }

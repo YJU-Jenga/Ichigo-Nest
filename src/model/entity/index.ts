@@ -5,3 +5,5 @@ export {Order} from "./order.entity";
 export {Post} from "./post.entity";
 export {Product} from "./product.entity";
 export {User} from "./user.entity";
+export {CartToProduct} from "./cartToProduct.entity";
+export {OrderToProduct} from "./orderToProduct.entity";
