@@ -1,8 +1,10 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateOrderDto, UpdateOrderDto } from './dto';
 import { OrderService } from './order.service';
 
 @Controller('order')
+@ApiTags('Order')
 export class OrderController {
   constructor(private readonly orderService: OrderService){}
 
