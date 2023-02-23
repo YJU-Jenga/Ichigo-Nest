@@ -12,9 +12,6 @@ export class Order extends BaseEntity {
   @Column()
   userId: number;
 
-  @Column({comment: '주문 개수'})
-  count: number;
-
   @Column({name: "postal_code", type: 'varchar',  comment: '주문자 우편번호'})
   postalCode: string;
 

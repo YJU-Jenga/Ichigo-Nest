@@ -8,14 +8,15 @@ import { SignUpDto, SignInDto } from './dto';
 import { Tokens } from './types';
 import { Response } from 'express';
 import * as bcrypt from 'bcrypt';
+import { CartService } from 'src/cart/cart.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    private readonly cartService: CartService,
+    @InjectRepository(User) private readonly usersRepository: Repository<User>,
     ) {}
 
   async singupLocal(dto: SignUpDto): Promise<Tokens> {
@@ -27,6 +28,8 @@ export class AuthService {
         password: await this.hashData(password),
         phone
       });
+
+      await this.cartService.createCart(newUser.id);
 
       const tokens = await this.getTokens(newUser.id, newUser.email);
       await this.updateRefreshToken(newUser.id, tokens.refresh_token);

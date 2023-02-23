@@ -3,12 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UpdateUserDto } from "./dto";
 import { User } from '../model/entity/user.entity';
+import { CartService } from 'src/cart/cart.service';
 
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
+    private readonly cartService: CartService
   ) {}
 
   findAll(): Promise<User[]> {
@@ -30,6 +32,7 @@ export class UserService {
   }
 
   async deleteUser(id: number): Promise<void> {
+    await this.cartService.deleteCart(id);
     await this.usersRepository.delete(id);
   }
 

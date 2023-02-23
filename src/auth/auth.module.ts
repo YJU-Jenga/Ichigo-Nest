@@ -6,12 +6,13 @@ import { AuthService } from './auth.service';
 import { JwtStrategy, JwtRefreshStrategy } from './strategies';
 import { AuthController } from './auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '../model/entity/user.entity';
 import { HttpModule } from '@nestjs/axios';
+import { CartService } from 'src/cart/cart.service';
+import { User, Cart, CartToProduct } from '../model/entity';
 
 @Module({
-  imports: [UserModule, PassportModule, HttpModule, JwtModule.register({}), TypeOrmModule.forFeature([User])],
-  providers: [AuthService, JwtStrategy, JwtRefreshStrategy],
+  imports: [UserModule, PassportModule, HttpModule, JwtModule.register({}), TypeOrmModule.forFeature([User, Cart, CartToProduct])],
+  providers: [AuthService, JwtStrategy, JwtRefreshStrategy, CartService],
   exports: [AuthService],
   controllers: [AuthController],
 })

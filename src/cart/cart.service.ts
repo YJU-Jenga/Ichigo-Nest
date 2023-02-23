@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cart, CartToProduct } from '../model/entity';
 import { Repository } from 'typeorm';
-import { AddProductDto, UpdateAddedProductDto } from './dto';
+import { AddProductDto, DeleteAddedProductDto, UpdateAddedProductDto } from './dto';
 
 @Injectable()
 export class CartService {
@@ -29,7 +29,11 @@ export class CartService {
 
   async deleteCart (userId: number) {
     try {
-      return await this.cartRepository.delete(userId);
+      return await this.cartRepository
+      .createQueryBuilder('cart')
+      .where('cart.userId=:userId',{userId})
+      .delete()
+      .execute();
     } catch (error) {
       console.log(error);
     }
@@ -73,8 +77,9 @@ export class CartService {
     }
   }
   
-  async deleteAddedProdcut (cartId, productId) {
+  async deleteAddedProdcut (dto: DeleteAddedProductDto) {
     try {
+      const {cartId, productId} = dto;
       return await this.cartToProductRepository
       .createQueryBuilder('cartToProduct')
       .where('cartId=:cartId',{cartId})

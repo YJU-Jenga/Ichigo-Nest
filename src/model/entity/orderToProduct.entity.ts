@@ -13,6 +13,9 @@ export class OrderToProduct extends BaseEntity {
     @Column()
     productId!: number
 
+    @Column({comment: '주문 개수'})
+    count: number;
+
     @ManyToOne(() => Order, (order) => order.orderToProducts)
     order!: Order
 
