@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiParam, ApiTags } from '@nestjs/swagger';
+import { format } from 'path';
 import { multerDiskOptions } from '../utils/multer.option';
 import { CreateProductDto, UpdateProductDto } from './dto';
 import { ProductService } from './product.service';
@@ -13,6 +14,34 @@ export class ProductController {
   @Post('/create')
   @UsePipes(ValidationPipe)
   @UseInterceptors(FileInterceptor('file', multerDiskOptions))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: { // 👈 this property
+          type:'string',
+          format: 'binary'
+        },
+        name: {
+          type: 'string'
+        },
+        price: {
+          type: 'number'
+
+        },
+        description: {
+          type: 'string'
+        },
+        stock: {
+          type: 'number'
+        },
+        type: {
+          type: 'boolean'
+        },
+      },
+    },
+  })
   async create (@UploadedFile() file: Express.Multer.File, @Body() dto:CreateProductDto) {
     return await this.productService.create(file, dto);
   }
@@ -30,6 +59,34 @@ export class ProductController {
   @Patch('/update/:id')
   @UsePipes(ValidationPipe)
   @UseInterceptors(FileInterceptor('file', multerDiskOptions))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: { // 👈 this property
+          type:'string',
+          format: 'binary'
+        },
+        name: {
+          type: 'string'
+        },
+        price: {
+          type: 'number'
+
+        },
+        description: {
+          type: 'string'
+        },
+        stock: {
+          type: 'number'
+        },
+        type: {
+          type: 'boolean'
+        },
+      },
+    },
+  })
   async update (@Param('id', ParseIntPipe) id: number, @UploadedFile() file: Express.Multer.File, @Body() dto:UpdateProductDto) {
     return await this.productService.update(id, file, dto);
   }

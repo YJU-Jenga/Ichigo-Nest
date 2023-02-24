@@ -11,11 +11,11 @@ export class UpdateProductDto {
   name: string;
 
   @ApiProperty({ 
-    example: '15000',
+    example: 15000,
     description: '상품가격',
     required: true
    })
-  @IsNumber()
+  // @IsNumber()
   @IsNotEmpty()
   price: number; 
 
@@ -29,11 +29,11 @@ export class UpdateProductDto {
   description: string;
 
   @ApiProperty({ 
-    example: '1000',
+    example: 1000,
     description: '상품재고',
     required: true
    })
-  @IsNumber()
+  // @IsNumber()
   @IsNotEmpty()
   stock: number;
   
@@ -42,7 +42,7 @@ export class UpdateProductDto {
     description: '상품종류(남,녀)',
     required: true
    })
-  @IsBoolean()
+  // @IsBoolean()
   @IsNotEmpty()
   type: boolean;
 }

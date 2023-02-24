@@ -57,8 +57,8 @@ export class CartService {
       return await this.cartRepository
       .createQueryBuilder('cart')
       .where('cart.id=:cartId', {cartId})
-      .leftJoin('cart.cartToProducts', 'cartToProducts')
-      .leftJoin('cartToProducts.product', 'product')
+      .leftJoinAndSelect('cart.cartToProducts', 'cartToProducts')
+      .leftJoinAndSelect('cartToProducts.product', 'product')
       .getMany()
     } catch (error) {
       console.log(error);

@@ -37,8 +37,8 @@ export class OrderService {
     try {
       return await this.orderRepository
       .createQueryBuilder('order')
-      .leftJoin('order.orderToProducts', 'orderToProducts')
-      .leftJoin('orderToProducts.product', 'product')
+      .leftJoinAndSelect('order.orderToProducts', 'orderToProducts')
+      .leftJoinAndSelect('orderToProducts.product', 'product')
       .orderBy({"createdAt":"DESC"})
       .getMany()
     } catch (error) {
@@ -51,8 +51,8 @@ export class OrderService {
       return await this.orderRepository
       .createQueryBuilder('order')
       .where("order.id=:id", {id})
-      .leftJoin('order.orderToProducts', 'orderToProducts')
-      .leftJoin('orderToProducts.product', 'product')
+      .leftJoinAndSelect('order.orderToProducts', 'orderToProducts')
+      .leftJoinAndSelect('orderToProducts.product', 'product')
       .orderBy({"createdAt":"DESC"})
       .getOne();
     } catch (error) {
