@@ -5,9 +5,11 @@ import { HttpExceptionFilter } from './utils/http-exception.flter';
 import { ValidationPipe } from "@nestjs/common";
 import { existsSync, mkdirSync } from 'fs';
 import * as cookieParser from 'cookie-parser'
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   const uploadPath = 'uploads';
 
@@ -16,8 +18,12 @@ async function bootstrap() {
     mkdirSync(uploadPath);
   }
 
+  app.useStaticAssets('/uploads');
+
   // 예외 필터 연결
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useStaticAssets(join(__dirname, '../', 'uploads'), {
+    prefix: '/uploads'
+  });
 
   // Global Middleware 설정 -> Cors 속성 활성화
   app.enableCors({
