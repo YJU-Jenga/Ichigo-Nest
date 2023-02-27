@@ -26,7 +26,7 @@ export class CreateOrderDto {
    })
   @IsString()
   @IsNotEmpty()
-  adress: string;
+  address: string;
 
   @ApiProperty({ 
     example: [1,2,3],

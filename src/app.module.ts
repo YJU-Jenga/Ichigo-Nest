@@ -12,7 +12,6 @@ import { CartModule } from './cart/cart.module';
 import { OrderModule } from './order/order.module';
 import { CommentModule } from './comment/comment.module';
 import { ProductModule } from './product/product.module';
-import { FileModule } from './file/file.module';
 import * as Joi from 'joi';
 
 
@@ -42,7 +41,6 @@ import * as Joi from 'joi';
     OrderModule,
     CommentModule,
     ProductModule,
-    FileModule,
   ],
 })
 export class AppModule implements NestModule {

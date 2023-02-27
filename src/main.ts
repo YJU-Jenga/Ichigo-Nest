@@ -20,11 +20,10 @@ async function bootstrap() {
 
   app.useStaticAssets('/uploads');
 
-  // 예외 필터 연결
   app.useStaticAssets(join(__dirname, '../', 'uploads'), {
     prefix: '/uploads'
   });
-
+  
   // Global Middleware 설정 -> Cors 속성 활성화
   app.enableCors({
     origin: true,
@@ -32,7 +31,8 @@ async function bootstrap() {
     optionsSuccessStatus: 200,
     credentials: true,
   });
-
+  
+  // 예외 필터 연결
   app.useGlobalPipes(
     new ValidationPipe({
     /**

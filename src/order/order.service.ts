@@ -13,11 +13,11 @@ export class OrderService {
   
   async createOrder(dto: CreateOrderDto) {
     try {
-      const { userId, postalCode, adress, productIds, counts } = dto;
+      const { userId, postalCode, address, productIds, counts } = dto;
       const newOrder = await this.orderRepository.save({
         userId,
         postalCode,
-        adress
+        address
       });
 
       productIds.forEach(async (productId, idx)=>{
@@ -62,11 +62,11 @@ export class OrderService {
 
   async updateOrder(id: number, dto: UpdateOrderDto) {
     try {
-      const { userId, postalCode, adress, state } = dto;
+      const { userId, postalCode, address, state } = dto;
       await this.orderRepository.update(id ,{
         userId,
         postalCode,
-        adress,
+        address,
         state
       });
     } catch (error) {

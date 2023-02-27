@@ -26,7 +26,7 @@ export class UpdateOrderDto {
    })
   @IsString()
   @IsNotEmpty()
-  adress: string;
+  address: string;
 
   @ApiProperty({ 
     example: true,

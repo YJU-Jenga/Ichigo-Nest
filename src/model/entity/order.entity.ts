@@ -16,7 +16,7 @@ export class Order extends BaseEntity {
   postalCode: string;
 
   @Column({type: 'varchar',  comment: '주문자 주소'})
-  adress: string;
+  address: string;
 
   // 주문 상태 - 0, 1
   // 0 : 주문 접수 중 - 고객님의 주문과 결제 정보가 접수되었습니다. 지금은 주문을 변경할 수 없지만 주문 처리 준비를 시작하면 변경할 수 있습니다.

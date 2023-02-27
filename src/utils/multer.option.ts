@@ -22,7 +22,7 @@ export const multerDiskOptions = {
         new HttpException(
           {
             message: 1,
-            error: '지원하지 않는 이미지 형식입니다.',
+            error: '지원하지 않는 파일 형식입니다.',
           },
           HttpStatus.BAD_REQUEST,
         ),
