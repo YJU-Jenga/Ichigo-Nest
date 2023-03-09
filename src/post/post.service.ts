@@ -89,10 +89,10 @@ export class PostService {
   }
 
   async view(postId: number): Promise<Post> {
-    let {hit, writer} = await this.postRepository
+    let {hit} = await this.postRepository
     .createQueryBuilder('post')
     .where("id = :id", {id: postId})
-    .getOne()
+    .getOne();
 
     await this.postRepository
     .createQueryBuilder()
@@ -105,6 +105,7 @@ export class PostService {
     .createQueryBuilder('post')
     .leftJoinAndSelect('post.user', 'user')
     .select(['post', 'user.name'])
+    .where("post.id = :id", {id: postId})
     .getOne();
 
     return post;
