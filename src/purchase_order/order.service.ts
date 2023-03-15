@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Order, OrderToProduct } from 'src/model/entity';
+import { PurchaseOrder, OrderToProduct } from 'src/model/entity';
 import { Repository } from 'typeorm';
 import { CreateOrderDto, UpdateOrderDto } from './dto';
 
 @Injectable()
 export class OrderService {
   constructor(
-    @InjectRepository(Order) private readonly orderRepository: Repository<Order>,
+    @InjectRepository(PurchaseOrder) private readonly orderRepository: Repository<PurchaseOrder>,
     @InjectRepository(OrderToProduct) private readonly orderToProductRepository: Repository<OrderToProduct>
   ){}
   
@@ -33,7 +33,7 @@ export class OrderService {
     }
   }
 
-  async findAllOrder(): Promise<Order[]> {
+  async findAllOrder(): Promise<PurchaseOrder[]> {
     try {
       return await this.orderRepository
       .createQueryBuilder('order')
@@ -46,7 +46,7 @@ export class OrderService {
     }
   }
 
-  async findOneOrder(id: number): Promise<Order> {
+  async findOneOrder(id: number): Promise<PurchaseOrder> {
     try {
       return await this.orderRepository
       .createQueryBuilder('order')

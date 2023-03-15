@@ -9,7 +9,7 @@ import { PostModule } from './post/post.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { CartModule } from './cart/cart.module';
-import { OrderModule } from './order/order.module';
+import { OrderModule } from './purchase_order/order.module';
 import { CommentModule } from './comment/comment.module';
 import { ProductModule } from './product/product.module';
 import * as Joi from 'joi';

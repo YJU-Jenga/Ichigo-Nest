@@ -1,6 +1,5 @@
 import { Entity, Column, ManyToOne, PrimaryGeneratedColumn, BaseEntity } from "typeorm"
-import { Order } from "./order.entity"
-import { Product } from "./product.entity"
+import { Product, PurchaseOrder } from "./index"
 
 @Entity()
 export class OrderToProduct extends BaseEntity {
@@ -16,8 +15,8 @@ export class OrderToProduct extends BaseEntity {
     @Column({comment: '주문 개수'})
     count: number;
 
-    @ManyToOne(() => Order, (order) => order.orderToProducts)
-    order!: Order
+    @ManyToOne(() => PurchaseOrder, (purchaseOrder) => purchaseOrder.orderToProducts)
+    purchaseOrder!: PurchaseOrder
 
     @ManyToOne(() => Product, (product) => product.orderToProducts)
     product!: Product

@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, Unique, BaseEntity, OneToMany, OneToOne } from "typeorm";
 import { Cart } from "./cart.entity";
 import { Comment } from "./comment.entity";
-import { Order } from "./order.entity";
+import { PurchaseOrder } from "./purchase_order.entity";
 import { Post } from "./post.entity";
 
 @Entity({name: 'user'})
@@ -48,6 +48,6 @@ export class User extends BaseEntity{
   // @OneToOne(() => Cart, (cart) => cart.user )
   // cart:Cart;
 
-  @OneToMany(() => Order, (order) => order.user )
-  order: Order[];
+  @OneToMany(() => PurchaseOrder, (purchaseOrder) => purchaseOrder.user )
+  purchaseOrder: PurchaseOrder[];
 }

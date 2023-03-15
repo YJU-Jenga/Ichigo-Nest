@@ -33,7 +33,7 @@ export class CreateOrderDto {
     description: '주문자 상품 고유 번호들',
     required: true
    })
-  @IsNumber()
+  // @IsNumber()
   @IsNotEmpty({each: true})
   productIds: number[];
 
@@ -42,7 +42,7 @@ export class CreateOrderDto {
     description: '주문 상품의 개수들',
     required: true
    })
-  @IsNumber()
+  // @IsNumber()
   @IsNotEmpty({each: true})
   counts: number[];
 }

@@ -5,7 +5,7 @@ import { User } from "./user.entity";
 
 @Entity()
 // @Unique([])
-export class Order extends BaseEntity {
+export class PurchaseOrder extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -32,9 +32,9 @@ export class Order extends BaseEntity {
 
   // 관계 설정
 
-  @ManyToOne(() => User, (user) => user.order, { cascade:true, nullable: false, onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.purchaseOrder, { cascade:true, nullable: false, onDelete: 'CASCADE' })
   user:User;
 
-  @OneToMany(() => OrderToProduct, (orderToProduct) => orderToProduct.order, { cascade:true, nullable: false, onDelete: 'CASCADE' })
+  @OneToMany(() => OrderToProduct, (orderToProduct) => orderToProduct.purchaseOrder, { cascade:true, nullable: false, onDelete: 'CASCADE' })
   orderToProducts:OrderToProduct[];
 }
