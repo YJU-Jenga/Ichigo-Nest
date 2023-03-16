@@ -3,12 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PurchaseOrder, OrderToProduct } from 'src/model/entity';
 import { Repository } from 'typeorm';
 import { CreateOrderDto, UpdateOrderDto } from './dto';
+import { CartService } from 'src/cart/cart.service';
+import { DeleteAddedProductDto } from 'src/cart/dto';
 
 @Injectable()
-export class OrderService {
+export class PurchaseOrderService {
   constructor(
     @InjectRepository(PurchaseOrder) private readonly orderRepository: Repository<PurchaseOrder>,
-    @InjectRepository(OrderToProduct) private readonly orderToProductRepository: Repository<OrderToProduct>
+    @InjectRepository(OrderToProduct) private readonly orderToProductRepository: Repository<OrderToProduct>,
+    private readonly cartService: CartService,
   ){}
   
   async createOrder(dto: CreateOrderDto) {
@@ -20,13 +23,24 @@ export class OrderService {
         address
       });
 
+      const find_cart = await this.cartService.findOneCart_userId(userId)
+
       productIds.forEach(async (productId, idx)=>{
         await this.orderToProductRepository.save({
           orderId: newOrder.id,
           productId,
           count: counts[idx]
-        })
+        });
+
+        let delete_dto: DeleteAddedProductDto = {
+          cartId: find_cart.id,
+          productId
+        }
+
+        await this.cartService.deleteAddedProdcut(delete_dto);
+
       });
+
 
     } catch (error) {
       console.log(error);

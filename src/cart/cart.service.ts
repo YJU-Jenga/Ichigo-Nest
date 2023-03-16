@@ -27,6 +27,14 @@ export class CartService {
     }
   }
 
+  async findOneCart_userId (userId:number): Promise<Cart> {
+    try {
+      return await this.cartRepository.findOneBy({userId})
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async deleteCart (userId: number) {
     try {
       return await this.cartRepository

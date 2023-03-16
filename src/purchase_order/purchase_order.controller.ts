@@ -1,12 +1,12 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateOrderDto, UpdateOrderDto } from './dto';
-import { OrderService } from './order.service';
+import { PurchaseOrderService } from './purchase_order.service';
 
 @Controller('order')
 @ApiTags('Order')
-export class OrderController {
-  constructor(private readonly orderService: OrderService){}
+export class PurchaseOrderController {
+  constructor(private readonly orderService: PurchaseOrderService){}
 
   @Post('/create')
   @UsePipes(ValidationPipe)
