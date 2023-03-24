@@ -25,7 +25,7 @@ export class CommentController {
   }
 
   @Patch("/update/:id")
-  async update(@Param('id', ParseIntPipe) id:number, dto: UpdateCommentDto){
+  async update(@Param('id', ParseIntPipe) id:number, @Body() dto: UpdateCommentDto){
     return this.commentService.update(id, dto)
   }
 
