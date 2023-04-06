@@ -13,10 +13,10 @@ export class ProductService {
       const { name, price, description, stock, type } = dto
 
       return await this.productRepository.save({
-        name: JSON.parse(name).name,
-        price: JSON.parse(price.toString()).price,
-        description: JSON.parse(description).description,
-        stock: JSON.parse(stock.toString()).stock,
+        name,
+        price,
+        description,
+        stock,
         type,
         image: file.path
       })
@@ -45,10 +45,10 @@ export class ProductService {
     try {
       const { name, price, description, stock, type } = dto
       return await this.productRepository.update(id, {
-        name: JSON.parse(name).name,
-        price: JSON.parse(price.toString()).price,
-        description: JSON.parse(description).description,
-        stock: JSON.parse(stock.toString()).stock,
+        name,
+        price,
+        description,
+        stock,
         type,
         image: file.path
       })

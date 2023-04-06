@@ -18,21 +18,21 @@ export class PostService {
 
         if(secret) {
           await this.postRepository.save({
-            writer: JSON.parse(writer.toString()).writer,
+            writer,
             boardId,
-            title: JSON.parse(title).title,
-            content: JSON.parse(content).content,
-            password: JSON.parse(content).content,
+            title,
+            content,
+            password,
             secret: true,
             image: file.path,
           });
         }
         else {
           await this.postRepository.save({
-            writer: JSON.parse(writer.toString()).writer,
+            writer,
             boardId,
-            title: JSON.parse(title).title,
-            content: JSON.parse(content).content,
+            title,
+            content,
             password: null,
             secret: false,
             image: file.path
@@ -42,20 +42,20 @@ export class PostService {
         const { writer, secret, title, content, password} = writePostDto;
         if(secret) {
           await this.postRepository.save({
-            writer: JSON.parse(writer.toString()).writer,
+            writer,
             boardId,
-            title: JSON.parse(title).title,
-            content: JSON.parse(content).content,
-            password: JSON.parse(content).content,
+            title,
+            content,
+            password,
             secret: true,
           });
         }
         else {
           await this.postRepository.save({
-            writer: JSON.parse(writer.toString()).writer,
+            writer,
             boardId,
-            title: JSON.parse(title).title,
-            content: JSON.parse(content).content,
+            title,
+            content,
             password: null,
             secret: false,
           });
@@ -119,19 +119,19 @@ export class PostService {
 
         if(secret) {
           await this.postRepository.update(postId, {
-            writer: JSON.parse(writer.toString()).writer,
-            title: JSON.parse(title).title,
-            content: JSON.parse(content).content,
-            password: JSON.parse(content).content,
+            writer,
+            title,
+            content,
+            password,
             secret: true,
             image: file.path,
           });
         }
         else {
           await this.postRepository.update(postId, {
-            writer: JSON.parse(writer.toString()).writer,
-            title: JSON.parse(title).title,
-            content: JSON.parse(content).content,
+            writer,
+            title,
+            content,
             password: null,
             secret: false,
             image: file.path
@@ -141,18 +141,18 @@ export class PostService {
         const { writer, secret, title, content, password} = updatePostDto;
         if(secret) {
           await this.postRepository.update(postId, {
-            writer: JSON.parse(writer.toString()).writer,
-            title: JSON.parse(title).title,
-            content: JSON.parse(content).content,
-            password: JSON.parse(content).content,
+            writer,
+            title,
+            content,
+            password,
             secret: true,
           });
         }
         else {
           await this.postRepository.update(postId, {
-            writer: JSON.parse(writer.toString()).writer,
-            title: JSON.parse(title).title,
-            content: JSON.parse(content).content,
+            writer,
+            title,
+            content,
             password: null,
             secret: false,
           });

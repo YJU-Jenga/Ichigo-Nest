@@ -5,6 +5,7 @@ import { ApiCreatedResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestj
 import { PostService } from './post.service';
 import { Response } from 'express';
 import { multerDiskOptions } from '../utils/multer.option';
+import { AxiosError } from 'axios';
 
 @Controller('post')
 @ApiTags("Post")
@@ -30,12 +31,32 @@ export class PostController {
     }
   })
   async writeProductInquiryPost( @UploadedFile() file: Express.Multer.File, @Body() writePostDto: WritePostDto, @Res() res: Response) {
-    await this.postService.write(file, 1, writePostDto).then((result) => {
-      res.status(HttpStatus.OK).json({success: result});
-    });
+    try {
+      writePostDto.writer = JSON.parse(writePostDto.writer.toString()).writer
+      writePostDto.title = JSON.parse(writePostDto.title).title
+      writePostDto.secret = JSON.parse(writePostDto.secret.toString()).secret
+      writePostDto.password = JSON.parse(writePostDto.password).password
+      writePostDto.content = JSON.parse(writePostDto.content).content
+
+      if(writePostDto.secret) {
+        if(writePostDto.password.length == 0) {
+          throw new AxiosError('비밀번호를 양식에 맞게 작성하지 않음')
+        }
+      } else {
+        writePostDto.password = ''
+      }
+  
+      await this.postService.write(file, 1, writePostDto).then((result) => {
+        res.status(HttpStatus.OK).json({success: result});
+      });
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.log(error.message);
+      }
+    }
   }
 
-  @Get("product_inquiry_all")
+  @Get("product_inquiry_all") 
   @ApiOperation({
     summary: '상품 문의 전체 가져오기',
     description: '상품 문의 가져오는 API'
@@ -79,9 +100,28 @@ export class PostController {
     }
   })
   async writeQAPost( @UploadedFile() file: Express.Multer.File, @Body() writePostDto: WritePostDto, @Res() res: Response) {
-    await this.postService.write(file, 2, writePostDto).then((result) => {
-      res.status(HttpStatus.OK).json({success: result});
-    });
+    try {
+      writePostDto.writer = JSON.parse(writePostDto.writer.toString()).writer
+      writePostDto.title = JSON.parse(writePostDto.title).title
+      writePostDto.secret = JSON.parse(writePostDto.secret.toString()).secret
+      writePostDto.password = JSON.parse(writePostDto.password).password
+      writePostDto.content = JSON.parse(writePostDto.content).content
+
+      if(writePostDto.secret) {
+        if(writePostDto.password.length == 0) {
+          throw new AxiosError('비밀번호를 양식에 맞게 작성하지 않음')
+        }
+      } else {
+        writePostDto.password = ''
+      }
+      await this.postService.write(file, 2, writePostDto).then((result) => {
+        res.status(HttpStatus.OK).json({success: result});
+      });
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.log(error.message);
+      }
+    }
   }
 
   @Get("q&a_all")
@@ -128,9 +168,29 @@ export class PostController {
     }
   })
   async writeItemUsePost( @UploadedFile() file: Express.Multer.File, @Body() writePostDto: WritePostDto, @Res() res: Response) {
-    await this.postService.write(file, 3, writePostDto).then((result) => {
-      res.status(HttpStatus.OK).json({success: result});
-    });
+    try {
+      writePostDto.writer = JSON.parse(writePostDto.writer.toString()).writer
+      writePostDto.title = JSON.parse(writePostDto.title).title
+      writePostDto.secret = JSON.parse(writePostDto.secret.toString()).secret
+      writePostDto.password = JSON.parse(writePostDto.password).password
+      writePostDto.content = JSON.parse(writePostDto.content).content
+  
+      if(writePostDto.secret) {
+        if(writePostDto.password.length == 0) {
+          throw new AxiosError('비밀번호를 양식에 맞게 작성하지 않음')
+        }
+      } else {
+        writePostDto.password = ''
+      }
+  
+      await this.postService.write(file, 3, writePostDto).then((result) => {
+        res.status(HttpStatus.OK).json({success: result});
+      });
+    } catch (error) {
+      if(error instanceof AxiosError) {
+        console.log(error.message);
+      }
+    }
   }
 
   @Get("item_use_all")
@@ -211,9 +271,29 @@ export class PostController {
     @Body() updatePostDto : UpdatePostDto,
     @Res() res:Response
   ): Promise<void> {
-    return await this.postService.update(null, id,updatePostDto).then((result) => {
-      res.status(HttpStatus.OK).json({success:result});
-    });
+    try {
+      updatePostDto.writer = JSON.parse(updatePostDto.writer.toString()).writer
+      updatePostDto.title = JSON.parse(updatePostDto.title).title
+      updatePostDto.secret = JSON.parse(updatePostDto.secret.toString()).secret
+      updatePostDto.password = JSON.parse(updatePostDto.password).password
+      updatePostDto.content = JSON.parse(updatePostDto.content).content
+  
+      if(updatePostDto.secret) {
+        if(updatePostDto.password.length == 0) {
+          throw new AxiosError('비밀번호를 양식에 맞게 작성하지 않음')
+        }
+      } else {
+        updatePostDto.password = ''
+      }
+  
+      return await this.postService.update(null, id, updatePostDto).then((result) => {
+        res.status(HttpStatus.OK).json({success:result});
+      });
+    } catch (error) {
+      if(error instanceof AxiosError) {
+        throw new AxiosError('비밀번호를 양식에 맞게 입력하세요')
+      }
+    }
   }
 
   

@@ -17,6 +17,7 @@ export class WritePostDto {
     description: '게시글 제목',
     required: true
    })
+  @MinLength(13, {message: '제목을 입력해주세요'})
   @IsNotEmpty()
   title: string;
   
@@ -26,11 +27,11 @@ export class WritePostDto {
    })
   @IsString()
   @IsOptional()
-  @MinLength(0)
-  @MaxLength(4)
-  // 숫자 4글자
+  // @MinLength(0)
+  // @MaxLength(4)
+  // // 숫자 4글자
   @Matches(
-    /^[0-9]{0,4}$/,
+    /^({.*")([0-9]{0}|[0-9]{4})("})$/,
     { 
       message: '비밀번호 양식에 맞게 작성하세요.',
     }
@@ -51,6 +52,7 @@ export class WritePostDto {
     required: true
    })
   @IsString()
+  @MinLength(15, {message: '글 내용을 입력해주세요'})
   @IsNotEmpty()
   content: string;
 }

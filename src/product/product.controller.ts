@@ -43,6 +43,11 @@ export class ProductController {
     },
   })
   async create (@UploadedFile() file: Express.Multer.File, @Body() dto:CreateProductDto) {
+    dto.name = JSON.parse(dto.name).name
+    dto.price = JSON.parse(dto.price.toString()).price
+    dto.description = JSON.parse(dto.description).description
+    dto.stock = JSON.parse(dto.stock.toString()).stock
+    dto.type = JSON.parse(dto.type.toString()).type
     return await this.productService.create(file, dto);
   }
   
@@ -88,6 +93,11 @@ export class ProductController {
     },
   })
   async update (@Param('id', ParseIntPipe) id: number, @UploadedFile() file: Express.Multer.File, @Body() dto:UpdateProductDto) {
+    dto.name = JSON.parse(dto.name).name
+    dto.price = JSON.parse(dto.price.toString()).price
+    dto.description = JSON.parse(dto.description).description
+    dto.stock = JSON.parse(dto.stock.toString()).stock
+    dto.type = JSON.parse(dto.type.toString()).type
     return await this.productService.update(id, file, dto);
   }
   
