@@ -11,11 +11,12 @@ export class ProductService {
   async create (file: Express.Multer.File, dto:CreateProductDto) {
     try {
       const { name, price, description, stock, type } = dto
+
       return await this.productRepository.save({
-        name,
-        price,
-        description,
-        stock,
+        name: JSON.parse(name).name,
+        price: JSON.parse(price.toString()).price,
+        description: JSON.parse(description).description,
+        stock: JSON.parse(stock.toString()).stock,
         type,
         image: file.path
       })
