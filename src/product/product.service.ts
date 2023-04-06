@@ -45,10 +45,10 @@ export class ProductService {
     try {
       const { name, price, description, stock, type } = dto
       return await this.productRepository.update(id, {
-        name,
-        price,
-        description,
-        stock,
+        name: JSON.parse(name).name,
+        price: JSON.parse(price.toString()).price,
+        description: JSON.parse(description).description,
+        stock: JSON.parse(stock.toString()).stock,
         type,
         image: file.path
       })
