@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsNumber, IsString, MinLength } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateProductDto {
@@ -7,7 +7,9 @@ export class CreateProductDto {
     description: '상품이름',
     required: true
    })
-  @IsNotEmpty()
+  @IsString()
+  @MinLength(13, {message: '상품명을 입력해주세요.'})
+  @IsNotEmpty({message: '상품명을 입력해주세요.'})
   name: string;
 
   @ApiProperty({ 
@@ -15,8 +17,9 @@ export class CreateProductDto {
     description: '상품가격',
     required: true
    })
-  // @IsNumber()
-  @IsNotEmpty()
+   // @IsNumber()
+  @MinLength(14, {message: '상품가격을 입력해주세요.'})
+  @IsNotEmpty({message: '상품가격을 입력해주세요.'})
   price: number; 
 
   @ApiProperty({ 
@@ -25,7 +28,8 @@ export class CreateProductDto {
     required: true
    })
   @IsString()
-  @IsNotEmpty()
+  @MinLength(20, {message: '상품설명을 입력해주세요.'})
+  @IsNotEmpty({message: '상품설명을 입력해주세요.'})
   description: string;
 
   @ApiProperty({ 
@@ -34,7 +38,8 @@ export class CreateProductDto {
     required: true
    })
   // @IsNumber()
-  @IsNotEmpty()
+  @MinLength(14, {message: '상품재고를 입력해주세요.'})
+  @IsNotEmpty({message: '상품재고를 입력해주세요.'})
   stock: number;
   
   @ApiProperty({ 

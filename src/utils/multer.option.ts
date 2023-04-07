@@ -15,7 +15,7 @@ export const multerDiskOptions = {
    */
   fileFilter: (request, file, callback) => {
     if (file.mimetype.match(imageFileFilter)) {
-      // 이미지 형식은 jpg, jpeg, png만 허용합니다.
+      // 이미지 형식은 jpg, jpeg, png, gif만 허용합니다.
       callback(null, true);
     } else {
       callback(
