@@ -50,6 +50,17 @@ export class CartService {
   async addProduct (dto:AddProductDto) {
     try {
       const { cartId, productId, count } = dto
+
+      const flag = await this.cartToProductRepository.findOneBy({cartId, productId});
+
+      console.log(flag);
+
+      if(flag != null) {
+        return await this.cartToProductRepository.update(flag.cartToProductId, {
+          count : flag.count + 1
+        });
+      }
+
       return await this.cartToProductRepository.save({
         cartId,
         productId,
@@ -79,7 +90,7 @@ export class CartService {
       return await this.cartToProductRepository.update(cartId, {
         productId,
         count
-      })
+      });
     } catch (error) {
       console.log(error);
     }
