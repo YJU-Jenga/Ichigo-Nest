@@ -8,7 +8,7 @@ export class CreateProductDto {
     required: true
    })
   @IsString()
-  @MinLength(13, {message: '상품명을 입력해주세요.'})
+  @MinLength(12, {message: '상품명을 입력해주세요.'})
   @IsNotEmpty({message: '상품명을 입력해주세요.'})
   name: string;
 
@@ -18,7 +18,7 @@ export class CreateProductDto {
     required: true
    })
    // @IsNumber()
-  @MinLength(14, {message: '상품가격을 입력해주세요.'})
+  @MinLength(11, {message: '상품가격을 입력해주세요.'})
   @IsNotEmpty({message: '상품가격을 입력해주세요.'})
   price: number; 
 
@@ -28,7 +28,7 @@ export class CreateProductDto {
     required: true
    })
   @IsString()
-  @MinLength(20, {message: '상품설명을 입력해주세요.'})
+  @MinLength(19, {message: '상품설명을 입력해주세요.'})
   @IsNotEmpty({message: '상품설명을 입력해주세요.'})
   description: string;
 
@@ -38,7 +38,7 @@ export class CreateProductDto {
     required: true
    })
   // @IsNumber()
-  @MinLength(14, {message: '상품재고를 입력해주세요.'})
+  @MinLength(11, {message: '상품재고를 입력해주세요.'})
   @IsNotEmpty({message: '상품재고를 입력해주세요.'})
   stock: number;
   
