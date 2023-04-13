@@ -14,7 +14,7 @@ export class PostController {
 
   // 1 = 상품 문의 게시판
   // 2 = Q & A 게시판
-  // 3 = 사용후기 게시판
+  // 3 = 상품 후기 게시판
 
   // 게시글 생성 - 상품 문의
   @Post('write_product_inquiry')
@@ -46,9 +46,8 @@ export class PostController {
         writePostDto.password = ''
       }
   
-      await this.postService.write(file, 1, writePostDto).then((result) => {
-        res.status(HttpStatus.OK).json({success: result});
-      });
+      const result = await this.postService.write(file, 1, writePostDto)
+      return res.status(HttpStatus.OK).json({success: result});
     } catch (error) {
       if (error instanceof AxiosError) {
         console.log(error.message);
@@ -114,9 +113,8 @@ export class PostController {
       } else {
         writePostDto.password = ''
       }
-      await this.postService.write(file, 2, writePostDto).then((result) => {
-        res.status(HttpStatus.OK).json({success: result});
-      });
+      const result = await this.postService.write(file, 2, writePostDto)
+      return res.status(HttpStatus.OK).json({success: result});
     } catch (error) {
       if (error instanceof AxiosError) {
         console.log(error.message);
@@ -182,10 +180,8 @@ export class PostController {
       } else {
         writePostDto.password = ''
       }
-  
-      await this.postService.write(file, 3, writePostDto).then((result) => {
-        res.status(HttpStatus.OK).json({success: result});
-      });
+      const result = await this.postService.write(file, 3, writePostDto)
+      return res.status(HttpStatus.OK).json({success: result});
     } catch (error) {
       if(error instanceof AxiosError) {
         console.log(error.message);
@@ -270,7 +266,7 @@ export class PostController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updatePostDto : UpdatePostDto,
     @Res() res:Response
-  ): Promise<void> {
+  ) {
     try {
       updatePostDto.writer = JSON.parse(updatePostDto.writer.toString()).writer
       updatePostDto.title = JSON.parse(updatePostDto.title).title
@@ -285,10 +281,8 @@ export class PostController {
       } else {
         updatePostDto.password = ''
       }
-  
-      return await this.postService.update(null, id, updatePostDto).then((result) => {
-        res.status(HttpStatus.OK).json({success:result});
-      });
+      const result = await this.postService.update(null, id, updatePostDto);
+      return res.status(HttpStatus.OK).json({success:result});
     } catch (error) {
       if(error instanceof AxiosError) {
         throw new AxiosError('비밀번호를 양식에 맞게 입력하세요')
@@ -310,9 +304,9 @@ export class PostController {
     }
   })
   async deletePost(@Query('id') id: number, @Res() res:Response) {
-    return await this.postService.delete(id).then((result)=>{
-      res.status(HttpStatus.OK).json({success:result});
-    });
+    const result = await this.postService.delete(id);
+    return res.status(HttpStatus.OK).json({success:result});
+    
   }
 
   @Get("seed")
@@ -327,9 +321,8 @@ export class PostController {
     }
   })
   async seed(@Res() res: Response) {
-    await this.postService.seed().then((result) => {
-      res.status(HttpStatus.OK).json({success: result});
-    });
+    const result = await this.postService.seed();
+    return  res.status(HttpStatus.OK).json({success: result});
   }
 
 

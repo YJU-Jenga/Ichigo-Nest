@@ -1,4 +1,5 @@
 export {Board} from "./board.entity";
+export {Calendar} from "./calendar.entity";
 export {Cart} from "./cart.entity";
 export {Comment} from "./comment.entity";
 export {PurchaseOrder} from "./purchase_order.entity";

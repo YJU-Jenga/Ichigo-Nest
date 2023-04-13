@@ -12,6 +12,7 @@ import { CartModule } from './cart/cart.module';
 import { PurchaseOrderModule } from './purchase_order/purchase_order.module';
 import { CommentModule } from './comment/comment.module';
 import { ProductModule } from './product/product.module';
+import { CalendarModule } from './calendar/calendar.module';
 import * as Joi from 'joi';
 
 
@@ -41,7 +42,8 @@ import * as Joi from 'joi';
     PurchaseOrderModule,
     CommentModule,
     ProductModule,
-  ],
+    CalendarModule,
+  ]
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
