@@ -90,13 +90,13 @@ export class CalendarService {
 
   async updateCalendar (calendarId:number, dto:UpdateCalendarDto) {
     try {
-      const {title, start, end, location, description} = dto
+      const {title, start, end, location, description} = dto;
       return await this.calendarRepository.update(calendarId, {
-        title,
-        start,
-        end,
-        location,
-        description
+       title,
+       start,
+       end,
+       location,
+       description,
       });
     } catch (error) {
       console.log(error);

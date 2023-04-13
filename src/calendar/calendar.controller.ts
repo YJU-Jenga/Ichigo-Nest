@@ -147,7 +147,7 @@ export class CalendarController {
   }
 
   // ----------- 수정 -----------
-  @Patch('/update_calendar')
+  @Patch('/update_calendar/:id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
   @ApiOperation({
@@ -161,7 +161,10 @@ export class CalendarController {
     }
   })
   @UsePipes(ValidationPipe)
-  async updateCalendar(@Param('id', ParseIntPipe) id: number,@Body() dto:UpdateCalendarDto) {
+  async updateCalendar(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto:UpdateCalendarDto
+  ) {
     return await this.calendarService.updateCalendar(id, dto);
   }
 
