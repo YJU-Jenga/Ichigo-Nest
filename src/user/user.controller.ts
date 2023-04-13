@@ -56,6 +56,10 @@ export class UserController {
   // @Query 방식 - 단일 유저 조회
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: '@Query 방식 - 단일 유저 조회',
+    description: '@Query 방식 - 단일 유저 조회 API',
+  })
   @Get('/user')
   findByUserOne1(@Query('id') id: number): Promise<User> {
     return this.userService.findOne(id);
@@ -97,6 +101,10 @@ export class UserController {
   // @Param 방식 - 단일 유저 조회
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: '@Param 방식 - 단일 유저 조회',
+    description: '@Param 방식 - 단일 유저 조회 API',
+  })
   @Get('/user/:id')
   findByUserOne2(@Param('id') id: number): Promise<User> {
     return this.userService.findOne(id);
@@ -105,6 +113,10 @@ export class UserController {
   // @Param & @Body 혼합 방식 - 단일 유저 수정
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: '유저 수정',
+    description: '유저 수정 API',
+  })
   @Patch('/user/:id')
   @UsePipes(ValidationPipe)
   setUser(
@@ -116,7 +128,10 @@ export class UserController {
 
   @UseGuards(JwtRefreshAuthGuard)
   @ApiBearerAuth('refresh-token')
-  // @Query 방식 - 단일 유저 삭제
+  @ApiOperation({
+    summary: '@Query 방식 - 단일 유저 삭제',
+    description: '@Query 방식 - 단일 유저 삭제 API',
+  })
   @Delete('/delete_user')
   deleteUser(@Query('id') id: number): Promise<void> {
     return this.userService.deleteUser(id);
