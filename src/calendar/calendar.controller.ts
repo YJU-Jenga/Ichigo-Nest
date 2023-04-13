@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UsePipes, ValidationPipe, UseGuards, Request, Res, HttpStatus} from '@nestjs/common';
 import { CalendarService } from './calendar.service';
-import { CreateCalendarDto, UpdateCalendarDto } from "./dto";
+import { CreateCalendarDto, SearchCalendarDto, SearchIdCalendarDto, UpdateCalendarDto } from "./dto";
 import { Calendar } from 'src/model/entity';
 import { ApiCreatedResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards';
@@ -30,7 +30,7 @@ export class CalendarController {
 
 
   // ----------- 조회 -----------
-  @Get('/all')
+  @Post('/all')
   @UseGuards(JwtAuthGuard)  // 검증된 유저만 접근 가능 - 토큰 발행 된 유저
   @ApiBearerAuth('access-token') //JWT 토큰 키 설정
   @ApiOperation({
@@ -55,11 +55,11 @@ export class CalendarController {
       },
     },
   })
-  async findAll(@Body() userId:number): Promise<Calendar[]> {
-    return await this.calendarService.findAllCalendar(userId);
+  async findAll(@Body() dto:SearchIdCalendarDto): Promise<Calendar[]> {
+    return await this.calendarService.findAllCalendar(dto);
   }
 
-  @Get('/month')
+  @Post('/month')
   @UseGuards(JwtAuthGuard)  // 검증된 유저만 접근 가능 - 토큰 발행 된 유저
   @ApiBearerAuth('access-token') //JWT 토큰 키 설정
   @ApiOperation({
@@ -84,11 +84,11 @@ export class CalendarController {
       },
     },
   })
-  async findMonth(@Body() userId: number,date: Date): Promise<Calendar[]> {
-    return await this.calendarService.findMonthCalendar(userId ,date);
+  async findMonth(@Body() dto: SearchCalendarDto): Promise<Calendar[]> {
+    return await this.calendarService.findMonthCalendar(dto);
   }
 
-  @Get('/week')
+  @Post('/week')
   @UseGuards(JwtAuthGuard)  // 검증된 유저만 접근 가능 - 토큰 발행 된 유저
   @ApiBearerAuth('access-token') //JWT 토큰 키 설정
   @ApiOperation({
@@ -113,11 +113,11 @@ export class CalendarController {
       },
     },
   })
-  async findWeek(@Body() userId: number,date: Date): Promise<Calendar[]> {
-    return await this.calendarService.findWeekCalendar(userId ,date);
+  async findWeek(@Body() dto: SearchCalendarDto): Promise<Calendar[]> {
+    return await this.calendarService.findWeekCalendar(dto);
   }
 
-  @Get('/date')
+  @Post('/date')
   @UseGuards(JwtAuthGuard)  // 검증된 유저만 접근 가능 - 토큰 발행 된 유저
   @ApiBearerAuth('access-token') //JWT 토큰 키 설정
   @ApiOperation({
@@ -142,8 +142,8 @@ export class CalendarController {
       },
     },
   })
-  async findDate(@Body() userId: number,date: Date): Promise<Calendar[]> {
-    return await this.calendarService.findDateCalendar(userId ,date);
+  async findDate(@Body() dto: SearchCalendarDto): Promise<Calendar[]> {
+    return await this.calendarService.findDateCalendar(dto);
   }
 
   // ----------- 수정 -----------
@@ -167,6 +167,8 @@ export class CalendarController {
 
   // ----------- 삭제 -----------
   @Delete('/delete_calendar')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: '스케줄 삭제',
     description: '스케줄 삭제 API'

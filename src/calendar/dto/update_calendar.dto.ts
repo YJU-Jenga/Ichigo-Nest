@@ -1,4 +1,4 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty, IsOptional } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class UpdateCalendarDto {
@@ -11,7 +11,7 @@ export class UpdateCalendarDto {
   userId: number;
 
   @ApiProperty({ 
-    example: 1,
+    example: "Meeting with clients",
     description: '제목',
     required: true
    })
@@ -19,7 +19,7 @@ export class UpdateCalendarDto {
   title: string;
 
   @ApiProperty({ 
-    example: 1,
+    example: "2023-04-17T09:00:00.000Z",
     description: '시작',
     required: true
    })
@@ -27,7 +27,7 @@ export class UpdateCalendarDto {
   start: Date;
 
   @ApiProperty({ 
-    example: 1,
+    example: "2023-04-17T11:00:00.000Z",
     description: '끝',
     required: true
    })
@@ -35,17 +35,19 @@ export class UpdateCalendarDto {
   end: Date;
 
   @ApiProperty({ 
-    example: 1,
+    example: "Conference room A",
     description: '장소',
     required: false
    })
-  location?: string|null;
+  @IsOptional()
+  location?: string;
 
   @ApiProperty({ 
-    example: 1,
+    example: "Meeting",
     description: '내용',
     required: false
    })
-  description?: string|null;
+  @IsOptional()
+  description?: string;
 }
   

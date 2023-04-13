@@ -3,7 +3,7 @@ import { IsEmail, IsNotEmpty, IsString, Matches } from 'class-validator';
 
 export class SignInDto {
   @ApiProperty({
-    example: 'client@gmail.com',
+    example: 'user@gmail.com',
     description: '유저 아이디(이메일 형식)',
     required: true,
   })
@@ -13,7 +13,7 @@ export class SignInDto {
   email: string;
 
   @ApiProperty({
-    example: '1234qweR!!',
+    example: '*qW23456',
     description: '유저 비밀번호 - 최소 8자 및 최대 20자 하나의 소문자, 하나의 숫자 및 하나의 특수 문자',
     required: true,
   })
