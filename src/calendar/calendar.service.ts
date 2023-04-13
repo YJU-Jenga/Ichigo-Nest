@@ -28,7 +28,8 @@ export class CalendarService {
 
   async findDateCalendar (dto:SearchCalendarDto): Promise<Calendar[]> {
     try {
-      const {userId, date} = dto;
+      const {userId, dateString} = dto;
+      const date = new Date(dateString);
       const startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
       const endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 0, 0, 0);
       return await this.calendarRepository.find({
@@ -44,7 +45,8 @@ export class CalendarService {
 
   async findWeekCalendar (dto:SearchCalendarDto): Promise<Calendar[]> {
     try {
-      const {userId, date} = dto;
+      const {userId, dateString} = dto;
+      const date = new Date(dateString);
       const weekStart = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay(), 0, 0, 0);
       const weekEnd = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay() + 7, 23, 59, 59);
 
@@ -61,7 +63,8 @@ export class CalendarService {
 
   async findMonthCalendar (dto:SearchCalendarDto): Promise<Calendar[]> {
     try {
-      const {userId, date} = dto;
+      const {userId, dateString} = dto;
+      const date = new Date(dateString);
       const monthStart = new Date(date.getFullYear(), date.getMonth(), 1, 0, 0, 0);
       const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59);
 
@@ -87,9 +90,8 @@ export class CalendarService {
 
   async updateCalendar (calendarId:number, dto:UpdateCalendarDto) {
     try {
-      const {userId, title, start, end, location, description} = dto
+      const {title, start, end, location, description} = dto
       return await this.calendarRepository.update(calendarId, {
-        userId,
         title,
         start,
         end,

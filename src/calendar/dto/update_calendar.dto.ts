@@ -3,14 +3,6 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class UpdateCalendarDto {
   @ApiProperty({ 
-    example: 1,
-    description: '유저 아이디',
-    required: true
-   })
-  @IsNotEmpty()
-  userId: number;
-
-  @ApiProperty({ 
     example: "Meeting with clients",
     description: '제목',
     required: true

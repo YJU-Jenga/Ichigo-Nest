@@ -16,6 +16,6 @@ export class SearchCalendarDto {
     required: true
    })
   @IsNotEmpty()
-  date: Date;
+  dateString: Date;
 }
   
