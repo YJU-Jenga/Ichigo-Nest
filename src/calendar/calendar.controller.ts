@@ -11,9 +11,9 @@ export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
 
   // ----------- 생성 -----------
-  @Post('/create')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
+  @Post('/create')
   @ApiOperation({
     summary: '스케줄 생성',
     description: '스케줄 생성 API'
@@ -30,9 +30,9 @@ export class CalendarController {
 
 
   // ----------- 조회 -----------
-  @Post('/all')
   @UseGuards(JwtAuthGuard)  // 검증된 유저만 접근 가능 - 토큰 발행 된 유저
   @ApiBearerAuth('access-token') //JWT 토큰 키 설정
+  @Post('/all')
   @ApiOperation({
     summary: '스케줄 전체 조회',
     description: '스케줄 전체 조회 API',
@@ -59,9 +59,9 @@ export class CalendarController {
     return await this.calendarService.findAllCalendar(dto);
   }
 
-  @Post('/month')
   @UseGuards(JwtAuthGuard)  // 검증된 유저만 접근 가능 - 토큰 발행 된 유저
   @ApiBearerAuth('access-token') //JWT 토큰 키 설정
+  @Post('/month')
   @ApiOperation({
     summary: '스케줄 월간 조회',
     description: '스케줄 월간 조회 API',
@@ -88,9 +88,9 @@ export class CalendarController {
     return await this.calendarService.findMonthCalendar(dto);
   }
 
-  @Post('/week')
   @UseGuards(JwtAuthGuard)  // 검증된 유저만 접근 가능 - 토큰 발행 된 유저
   @ApiBearerAuth('access-token') //JWT 토큰 키 설정
+  @Post('/week')
   @ApiOperation({
     summary: '스케줄 주간 조회',
     description: '스케줄 주간 조회 API',
@@ -117,9 +117,9 @@ export class CalendarController {
     return await this.calendarService.findWeekCalendar(dto);
   }
 
-  @Post('/date')
   @UseGuards(JwtAuthGuard)  // 검증된 유저만 접근 가능 - 토큰 발행 된 유저
   @ApiBearerAuth('access-token') //JWT 토큰 키 설정
+  @Post('/date')
   @ApiOperation({
     summary: '스케줄 일간 조회',
     description: '스케줄 일간 조회 API',
@@ -147,9 +147,9 @@ export class CalendarController {
   }
 
   // ----------- 수정 -----------
-  @Patch('/update_calendar/:id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
+  @Patch('/update_calendar/:id')
   @ApiOperation({
     summary: '스케줄 수정',
     description: '스케줄 수정 API'
@@ -169,9 +169,9 @@ export class CalendarController {
   }
 
   // ----------- 삭제 -----------
-  @Delete('/delete_calendar')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
+  @Delete('/delete_calendar')
   @ApiOperation({
     summary: '스케줄 삭제',
     description: '스케줄 삭제 API'

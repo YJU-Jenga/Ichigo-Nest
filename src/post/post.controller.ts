@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Patch, Delete, Query, Param, UseInterceptors, UploadedFile, UsePipes, ValidationPipe, ParseIntPipe, Res, Body, Request, HttpStatus, Bind } from '@nestjs/common';
+import { Controller, Post, Get, Patch, Delete, Query, Param, UseInterceptors, UploadedFile, UsePipes, ValidationPipe, ParseIntPipe, Res, Body, Request, HttpStatus, Bind, UseGuards } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { WritePostDto, UpdatePostDto } from "./dto";
 import { ApiCreatedResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
@@ -6,6 +6,7 @@ import { PostService } from './post.service';
 import { Response } from 'express';
 import { multerDiskOptions } from '../utils/multer.option';
 import { AxiosError } from 'axios';
+import { JwtAuthGuard } from 'src/auth/guards';
 
 @Controller('post')
 @ApiTags("Post")
@@ -17,12 +18,14 @@ export class PostController {
   // 3 = 상품 후기 게시판
 
   // 게시글 생성 - 상품 문의
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   @Post('write_product_inquiry')
   @UsePipes(ValidationPipe)
   @UseInterceptors(FileInterceptor('file', multerDiskOptions))
   @ApiOperation({
-    summary: '상품 문의 생성',
-    description: '상품 문의 생성 API'
+    summary: '상품 문의 작성',
+    description: '상품 문의 작성 API'
   })
   @ApiCreatedResponse({
     description: '성공여부',
@@ -57,8 +60,8 @@ export class PostController {
 
   @Get("product_inquiry_all") 
   @ApiOperation({
-    summary: '상품 문의 전체 가져오기',
-    description: '상품 문의 가져오는 API'
+    summary: '상품 문의 전체 조회',
+    description: '상품 문의 조회 API'
   })
   @ApiCreatedResponse({
     description: '게시글',
@@ -85,12 +88,14 @@ export class PostController {
   }
   
   // 게시글 생성 - Q & A
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   @Post('write_q&a')
   @UsePipes(ValidationPipe)
   @UseInterceptors(FileInterceptor('file', multerDiskOptions))
   @ApiOperation({
-    summary: 'Q & A 생성',
-    description: 'Q & A 생성 API'
+    summary: 'Q & A 작성',
+    description: 'Q & A 작성 API'
   })
   @ApiCreatedResponse({
     description: '성공여부',
@@ -124,8 +129,8 @@ export class PostController {
 
   @Get("q&a_all")
   @ApiOperation({
-    summary: 'Q & A 전체 가져오기',
-    description: 'Q & A 가져오는 API'
+    summary: 'Q & A 전체 조회',
+    description: 'Q & A 전체 조회 API'
   })
   @ApiCreatedResponse({
     description: '게시글',
@@ -152,12 +157,14 @@ export class PostController {
   }
 
   // 게시글 생성 - 후기
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   @Post('write_item_use')
   @UsePipes(ValidationPipe)
   @UseInterceptors(FileInterceptor('file', multerDiskOptions))
   @ApiOperation({
-    summary: '상품 후기 생성',
-    description: '상품 후기 생성 API'
+    summary: '상품 후기 작성',
+    description: '상품 후기 작성 API'
   })
   @ApiCreatedResponse({
     description: '성공여부',
@@ -191,8 +198,8 @@ export class PostController {
 
   @Get("item_use_all")
   @ApiOperation({
-    summary: '상품 후기 전체 가져오기',
-    description: '상품 후기 가져오는 API'
+    summary: '상품 후기 전체 조회',
+    description: '상품 후기 조회 API'
   })
   @ApiCreatedResponse({
     description: '게시글',
@@ -220,8 +227,8 @@ export class PostController {
 
   @Get('/view/:id')
   @ApiOperation({
-    summary: '게시글 내용 가져오기',
-    description: '게시글 내용 불러오는 API'
+    summary: '게시글 내용 조회',
+    description: '게시글 내용 조회 API'
   })
   @ApiCreatedResponse({
     description: '성공여부',
@@ -250,6 +257,8 @@ export class PostController {
     return res.json(post);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   @Patch('/update/:id')
   @ApiOperation({
     summary: '게시글 수정',
@@ -292,6 +301,8 @@ export class PostController {
 
   
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   @Delete('/delete_post')
   @ApiOperation({
     summary: '게시글 삭제',
@@ -309,21 +320,21 @@ export class PostController {
     
   }
 
-  @Get("seed")
-  @ApiOperation({
-    summary: 'seeding',
-    description: '게시글 시딩 API'
-  })
-  @ApiCreatedResponse({
-    description: '성공여부',
-    schema: {
-      example: { success: true },
-    }
-  })
-  async seed(@Res() res: Response) {
-    const result = await this.postService.seed();
-    return  res.status(HttpStatus.OK).json({success: result});
-  }
+  // @Get("seed")
+  // @ApiOperation({
+  //   summary: 'seeding',
+  //   description: '게시글 시딩 API'
+  // })
+  // @ApiCreatedResponse({
+  //   description: '성공여부',
+  //   schema: {
+  //     example: { success: true },
+  //   }
+  // })
+  // async seed(@Res() res: Response) {
+  //   const result = await this.postService.seed();
+  //   return  res.status(HttpStatus.OK).json({success: result});
+  // }
 
 
 }

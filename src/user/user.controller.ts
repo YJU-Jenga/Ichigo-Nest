@@ -21,9 +21,9 @@ export class UserController {
   
 
   // 전체 유저 조회
-  @Get('/user_all')
   @UseGuards(JwtAuthGuard)  // 검증된 유저만 접근 가능 - 토큰 발행 된 유저
   @ApiBearerAuth('access-token') //JWT 토큰 키 설정
+  @Get('/user_all')
   @ApiOperation({
     summary: '전체 유저 조회',
     description: '전체 유저 조회 API',

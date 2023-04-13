@@ -54,9 +54,23 @@ export class PurchaseOrderService {
       .leftJoinAndSelect('order.orderToProducts', 'orderToProducts')
       .leftJoinAndSelect('orderToProducts.product', 'product')
       .orderBy({"createdAt":"DESC"})
-      .getMany()
+      .getMany();
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  async findAllUserOrder(userId: number): Promise<PurchaseOrder[]> {
+    try {
+      return await this.orderRepository.
+      createQueryBuilder('order')
+      .leftJoinAndSelect('order.orderToProducts', 'orderToProducts')
+      .leftJoinAndSelect('orderToProducts.product', 'product')
+      .where("userId = :userId", {userId})
+      .orderBy({"createdAt":"DESC"})
+      .getMany();
+    } catch (error) {
+      
     }
   }
 
