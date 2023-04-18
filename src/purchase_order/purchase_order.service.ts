@@ -50,10 +50,10 @@ export class PurchaseOrderService {
   async findAllOrder(): Promise<PurchaseOrder[]> {
     try {
       return await this.orderRepository
-      .createQueryBuilder('order')
-      .leftJoinAndSelect('order.orderToProducts', 'orderToProducts')
+      .createQueryBuilder('purchaseOrder')
+      .leftJoinAndSelect('purchaseOrder.orderToProducts', 'orderToProducts')
       .leftJoinAndSelect('orderToProducts.product', 'product')
-      .orderBy({"createdAt":"DESC"})
+      .orderBy("purchaseOrder.created_at","DESC")
       .getMany();
     } catch (error) {
       console.log(error);
@@ -63,11 +63,11 @@ export class PurchaseOrderService {
   async findAllUserOrder(userId: number): Promise<PurchaseOrder[]> {
     try {
       return await this.orderRepository.
-      createQueryBuilder('order')
-      .leftJoinAndSelect('order.orderToProducts', 'orderToProducts')
+      createQueryBuilder('purchaseOrder')
+      .leftJoinAndSelect('purchaseOrder.orderToProducts', 'orderToProducts')
       .leftJoinAndSelect('orderToProducts.product', 'product')
       .where("userId = :userId", {userId})
-      .orderBy({"createdAt":"DESC"})
+      .orderBy("purchaseOrder.created_at","DESC")
       .getMany();
     } catch (error) {
       
@@ -77,11 +77,11 @@ export class PurchaseOrderService {
   async findOneOrder(id: number): Promise<PurchaseOrder> {
     try {
       return await this.orderRepository
-      .createQueryBuilder('order')
-      .where("order.id=:id", {id})
-      .leftJoinAndSelect('order.orderToProducts', 'orderToProducts')
+      .createQueryBuilder('purchaseOrder')
+      .where("purchaseOrder.id=:id", {id})
+      .leftJoinAndSelect('purchaseOrder.orderToProducts', 'orderToProducts')
       .leftJoinAndSelect('orderToProducts.product', 'product')
-      .orderBy({"createdAt":"DESC"})
+      .orderBy("purchaseOrder.created_at","DESC")
       .getOne();
     } catch (error) {
       console.log(error);
