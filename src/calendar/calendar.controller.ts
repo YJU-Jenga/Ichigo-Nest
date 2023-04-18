@@ -171,7 +171,7 @@ export class CalendarController {
   // ----------- 삭제 -----------
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @Delete('/delete_calendar')
+  @Delete('/delete_calendar/:id')
   @ApiOperation({
     summary: '스케줄 삭제',
     description: '스케줄 삭제 API'
@@ -182,7 +182,7 @@ export class CalendarController {
       example: { success: true },
     }
   })
-  async deleteCalendar(@Query('id') id: number) {
+  async deleteCalendar(@Param('id') id: number) {
     return await this.calendarService.deleteCalendar(id);
   }
 }

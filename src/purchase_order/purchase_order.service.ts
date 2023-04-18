@@ -70,7 +70,7 @@ export class PurchaseOrderService {
       .orderBy("purchaseOrder.created_at","DESC")
       .getMany();
     } catch (error) {
-      
+      console.log(error);
     }
   }
 
