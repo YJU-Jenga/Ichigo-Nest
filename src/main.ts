@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core';
+import { APP_PIPE, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { setupSwagger } from './utils/swagger';
 import { HttpExceptionFilter } from './utils/http-exception.flter';
@@ -57,6 +57,6 @@ async function bootstrap() {
 
   setupSwagger(app);
 
-  await app.listen(5000);
+  await app.listen(5000, '13.125.180.187');
 }
 bootstrap();
