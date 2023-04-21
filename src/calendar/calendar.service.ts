@@ -30,8 +30,8 @@ export class CalendarService {
     try {
       const {userId, dateString} = dto;
       const date = new Date(dateString);
-      const startDate = new Date(date.getFullYear(), date.getMonth() + 1, date.getDate(), 0, 0, 0);
-      const endDate = new Date(date.getFullYear(), date.getMonth() + 1, date.getDate() + 1, 0, 0, 0);
+      const startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
+      const endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 0, 0, 0);
       return await this.calendarRepository.find({
         where: {
           userId,
@@ -47,8 +47,8 @@ export class CalendarService {
     try {
       const {userId, dateString} = dto;
       const date = new Date(dateString);
-      const weekStart = new Date(date.getFullYear(), date.getMonth() + 1, date.getDate() - date.getDay(), 0, 0, 0);
-      const weekEnd = new Date(date.getFullYear(), date.getMonth() + 1, date.getDate() - date.getDay() + 7, 23, 59, 59);
+      const weekStart = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay(), 0, 0, 0);
+      const weekEnd = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay() + 7, 23, 59, 59);
 
       return await this.calendarRepository.find({
         where: {
@@ -65,14 +65,20 @@ export class CalendarService {
     try {
       const {userId, dateString} = dto;
       const date = new Date(dateString);
-      const monthStart = new Date(date.getFullYear(), date.getMonth() + 1, 1, 0, 0, 0);
-      const monthEnd = new Date(date.getFullYear(), date.getMonth() + 2, 0, 23, 59, 59);
+      const monthStart = new Date(date.getFullYear(), date.getMonth(), 1, 0, 0, 0);
+      const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59);
 
       return await this.calendarRepository.find({
-        where: {
-          userId,
-          start: Between(monthStart, monthEnd)
-        }
+        where: [
+          {
+            userId,
+            start: Between(monthStart, monthEnd)
+          },
+          {
+            userId,
+            end: Between(monthStart, monthEnd)
+          }
+        ]
       });
     } catch (error) {
       console.log(error);
