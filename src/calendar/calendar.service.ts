@@ -33,10 +33,16 @@ export class CalendarService {
       const startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
       const endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 0, 0, 0);
       return await this.calendarRepository.find({
-        where: {
-          userId,
-          start: Between(startDate,endDate)
-        }
+        where: [
+          {
+            userId,
+            start: Between(startDate, endDate)
+          },
+          {
+            userId,
+            end: Between(startDate, endDate)
+          }
+        ]
       })
     } catch (error) {
       console.log(error);
@@ -51,10 +57,16 @@ export class CalendarService {
       const weekEnd = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay() + 7, 23, 59, 59);
 
       return await this.calendarRepository.find({
-        where: {
-          userId,
-          start: Between(weekStart,weekEnd)
-        }
+        where: [
+          {
+            userId,
+            start: Between(weekStart, weekEnd)
+          },
+          {
+            userId,
+            end: Between(weekStart, weekEnd)
+          }
+        ]
       })
     } catch (error) {
       console.log(error);
