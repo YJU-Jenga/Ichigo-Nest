@@ -57,6 +57,6 @@ async function bootstrap() {
 
   setupSwagger(app);
 
-  await app.listen(5000, '13.125.180.187');
+  await app.listen(5000);
 }
 bootstrap();
