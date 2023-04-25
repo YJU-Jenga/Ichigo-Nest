@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Calendar } from '../model/entity';
-import { Between, Repository } from 'typeorm';
+import { Between, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { CreateCalendarDto, SearchCalendarDto, SearchIdCalendarDto, UpdateCalendarDto } from './dto';
 
 
@@ -30,10 +30,23 @@ export class CalendarService {
     try {
       const {userId, dateString} = dto;
       const date = new Date(dateString);
-      const startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
-      const endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
+      const startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 9, 0, 0);
+      const endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 8, 59, 59);
+      console.log("start", startDate);
+      console.log("end", endDate);
       return await this.calendarRepository.find({
-        where: [
+        where:[
+          {
+            // 해당 날짜에만 일정이 있을 경우
+            userId,
+            start: MoreThanOrEqual(startDate), 
+            end: LessThanOrEqual(endDate)
+          }, 
+          {
+            userId,
+            start: LessThanOrEqual(startDate), 
+            end: MoreThanOrEqual(endDate)
+          }, 
           {
             userId,
             start: Between(startDate, endDate)
