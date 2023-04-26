@@ -24,7 +24,7 @@ export class CreateCalendarDto {
     required: true
    })
   @IsNotEmpty()
-  start: Date;
+  start: string;
 
   @ApiProperty({ 
     example: "2023-04-17T11:00:00.000Z",
@@ -32,7 +32,7 @@ export class CreateCalendarDto {
     required: true
    })
   @IsNotEmpty()
-  end: Date;
+  end: string;
 
   @ApiProperty({ 
     example: "Conference room A",
@@ -49,5 +49,13 @@ export class CreateCalendarDto {
    })
   @IsOptional()
   description?: string;
+
+  @ApiProperty({ 
+    example: "-540",
+    description: 'utcOffset',
+    required: true
+   })
+  @IsNotEmpty()
+  utcOffset: string;
 }
   

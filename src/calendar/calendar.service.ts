@@ -12,12 +12,17 @@ export class CalendarService {
   //crud
   async createCalendar (dto:CreateCalendarDto) {
     try {
-      const {userId, title, start, end, location, description} = dto;
+      const {userId, title, start, end, location, description, utcOffset} = dto;
+      console.log(utcOffset);
+      const adjustedStart = new Date(new Date(start).getTime() + (parseInt(utcOffset) * 60000)).toISOString();
+      const adjustedEnd = new Date(new Date(end).getTime() + (parseInt(utcOffset) * 60000)).toISOString();
+      console.log("saveStart", adjustedStart);
+      console.log("saveEnd", adjustedEnd);
       return await this.calendarRepository.save({
         userId,
         title,
-        start,
-        end,
+        start: adjustedStart,
+        end: adjustedEnd,
         location,
         description
       });
@@ -30,10 +35,10 @@ export class CalendarService {
     try {
       const {userId, dateString} = dto;
       const date = new Date(dateString);
-      const startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 9, 0, 0);
-      const endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 8, 59, 59);
-      console.log("start", startDate);
-      console.log("end", endDate);
+      const serverUtcTime = new Date(); // 서버의 UTC 시간
+      const serverUtcOffset = serverUtcTime.getTimezoneOffset() * -1; // 서버의 UTC offset
+      const startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0 + (serverUtcOffset / 60), 0, 0);
+      const endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 0 + (serverUtcOffset / 60), 0, 0);
       return await this.calendarRepository.find({
         where:[
           {
@@ -66,9 +71,10 @@ export class CalendarService {
     try {
       const {userId, dateString} = dto;
       const date = new Date(dateString);
-      const weekStart = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay(), 0, 0, 0);
-      const weekEnd = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay() + 7, 23, 59, 59);
-
+      const serverUtcTime = new Date(); // 서버의 UTC 시간
+      const serverUtcOffset = serverUtcTime.getTimezoneOffset() * -1; // 서버의 UTC offset
+      const weekStart = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay(), 0 + (serverUtcOffset / 60), 0, 0);
+      const weekEnd = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay() + 7, 0 + (serverUtcOffset / 60) -1, 59, 59);
       return await this.calendarRepository.find({
         where: [
           {
@@ -90,9 +96,10 @@ export class CalendarService {
     try {
       const {userId, dateString} = dto;
       const date = new Date(dateString);
-      const monthStart = new Date(date.getFullYear(), date.getMonth(), 1, 0, 0, 0);
-      const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59);
-
+      const serverUtcTime = new Date(); // 서버의 UTC 시간
+      const serverUtcOffset = serverUtcTime.getTimezoneOffset() * -1; // 서버의 UTC offset
+      const monthStart = new Date(date.getFullYear(), date.getMonth(), 1, 0 + (serverUtcOffset / 60), 0, 0);
+      const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0, 0 + (serverUtcOffset / 60) - 1, 59, 59);
       return await this.calendarRepository.find({
         where: [
           {
@@ -121,11 +128,16 @@ export class CalendarService {
 
   async updateCalendar (calendarId:number, dto:UpdateCalendarDto) {
     try {
-      const {title, start, end, location, description} = dto;
+      const {title, start, end, location, description, utcOffset} = dto;
+      console.log(utcOffset);
+      const adjustedStart = new Date(new Date(start).getTime() + (parseInt(utcOffset) * 60000)).toISOString();
+      const adjustedEnd = new Date(new Date(end).getTime() + (parseInt(utcOffset) * 60000)).toISOString();
+      console.log("updateStart", adjustedStart);
+      console.log("updateEnd", adjustedEnd);
       return await this.calendarRepository.update(calendarId, {
        title,
-       start,
-       end,
+       start: adjustedStart,
+       end: adjustedEnd,
        location,
        description,
       });

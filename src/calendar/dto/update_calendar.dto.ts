@@ -41,5 +41,13 @@ export class UpdateCalendarDto {
    })
   @IsOptional()
   description?: string;
+
+  @ApiProperty({ 
+    example: "-540",
+    description: 'utcOffset',
+    required: true
+   })
+  @IsNotEmpty()
+  utcOffset: string;
 }
   
