@@ -13,6 +13,7 @@ import { PurchaseOrderModule } from './purchase_order/purchase_order.module';
 import { CommentModule } from './comment/comment.module';
 import { ProductModule } from './product/product.module';
 import { CalendarModule } from './calendar/calendar.module';
+import { DeviceModule } from './device/device.module';
 import * as Joi from 'joi';
 
 
@@ -43,6 +44,7 @@ import * as Joi from 'joi';
     CommentModule,
     ProductModule,
     CalendarModule,
+    DeviceModule,
   ]
 })
 export class AppModule implements NestModule {

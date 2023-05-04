@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, Unique, BaseEntity, OneToMany, OneToOne, JoinColumn } from "typeorm";
-import {Cart, Comment, PurchaseOrder, Post, Calendar} from './index';
+import {Cart, Comment, PurchaseOrder, Post, Calendar, Device} from './index';
 
 @Entity({name: 'user'})
 @Unique(['email'])
@@ -44,6 +44,10 @@ export class User extends BaseEntity{
 
   // @OneToOne(() => Cart, (cart) => cart.user)
   // cart:Cart;
+
+  @OneToMany(() => Device, (device) => device.user )
+  device: Device[];
+  
 
   @OneToMany(() => Calendar, (calendar) => calendar.user)
   calendar: Calendar[];
