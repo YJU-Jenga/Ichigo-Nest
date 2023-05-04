@@ -44,8 +44,6 @@ export class DeviceController {
   }
 
   // 맥주소로 조회
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
   @Get("/getDevice/:macAddress")
   @ApiOperation({
     summary: '기기 맥주소 조회',

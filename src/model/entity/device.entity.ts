@@ -13,7 +13,7 @@ export class Device extends BaseEntity {
   @Column({comment:"기기 이름"})
   name: string;
 
-  @Column()
+  @Column({nullable: true})
   userId: number;
 
   @CreateDateColumn({name: 'created_at', comment: '생성일'})
@@ -26,7 +26,7 @@ export class Device extends BaseEntity {
 
   @ManyToOne(
     () => User,
-    (user) => user.device, { cascade:true, nullable: false, onDelete: 'CASCADE' }
+    (user) => user.device, { cascade:true, nullable: true, onDelete: 'CASCADE' }
   )
   @JoinColumn({name: 'userId'})
   user:User;
