@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query,
 import { UserService } from "./user.service";
 import { UpdateUserDto } from "./dto/update_user.dto";
 import { User } from '../model/entity/user.entity';
+import { Response } from 'express';
 import { ApiCreatedResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard, JwtRefreshAuthGuard } from 'src/auth/guards';
 
@@ -49,8 +50,12 @@ export class UserController {
       },
     },
   })
-  getUserAll(): Promise<User[]> {
-    return this.userService.findAll();
+  async getUserAll(@Res() res: Response) {
+    const users = await this.userService.findAll();
+    return res.json({
+      success: true,
+      data: users,
+    });
   }
 
   // @Query 방식 - 단일 유저 조회

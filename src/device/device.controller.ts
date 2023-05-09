@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGua
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeviceService } from './device.service';
 import { JwtAuthGuard } from 'src/auth/guards';
-import { CreateDeviceDto, UpdateDeviceDto } from './dto';
+import { CreateDeviceDto, SyncDeviceDto, UpdateDeviceDto } from './dto';
 
 @Controller('device')
 @ApiTags('Device')
@@ -44,6 +44,7 @@ export class DeviceController {
   }
 
   // 맥주소로 조회
+  @UseGuards(JwtAuthGuard)
   @Get("/getDevice/:macAddress")
   @ApiOperation({
     summary: '기기 맥주소 조회',
@@ -57,11 +58,22 @@ export class DeviceController {
   @ApiBearerAuth('access-token')
   @Patch("/update/:id")
   @ApiOperation({
-    summary: '기기 연동 혹은 정보 수정',
+    summary: '기기 정보 수정',
     description: '기기 수정 API'
   })
   async update(@Param('id', ParseIntPipe) id:number, @Body() dto: UpdateDeviceDto){
     return this.deviceService.update(id, dto)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @Patch("/sync")
+  @ApiOperation({
+    summary: '기기 연동',
+    description: '기기 연동 API'
+  })
+  async sync(@Body() dto: SyncDeviceDto){
+    return this.deviceService.sync(dto)
   }
 
   @UseGuards(JwtAuthGuard)

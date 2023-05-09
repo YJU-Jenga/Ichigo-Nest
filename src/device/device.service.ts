@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Device } from 'src/model/entity';
 import { Repository } from 'typeorm';
-import { CreateDeviceDto, UpdateDeviceDto } from './dto';
+import { CreateDeviceDto, SyncDeviceDto, UpdateDeviceDto } from './dto';
 
 @Injectable()
 export class DeviceService {
@@ -52,6 +52,16 @@ export class DeviceService {
         macAddress,
         userId
       });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async sync(dto: SyncDeviceDto){
+    try {
+      const { macAddress, userId } = dto;
+      const device = await this.deviceRepository.findOne({where:{macAddress}});
+      await this.deviceRepository.update(device.id, { userId });
     } catch (error) {
       console.log(error);
     }
