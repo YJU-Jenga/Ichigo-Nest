@@ -57,7 +57,20 @@ export class DeviceController {
     const data = await this.deviceService.getDevice(macAddress)
     return res.json(data);
   }
-
+  
+  // 유저아이디로 조회
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @Get("/syncedDevice/:id")
+  @ApiOperation({
+    summary: '유저에게 연동된 기기 조회',
+    description: '유저에게 연동된 기기 API'
+  })
+  async syncedDevice(@Param('id', ParseIntPipe) id:number,  @Res() res: Response){
+    const data = await this.deviceService.syncedDevice(id);
+    return res.json(data);
+  }
+  
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
   @Patch("/update/:id")

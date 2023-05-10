@@ -28,6 +28,15 @@ export class DeviceService {
     }
   }
 
+  async syncedDevice(id: number): Promise<Device[]>{
+    try {
+      return await this.deviceRepository.find({where:{userId: id}});
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
   async getOne(id: number): Promise<Device>{
     try {
       return await this.deviceRepository.findOneBy({id})

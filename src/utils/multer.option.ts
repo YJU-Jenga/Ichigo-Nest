@@ -2,6 +2,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { existsSync, mkdirSync } from 'fs';
 import { diskStorage, memoryStorage } from 'multer';
 import { basename, extname } from 'path';
+import * as fileType from 'file-type';
 
 const imageFileFilter = /\/(jpg|jpeg|png|gif)$/;
 const audioFileFilter = /\/(m4a|mp3|wav|flac|3gp)$/
@@ -70,22 +71,36 @@ export const multerAudioOptions = {
    * @param file 파일 정보
    * @param callback 성공 및 실패 콜백함수
    */
-  fileFilter: (request, file, callback) => {
-    if (file.mimetype.match(audioFileFilter)) {
-      // 이미지 형식은 jpg, jpeg, png, gif만 허용합니다.
-      callback(null, true);
-    } else {
+  fileFilter: async (request, file, callback) => {
+    const allowedExtensions = ['.m4a', '.mp3', '.wav', '.flac', '.3gp'];
+    const fileExt = extname(file.originalname).toLowerCase();
+
+    if (!allowedExtensions.includes(fileExt)) {
       callback(
         new HttpException(
-          {
-            message: 1,
-            error: '지원하지 않는 파일 형식입니다.',
-          },
+          '지원하지 않는 파일 형식입니다.',
           HttpStatus.BAD_REQUEST,
         ),
         false,
       );
+      return;
     }
+
+    const buffer = await file.buffer;
+    const fileInfo = await fileType.fileTypeFromBuffer(buffer);
+
+    if (!fileInfo || !allowedExtensions.includes(`.${fileInfo.ext}`)) {
+      callback(
+        new HttpException(
+          '지원하지 않는 파일 형식입니다.',
+          HttpStatus.BAD_REQUEST,
+        ),
+        false,
+      );
+      return;
+    }
+
+    callback(null, true);
   },
   /**
    * @description Disk 저장 방식 사용
