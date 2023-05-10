@@ -41,14 +41,14 @@ export class CartController {
   
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @Patch('/updateAddedProdcut/:id')
+  @Patch('/updateAddedProduct/:id')
   @ApiOperation({
     summary: '장바구니안 상품 수정',
     description: '장바구니안 상품 수정 API'
   })
   @UsePipes(ValidationPipe)
-  async updateAddedProdcut(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateAddedProductDto) {
-    return await this.cartService.updateAddedProdcut(id, dto);
+  async updateAddedProduct(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateAddedProductDto) {
+    return await this.cartService.updateAddedProduct(id, dto);
   }
   
   @UseGuards(JwtAuthGuard)
@@ -57,8 +57,8 @@ export class CartController {
     summary: '장바구니안 상품 삭제',
     description: '장바구니안 상품 삭제 API'
   })
-  @Delete('/deleteAddedProdcut')
-  async deleteAddedProdcut(@Body() dto: DeleteAddedProductDto) {
-    return await this.cartService.deleteAddedProdcut(dto);
+  @Delete('/deleteAddedProduct')
+  async deleteAddedProduct(@Body() dto: DeleteAddedProductDto) {
+    return await this.cartService.deleteAddedProduct(dto);
   }
 }

@@ -14,6 +14,7 @@ import { CommentModule } from './comment/comment.module';
 import { ProductModule } from './product/product.module';
 import { CalendarModule } from './calendar/calendar.module';
 import { DeviceModule } from './device/device.module';
+import { AlarmModule } from './alarm/alarm.module';
 import * as Joi from 'joi';
 
 
@@ -45,6 +46,7 @@ import * as Joi from 'joi';
     ProductModule,
     CalendarModule,
     DeviceModule,
+    AlarmModule,
   ]
 })
 export class AppModule implements NestModule {

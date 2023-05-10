@@ -37,7 +37,7 @@ export class PurchaseOrderService {
           productId
         }
 
-        await this.cartService.deleteAddedProdcut(delete_dto);
+        await this.cartService.deleteAddedProduct(delete_dto);
 
       });
 

@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 import { DeviceService } from './device.service';
 import { JwtAuthGuard } from 'src/auth/guards';
 import { CreateDeviceDto, SyncDeviceDto, UpdateDeviceDto } from './dto';
@@ -8,6 +9,7 @@ import { CreateDeviceDto, SyncDeviceDto, UpdateDeviceDto } from './dto';
 @ApiTags('Device')
 export class DeviceController {
   constructor(private readonly deviceService: DeviceService){}
+  
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
   @Post("/create")
@@ -17,7 +19,7 @@ export class DeviceController {
   })
   @UsePipes(ValidationPipe)
   async write(@Body() dto: CreateDeviceDto){
-    return this.deviceService.create(dto)
+    return this.deviceService.create(dto);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -28,7 +30,7 @@ export class DeviceController {
     description: '등록된 기기 전체 조회 API'
   })
   async getAll(){
-    return this.deviceService.getAll()
+    return this.deviceService.getAll();
   }
 
   // id로 조회
@@ -40,7 +42,7 @@ export class DeviceController {
     description: '기기 id 조회 API'
   })
   async getOne(@Param('id', ParseIntPipe) id:number ){
-    return this.deviceService.getOne(id)
+    return this.deviceService.getOne(id);
   }
 
   // 맥주소로 조회
@@ -50,8 +52,9 @@ export class DeviceController {
     summary: '기기 맥주소 조회',
     description: '기기 맥주소 조회 API'
   })
-  async getDevice(@Param('macAddress') macAddress:string ){
-    return this.deviceService.getDevice(macAddress)
+  async getDevice(@Param('macAddress') macAddress:string,  @Res() res: Response){
+    const data = await this.deviceService.getDevice(macAddress)
+    return res.json(data);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -62,18 +65,18 @@ export class DeviceController {
     description: '기기 수정 API'
   })
   async update(@Param('id', ParseIntPipe) id:number, @Body() dto: UpdateDeviceDto){
-    return this.deviceService.update(id, dto)
+    return this.deviceService.update(id, dto);
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @Patch("/sync")
+  @Post("/sync")
   @ApiOperation({
     summary: '기기 연동',
     description: '기기 연동 API'
   })
   async sync(@Body() dto: SyncDeviceDto){
-    return this.deviceService.sync(dto)
+    return this.deviceService.sync(dto);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -84,6 +87,6 @@ export class DeviceController {
     description: '기기 삭제 API'
   })
   async delete(@Param('id', ParseIntPipe) id:number){
-    return this.deviceService.delete(id)
+    return this.deviceService.delete(id);
   }
 }

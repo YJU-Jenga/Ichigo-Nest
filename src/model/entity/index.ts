@@ -9,3 +9,4 @@ export {User} from "./user.entity";
 export {CartToProduct} from "./cartToProduct.entity";
 export {OrderToProduct} from "./orderToProduct.entity";
 export {Device} from "./device.entity";
+export {Alarm} from "./alarm.entity";

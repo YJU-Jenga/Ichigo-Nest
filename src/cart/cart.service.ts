@@ -84,7 +84,7 @@ export class CartService {
     }
   }
   
-  async updateAddedProdcut (cartId: number, dto:UpdateAddedProductDto) {
+  async updateAddedProduct (cartId: number, dto:UpdateAddedProductDto) {
     try {
       const { productId, count } = dto
       return await this.cartToProductRepository.update(cartId, {
@@ -96,7 +96,7 @@ export class CartService {
     }
   }
   
-  async deleteAddedProdcut (dto: DeleteAddedProductDto) {
+  async deleteAddedProduct (dto: DeleteAddedProductDto) {
     try {
       const {cartId, productId} = dto;
       return await this.cartToProductRepository
