@@ -39,6 +39,6 @@ export class Alarm extends BaseEntity {
     () => User,
     (user) => user.alarm, { cascade:true, nullable: false, onDelete: 'CASCADE' }
   )
-  @JoinColumn({name: 'userId'})
+  @JoinColumn({name: 'user_id'})
   user:User;
 }

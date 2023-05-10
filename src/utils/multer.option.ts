@@ -75,6 +75,9 @@ export const multerAudioOptions = {
     const allowedExtensions = ['.m4a', '.mp3', '.wav', '.flac', '.3gp'];
     const fileExt = extname(file.originalname).toLowerCase();
 
+    console.log(file);
+    console.log(fileExt);
+
     if (!allowedExtensions.includes(fileExt)) {
       callback(
         new HttpException(
@@ -87,7 +90,7 @@ export const multerAudioOptions = {
     }
 
     const buffer = await file.buffer;
-    const fileInfo = await fileType.fileTypeFromBuffer(buffer);
+    const fileInfo = await fileType(buffer);
 
     if (!fileInfo || !allowedExtensions.includes(`.${fileInfo.ext}`)) {
       callback(

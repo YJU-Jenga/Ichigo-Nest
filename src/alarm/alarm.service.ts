@@ -11,27 +11,32 @@ export class AlarmService {
 
   async create(file: Express.Multer.File, dto: CreateAlarmDto){
     try {
+      const { user_id, time_id, name, sentence, state, repeat } = dto;
+      const parsedUserId = JSON.parse(user_id.toString()).user_id;
+      const parsedTimeId = JSON.parse(time_id).time_id;
+      const parsedName = JSON.parse(name).name;
+      const parsedSentence = JSON.parse(sentence).sentence;
+      const parsedState = JSON.parse(state.toString());
+      const parsedRepeat = JSON.parse(repeat).repeat;
       if(file) {
-        const { user_id, time_id, name, sentence, state, repeat } = dto;
         await this.alarmRepository.save({
-          user_id,
-          time_id,
-          name,
-          sentence,
+          user_id: parsedUserId,
+          time_id: parsedTimeId,
+          name: parsedName,
+          sentence: parsedSentence,
           file: file.path,
-          state,
-          repeat
+          state: parsedState,
+          repeat: parsedRepeat
         });
       } else {
-        const { user_id, time_id, name, sentence, state, repeat } = dto;
         await this.alarmRepository.save({
-          user_id,
-          time_id,
-          name,
-          sentence,
+          user_id: parsedUserId,
+          time_id: parsedTimeId,
+          name: parsedName,
+          sentence: parsedSentence,
           file: null,
-          state,
-          repeat
+          state: parsedState,
+          repeat: parsedRepeat
         });
       }
     } catch (error) {
@@ -56,33 +61,34 @@ export class AlarmService {
   }
 
   async update(id: number, file: Express.Multer.File, dto: UpdateAlarmDto){
-    try {
+    const { user_id, time_id, name, sentence, state, repeat } = dto;
+      const parsedUserId = JSON.parse(user_id.toString()).user_id;
+      const parsedTimeId = JSON.parse(time_id).time_id;
+      const parsedName = JSON.parse(name).name;
+      const parsedSentence = JSON.parse(sentence).sentence;
+      const parsedState = JSON.parse(state.toString());
+      const parsedRepeat = JSON.parse(repeat).repeat;
       if(file) {
-        const { user_id, time_id, name, sentence, state, repeat } = dto;
-        await this.alarmRepository.save({
-          user_id,
-          time_id,
-          name,
-          sentence,
+        await this.alarmRepository.update(id, {
+          user_id: parsedUserId,
+          time_id: parsedTimeId,
+          name: parsedName,
+          sentence: parsedSentence,
           file: file.path,
-          state,
-          repeat
+          state: parsedState,
+          repeat: parsedRepeat
         });
       } else {
-        const { user_id, time_id, name, sentence, state, repeat } = dto;
-        await this.alarmRepository.save({
-          user_id,
-          time_id,
-          name,
-          sentence,
+        await this.alarmRepository.update(id, {
+          user_id: parsedUserId,
+          time_id: parsedTimeId,
+          name: parsedName,
+          sentence: parsedSentence,
           file: null,
-          state,
-          repeat
+          state: parsedState,
+          repeat: parsedRepeat
         });
       }
-    } catch (error) {
-      console.log(error);
-    }
   }
 
   async delete(id: number){
