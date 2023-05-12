@@ -4,8 +4,6 @@ import { AlarmService } from './alarm.service';
 import { Response } from 'express';
 import { JwtAuthGuard } from 'src/auth/guards';
 import { CreateAlarmDto, UpdateAlarmDto } from './dto';
-import { multerAudioOptions } from 'src/utils/multer.option';
-import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('alarm')
 @ApiTags('Alarm')
@@ -15,21 +13,13 @@ export class AlarmController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
   @Post("/create")
-  @UseInterceptors(FileInterceptor('file', multerAudioOptions))
   @ApiOperation({
     summary: '알람 등록',
     description: '알람 등록 API'
   })
   @UsePipes(ValidationPipe)
-  async write(@UploadedFile() file: Express.Multer.File, @Body() dto: CreateAlarmDto){
-    dto.user_id = JSON.parse(dto.user_id.toString()).user_id;
-    dto.time_id = JSON.parse(dto.time_id.toString()).time_id;
-    dto.name = JSON.parse(dto.name).name;
-    dto.sentence = JSON.parse(dto.sentence).sentence;
-    dto.state = JSON.parse(dto.sentence.toString()).state;
-    dto.repeat = JSON.parse(dto.sentence).repeat;
-
-    return this.alarmService.create(file ,dto)
+  async create(@Body() dto: CreateAlarmDto){
+    return this.alarmService.create(dto)
   }
 
   @UseGuards(JwtAuthGuard)
@@ -59,20 +49,12 @@ export class AlarmController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
   @Patch("/update/:id")
-  @UseInterceptors(FileInterceptor('file', multerAudioOptions))
   @ApiOperation({
     summary: '알람 정보 수정',
     description: '알람 수정 API'
   })
-  async update(@Param('id', ParseIntPipe) id:number, @UploadedFile() file: Express.Multer.File,  @Body() dto: UpdateAlarmDto){
-    dto.user_id = JSON.parse(dto.user_id.toString()).user_id;
-    dto.time_id = JSON.parse(dto.time_id.toString()).time_id;
-    dto.name = JSON.parse(dto.name).name;
-    dto.sentence = JSON.parse(dto.sentence).sentence;
-    dto.state = JSON.parse(dto.sentence.toString()).state;
-    dto.repeat = JSON.parse(dto.sentence).repeat;
-
-    return this.alarmService.update(id, file, dto)
+  async update(@Param('id', ParseIntPipe) id:number, @Body() dto: UpdateAlarmDto){
+    return this.alarmService.update(id, dto)
   }
 
   @UseGuards(JwtAuthGuard)

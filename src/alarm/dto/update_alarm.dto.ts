@@ -33,6 +33,14 @@ export class UpdateAlarmDto {
   })
   @IsOptional()
   sentence: string;
+
+  @ApiProperty({ 
+    example: 'uploads/music/asdf.mp3',
+    description: '파일경로',
+    required: false
+  })
+  @IsOptional()
+  file: string;
   
   @ApiProperty({ 
     example: true,
