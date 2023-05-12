@@ -4,6 +4,7 @@ import { CreateCalendarDto, SearchCalendarDto, SearchIdCalendarDto, UpdateCalend
 import { Calendar } from 'src/model/entity';
 import { ApiCreatedResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards';
+import { Response } from 'express';
 
 @Controller('calendar')
 @ApiTags('Calendar')  // Swagger Tag 설정
@@ -55,8 +56,9 @@ export class CalendarController {
       },
     },
   })
-  async findAll(@Body() dto:SearchIdCalendarDto): Promise<Calendar[]> {
-    return await this.calendarService.findAllCalendar(dto);
+  async findAll(@Body() dto:SearchIdCalendarDto, @Res() res: Response) {
+    const data = await this.calendarService.findAllCalendar(dto);
+    return res.json(data);
   }
 
   @UseGuards(JwtAuthGuard)  // 검증된 유저만 접근 가능 - 토큰 발행 된 유저
@@ -84,8 +86,9 @@ export class CalendarController {
       },
     },
   })
-  async findMonth(@Body() dto: SearchCalendarDto): Promise<Calendar[]> {
-    return await this.calendarService.findMonthCalendar(dto);
+  async findMonth(@Body() dto: SearchCalendarDto, @Res() res: Response) {
+    const data = await this.calendarService.findMonthCalendar(dto);
+    return res.json(data);
   }
 
   @UseGuards(JwtAuthGuard)  // 검증된 유저만 접근 가능 - 토큰 발행 된 유저
@@ -113,8 +116,9 @@ export class CalendarController {
       },
     },
   })
-  async findWeek(@Body() dto: SearchCalendarDto): Promise<Calendar[]> {
-    return await this.calendarService.findWeekCalendar(dto);
+  async findWeek(@Body() dto: SearchCalendarDto, @Res() res: Response) {
+    const data = await this.calendarService.findWeekCalendar(dto);
+    return res.json(data);
   }
 
   @UseGuards(JwtAuthGuard)  // 검증된 유저만 접근 가능 - 토큰 발행 된 유저
@@ -142,8 +146,9 @@ export class CalendarController {
       },
     },
   })
-  async findDate(@Body() dto: SearchCalendarDto): Promise<Calendar[]> {
-    return await this.calendarService.findDateCalendar(dto);
+  async findDate(@Body() dto: SearchCalendarDto, @Res() res: Response) {
+    const data = await this.calendarService.findDateCalendar(dto);
+    return res.json(data);
   }
 
   // ----------- 수정 -----------

@@ -11,3 +11,6 @@ export {OrderToProduct} from "./orderToProduct.entity";
 export {Device} from "./device.entity";
 export {Alarm} from "./alarm.entity";
 export {Music} from "./music.entity";
+export {Clothes} from "./clothes.entity";
+export {CartToProductOption} from "./cartToProductOption.entity";
+export {Models} from "./models.entity";

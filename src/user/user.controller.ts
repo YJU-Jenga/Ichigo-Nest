@@ -51,11 +51,8 @@ export class UserController {
     },
   })
   async getUserAll(@Res() res: Response) {
-    const users = await this.userService.findAll();
-    return res.json({
-      success: true,
-      data: users,
-    });
+    const data = await this.userService.findAll();
+    return res.json(data);
   }
 
   // @Query 방식 - 단일 유저 조회

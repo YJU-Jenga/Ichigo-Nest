@@ -6,6 +6,7 @@ import * as fileType from 'file-type';
 
 const imageFileFilter = /\/(jpg|jpeg|png|gif)$/;
 const audioFileFilter = /\/(m4a|mp3|wav|flac|3gp)$/
+const modelFileFilter = /\/(gltf|glb)$/
 
 export const multerDiskOptions = {
   /**
@@ -138,6 +139,94 @@ export const multerAudioOptions = {
     // fields: 2, // 파일 형식이 아닌 필드의 최대 개수 (기본 값 무제한)
     // fileSize: 16777216, //multipart 형식 폼에서 최대 파일 사이즈(bytes) "16MB 설정" (기본 값 무제한)
     // files: 10, //multipart 형식 폼에서 파일 필드 최대 개수 (기본 값 무제한)
+  },
+};
+
+export const multerClothesOptions = {
+    fileFilter: (request, file, callback) => {
+      if (file.mimetype.match(imageFileFilter)) {
+        callback(null, true);
+      } else {
+        callback(
+          new HttpException(
+            {
+              message: 1,
+              error: '지원하지 않는 파일 형식입니다.',
+            },
+            HttpStatus.BAD_REQUEST,
+          ),
+          false,
+        );
+      }
+    },
+    storage: diskStorage({
+      destination: (request, file, callback) => {
+        const uploadPath = 'uploads';
+        const clothesPath = 'uploads/clothes';
+        if (!existsSync(uploadPath)) {
+          // uploads 폴더가 존재하지 않을시, 생성합니다.
+          mkdirSync(uploadPath);
+        }
+        if (!existsSync(clothesPath)) {
+          // cloth 폴더가 존재하지 않을시, 생성합니다.
+          mkdirSync(clothesPath);
+        }
+        callback(null, uploadPath);
+      },
+      filename: (request, file, callback) => {
+        //파일 이름 설정
+        const ext = extname(file.originalname);
+        const base = basename(file.originalname, ext);
+        callback(null, `${base}_${Date.now()}${ext}`);
+      },
+    }),
+    limits: {
+      fieldNameSize: 200, // 필드명 사이즈 최대값 (기본값 100bytes)
+      filedSize: 10* 1024 * 1024, // 필드 사이즈 값 설정 (기본값 10MB)
+    },
+  };
+
+export const multerModelsOptions = {
+  fileFilter: (request, file, callback) => {
+    if (file.mimetype.match(modelFileFilter)) {
+      callback(null, true);
+    } else {
+      callback(
+        new HttpException(
+          {
+            message: 1,
+            error: '지원하지 않는 파일 형식입니다.',
+          },
+          HttpStatus.BAD_REQUEST,
+        ),
+        false,
+      );
+    }
+  },
+  storage: diskStorage({
+    destination: (request, file, callback) => {
+      const uploadPath = 'uploads';
+      const modelsPath = 'uploads/models';
+      if (!existsSync(uploadPath)) {
+        // uploads 폴더가 존재하지 않을시, 생성합니다.
+        mkdirSync(uploadPath);
+      }
+      if (!existsSync(modelsPath)) {
+        // models 폴더가 존재하지 않을시, 생성합니다.
+        mkdirSync(modelsPath);
+      }
+      callback(null, uploadPath);
+    },
+    filename: (request, file, callback) => {
+      //파일 이름 설정
+      const ext = extname(file.originalname);
+      const base = basename(file.originalname, ext);
+      callback(null, `${base}_${Date.now()}${ext}`);
+    },
+  }),
+  limits: {
+    fieldNameSize: 200, // 필드명 사이즈 최대값 (기본값 100bytes)
+    filedSize: 100* 1024 * 1024, // 필드 사이즈 값 설정 (기본값 10MB)
   },
 };
 

@@ -8,10 +8,10 @@ import { AuthController } from './auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
 import { CartService } from 'src/cart/cart.service';
-import { User, Cart, CartToProduct } from '../model/entity';
+import { User, Cart, CartToProduct, CartToProductOption } from '../model/entity';
 
 @Module({
-  imports: [UserModule, PassportModule, HttpModule, JwtModule.register({}), TypeOrmModule.forFeature([User, Cart, CartToProduct])],
+  imports: [UserModule, PassportModule, HttpModule, JwtModule.register({}), TypeOrmModule.forFeature([User, Cart, CartToProduct, CartToProductOption])],
   providers: [AuthService, JwtStrategy, JwtRefreshStrategy, CartService],
   exports: [AuthService],
   controllers: [AuthController],

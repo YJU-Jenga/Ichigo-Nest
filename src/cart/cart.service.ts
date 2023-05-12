@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Cart, CartToProduct } from '../model/entity';
+import { Cart, CartToProduct, CartToProductOption } from '../model/entity';
 import { Repository } from 'typeorm';
-import { AddProductDto, DeleteAddedProductDto, UpdateAddedProductDto } from './dto';
+import { AddProductDto, AddProductWithOptionDto, DeleteAddedProductDto, UpdateAddedProductDto, UpdateProductWithOptionDto } from './dto';
 
 @Injectable()
 export class CartService {
   constructor(
     @InjectRepository(Cart) private readonly cartRepository: Repository<Cart>,
     @InjectRepository(CartToProduct) private readonly cartToProductRepository: Repository<CartToProduct>,
+    @InjectRepository(CartToProductOption) private readonly cartToProductOptionRepository: Repository<CartToProductOption>,
   ){}
 
   async createCart (userId: number) {
@@ -70,6 +71,102 @@ export class CartService {
       console.log(error);
     }
   }
+
+  async addProductWithOption (dto:AddProductWithOptionDto) {
+    try {
+      const { cartId, productId, count, clothesIds, colors } = dto
+
+      const cTP = await this.cartToProductRepository.findOneBy({cartId, productId});
+
+      if(cTP != null) {
+        clothesIds.forEach(async (clothesId, idx)=>{
+          await this.cartToProductOptionRepository.save({
+            cartToProductId: cTP.cartToProductId,
+            clothesId,
+            color: colors[idx]
+          });
+        });
+        return
+      }
+
+      const newCTP = await this.cartToProductRepository.save({
+        cartId,
+        productId,
+        count
+      });
+
+      clothesIds.forEach(async (clothesId, idx)=>{
+        await this.cartToProductOptionRepository.save({
+          cartToProductId: newCTP.cartToProductId,
+          clothesId,
+          color: colors[idx]
+        });
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async updateProductWithOption (ctpId:number, dto:UpdateProductWithOptionDto) {
+    try {
+      const { cartId, productId, count, clothesIds, colors } = dto
+
+
+      if(clothesIds.length > 0) {
+        await this.cartToProductRepository.update(ctpId, {
+          cartId,
+          productId,
+          count
+        });
+        const ctpos = await this.cartToProductOptionRepository.find({where: {cartToProductId: ctpId}})
+        console.log("sdf",ctpos.length);
+
+        if(ctpos.length == 0) {
+          clothesIds.forEach(async (clothesId, idx)=>{
+            await this.cartToProductOptionRepository.save({
+              cartToProductId: ctpId,
+              clothesId: clothesId,
+              color: colors[idx]
+            });
+          });
+          return
+        }
+
+        if (clothesIds.length == ctpos.length) {
+          ctpos.forEach(async (ctpo, idx)=>{
+            await this.cartToProductOptionRepository.update(ctpo.id, {
+              cartToProductId: ctpId,
+              clothesId: clothesIds[idx],
+              color: colors[idx]
+            });
+          });
+        } else {
+          ctpos.forEach(async (ctpo, idx)=>{
+            await this.cartToProductOptionRepository.delete(ctpo.id);
+            await this.cartToProductOptionRepository.save({
+              cartToProductId: ctpId,
+              clothesId: clothesIds[idx],
+              color: colors[idx]
+            });
+          });
+        }
+
+      } else {
+        await this.cartToProductRepository.update(ctpId, {
+          cartId,
+          productId,
+          count
+        });
+        const ctpos = await this.cartToProductOptionRepository.find({where: {cartToProductId: ctpId}})
+        ctpos.forEach(async (ctpo)=>{
+          await this.cartToProductOptionRepository.delete(ctpo.id);
+        });
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
   
   async findAllProductInCart (cartId: number) {
     try {
@@ -78,6 +175,7 @@ export class CartService {
       .where('cart.id=:cartId', {cartId})
       .leftJoinAndSelect('cart.cartToProducts', 'cartToProducts')
       .leftJoinAndSelect('cartToProducts.product', 'product')
+      .leftJoinAndSelect('cartToProducts.cartToProductOption', 'cartToProductOption')
       .getMany()
     } catch (error) {
       console.log(error);
@@ -91,7 +189,7 @@ export class CartService {
         productId,
         count
       });
-    } catch (error) {
+    } catch (error) { 
       console.log(error);
     }
   }
@@ -99,6 +197,14 @@ export class CartService {
   async deleteAddedProduct (dto: DeleteAddedProductDto) {
     try {
       const {cartId, productId} = dto;
+
+      const ctpId = await this.cartToProductRepository.findOne({where: [{cartId}, {productId}]});
+      const delOpIds = await this.cartToProductOptionRepository.find({where: {cartToProductId: ctpId.cartToProductId}});
+
+      delOpIds.forEach(async(delOpId)=>{
+        await this.cartToProductOptionRepository.delete(delOpId.id);
+      })
+
       return await this.cartToProductRepository
       .createQueryBuilder('cartToProduct')
       .where('cartId=:cartId',{cartId})
