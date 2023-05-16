@@ -1,8 +1,5 @@
 import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique, OneToMany, ManyToOne, ManyToMany, JoinTable } from "typeorm";
-import { CartToProduct } from "./cartToProduct.entity";
-import { OrderToProduct } from "./orderToProduct.entity";
-import { Clothes } from "./clothes.entity";
-import { Models } from "./models.entity";
+import { CartToProduct, Clothes, OrderToProduct, Models } from "./index";
 
 @Entity()
 // @Unique([])

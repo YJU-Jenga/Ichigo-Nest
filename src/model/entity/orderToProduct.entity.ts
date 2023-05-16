@@ -1,5 +1,5 @@
-import { Entity, Column, ManyToOne, PrimaryGeneratedColumn, BaseEntity, JoinColumn } from "typeorm"
-import { Product, PurchaseOrder } from "./index"
+import { Entity, Column, ManyToOne, PrimaryGeneratedColumn, BaseEntity, JoinColumn, OneToMany } from "typeorm"
+import { OrderToProductOption, Product, PurchaseOrder } from "./index"
 
 @Entity()
 export class OrderToProduct extends BaseEntity {
@@ -21,4 +21,7 @@ export class OrderToProduct extends BaseEntity {
 
     @ManyToOne(() => Product, (product) => product.orderToProducts)
     product!: Product
+
+    @OneToMany(() => OrderToProductOption, (orderToProductOption) => orderToProductOption.orderToProduct, { cascade:true, nullable: true, onDelete: 'CASCADE' })
+    orderToProductOption: OrderToProductOption[] 
 }

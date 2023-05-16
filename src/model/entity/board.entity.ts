@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique, OneToMany, BaseEntity } from "typeorm";
-import { Post } from "./post.entity";
+import { Post } from "./index";
 
 @Entity({name: 'board'})
 @Unique(['board_name'])

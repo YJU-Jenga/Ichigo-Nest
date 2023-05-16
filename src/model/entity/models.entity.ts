@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, BaseEntity, JoinColumn } from "typeorm";
-import { Product } from "./product.entity";
+import { Product } from "./index";
 
 @Entity({name: 'models'})
 export class Models extends BaseEntity {

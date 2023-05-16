@@ -1,6 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, BaseEntity, JoinColumn } from "typeorm";
-import { Post } from "./post.entity";
-import { User } from "./user.entity";
+import { User, Post } from "./index";
 
 @Entity({name: 'device'})
 export class Device extends BaseEntity {

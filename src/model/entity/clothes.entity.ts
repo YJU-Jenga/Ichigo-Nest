@@ -1,6 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, BaseEntity, JoinColumn, OneToMany } from "typeorm";
-import { Product } from "./product.entity";
-import { CartToProductOption } from "./cartToProductOption.entity";
+import { Product, CartToProductOption } from "./index";
 
 @Entity({name: 'clothes'})
 export class Clothes extends BaseEntity {
@@ -29,4 +28,7 @@ export class Clothes extends BaseEntity {
 
   @OneToMany(() => CartToProductOption, (cartToProductOption) => cartToProductOption.clothes, { cascade:true, nullable: false, onDelete: 'CASCADE' })
   cartToProductOption: CartToProductOption
+
+  @OneToMany(() => CartToProductOption, (cartToProductOption) => cartToProductOption.clothes, { cascade:true, nullable: false, onDelete: 'CASCADE' })
+  orderToProductOption: CartToProductOption
 }

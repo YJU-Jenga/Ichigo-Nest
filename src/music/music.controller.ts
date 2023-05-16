@@ -22,6 +22,8 @@ export class MusicController {
   })
   @UsePipes(ValidationPipe)
   async create(@UploadedFile() file: Express.Multer.File, @Body() dto: CreateMusicDto){
+    console.log(file);
+    console.log(dto);
     return this.musicService.create(file ,dto)
   }
 

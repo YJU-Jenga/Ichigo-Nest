@@ -12,7 +12,7 @@ export class MusicService {
     try {
       const { user_id, name } = dto;
       const parsedUserId = JSON.parse(user_id.toString()).user_id;
-      const parsedName = JSON.parse(name).name;
+      const parsedName = JSON.parse(name.toString()).name;
       if(file) {
         await this.musicRepository.save({
           user_id: parsedUserId,

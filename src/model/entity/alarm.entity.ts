@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, BaseEntity, JoinColumn } from "typeorm";
-import { User } from "./user.entity";
+import { User } from "./index";
 
 @Entity({name: 'alarm'})
 export class Alarm extends BaseEntity {

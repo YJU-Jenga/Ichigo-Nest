@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PurchaseOrder, OrderToProduct } from 'src/model/entity';
+import { PurchaseOrder, OrderToProduct, OrderToProductOption } from 'src/model/entity';
 import { Repository } from 'typeorm';
 import { CreateOrderDto, UpdateOrderDto } from './dto';
 import { CartService } from 'src/cart/cart.service';
@@ -11,36 +11,53 @@ export class PurchaseOrderService {
   constructor(
     @InjectRepository(PurchaseOrder) private readonly orderRepository: Repository<PurchaseOrder>,
     @InjectRepository(OrderToProduct) private readonly orderToProductRepository: Repository<OrderToProduct>,
+    @InjectRepository(OrderToProductOption) private readonly orderToProductOptionRepository: Repository<OrderToProductOption>,
     private readonly cartService: CartService,
   ){}
   
   async createOrder(dto: CreateOrderDto) {
     try {
-      const { userId, postalCode, address, productIds, counts } = dto;
+      const { userId, postalCode, address, productIds, counts, productOptions } = dto;
+      // console.log(dto);
       const newOrder = await this.orderRepository.save({
         userId,
         postalCode,
         address
       });
 
-      const find_cart = await this.cartService.findOneCart_userId(userId)
+      const find_cart = await this.cartService.findCartId(userId)
 
       productIds.forEach(async (productId, idx)=>{
-        await this.orderToProductRepository.save({
+        const newOrderToProduct = await this.orderToProductRepository.save({
           orderId: newOrder.id,
           productId,
           count: counts[idx]
         });
 
+        if(productOptions.length != 0) {
+          productOptions.forEach(async (productOption)=> {
+            const {productId, clothesIds, colors, optionCounts} = productOption;
+    
+            clothesIds.forEach(async (clothesId, idx)=>{
+              if(newOrderToProduct.productId == productId) {
+                await this.orderToProductOptionRepository.save({
+                  orderToProductId: newOrderToProduct.orderToProductId,
+                  clothesId,
+                  color: colors[idx],
+                  count: optionCounts[idx]
+                });
+              }
+            });
+          });
+        }
+        
         let delete_dto: DeleteAddedProductDto = {
           cartId: find_cart.id,
           productId
         }
-
+        
         await this.cartService.deleteAddedProduct(delete_dto);
-
       });
-
 
     } catch (error) {
       console.log(error);

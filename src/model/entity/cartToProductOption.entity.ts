@@ -1,7 +1,6 @@
 import { Entity, Column, ManyToOne, PrimaryGeneratedColumn, BaseEntity, OneToMany, OneToOne, JoinColumn } from "typeorm"
 
-import { Clothes } from "./clothes.entity"
-import { CartToProduct } from "./cartToProduct.entity"
+import { Clothes, CartToProduct } from "./index"
 
 @Entity()
 export class CartToProductOption extends BaseEntity {
@@ -16,6 +15,10 @@ export class CartToProductOption extends BaseEntity {
 
     @Column()
     color!: string
+    
+    @Column({comment: '주문 개수'})
+    count: number;
+
 
     @ManyToOne(() => CartToProduct, (cartToProduct) => cartToProduct.cartToProductOption)
     @JoinColumn({name:"cartToProductId"})

@@ -2,7 +2,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { existsSync, mkdirSync } from 'fs';
 import { diskStorage, memoryStorage } from 'multer';
 import { basename, extname } from 'path';
-import * as fileType from 'file-type';
+// import * as fileType from 'file-type';
 
 const imageFileFilter = /\/(jpg|jpeg|png|gif)$/;
 const audioFileFilter = /\/(m4a|mp3|wav|flac|3gp)$/
@@ -90,19 +90,19 @@ export const multerAudioOptions = {
       return;
     }
 
-    const buffer = await file.buffer;
-    const fileInfo = await fileType(buffer);
+    // const buffer = await file.buffer;
+    // const fileInfo = await fileType(buffer);
 
-    if (!fileInfo || !allowedExtensions.includes(`.${fileInfo.ext}`)) {
-      callback(
-        new HttpException(
-          '지원하지 않는 파일 형식입니다.',
-          HttpStatus.BAD_REQUEST,
-        ),
-        false,
-      );
-      return;
-    }
+    // if (!fileInfo || !allowedExtensions.includes(`.${fileInfo.ext}`)) {
+    //   callback(
+    //     new HttpException(
+    //       '지원하지 않는 파일 형식입니다.',
+    //       HttpStatus.BAD_REQUEST,
+    //     ),
+    //     false,
+    //   );
+    //   return;
+    // }
 
     callback(null, true);
   },
@@ -171,7 +171,7 @@ export const multerClothesOptions = {
           // cloth 폴더가 존재하지 않을시, 생성합니다.
           mkdirSync(clothesPath);
         }
-        callback(null, uploadPath);
+        callback(null, clothesPath);
       },
       filename: (request, file, callback) => {
         //파일 이름 설정
@@ -215,7 +215,7 @@ export const multerModelsOptions = {
         // models 폴더가 존재하지 않을시, 생성합니다.
         mkdirSync(modelsPath);
       }
-      callback(null, uploadPath);
+      callback(null, modelsPath);
     },
     filename: (request, file, callback) => {
       //파일 이름 설정

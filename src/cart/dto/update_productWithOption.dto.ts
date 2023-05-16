@@ -43,5 +43,14 @@ export class UpdateProductWithOptionDto {
    })
   @IsOptional()
   colors: string[];
+
+  @ApiProperty({ 
+    example: [1,2,3],
+    description: '상품 옵션의 개수',
+    required: true
+   })
+  @IsNumber()
+  @IsNotEmpty()
+  counts: number[];
 }
   

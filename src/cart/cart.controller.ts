@@ -1,14 +1,16 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CartService } from './cart.service';
 import { AddProductDto, AddProductWithOptionDto, DeleteAddedProductDto, UpdateAddedProductDto, UpdateProductWithOptionDto } from './dto';
 import { JwtAuthGuard } from 'src/auth/guards';
+import { Response } from 'express';
 
 @Controller('cart')
 @ApiTags('Cart')
 export class CartController {
   constructor(private readonly cartService: CartService){}
-
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   @Get('/findOne/:id')
   @ApiOperation({
     summary: '장바구니 조회',
@@ -16,6 +18,22 @@ export class CartController {
   })
   async findOneCart(@Param('id', ParseIntPipe) id: number) {
     return await this.cartService.findOneCart(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @Get('/findCartId/:id')
+  @ApiOperation({
+    summary: '유저의 장바구니 id 조회',
+    description: '장바구니 id 조회 API'
+  })
+  async findCartId(@Param('id', ParseIntPipe) id: number, @Res() res:Response) {
+    try {
+      const data = await this.cartService.findCartId(id);
+      return res.json(data.id);
+    } catch (error) {
+      console.log(error);
+    }
   }
   
   @UseGuards(JwtAuthGuard)
@@ -42,6 +60,8 @@ export class CartController {
     return await this.cartService.addProductWithOption(dto);
   }
   
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   @Get('/findAllProducts/:id')
   @ApiOperation({
     summary: '장바구니안 상품 전체 조회',
