@@ -11,17 +11,17 @@ export class ClothesService {
   async create(file: Express.Multer.File, dto: CreateClothesDto){
     try {
       const { productId, name } = dto;
-      const parsedUserId = JSON.parse(productId.toString()).user_id;
+      const parsedProductId = JSON.parse(productId.toString()).productId;
       const parsedName = JSON.parse(name).name;
       if(file) {
         await this.clothesRepository.save({
-          productId: parsedUserId,
+          productId: parsedProductId,
           name: parsedName,
           file: file.path,
         });
       } else {
         await this.clothesRepository.save({
-          productId: parsedUserId,
+          productId: parsedProductId,
           name: parsedName,
           file: null,
         });

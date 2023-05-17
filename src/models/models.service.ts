@@ -11,17 +11,17 @@ export class ModelsService {
   async create(file: Express.Multer.File, dto: CreateModelsDto){
     try {
       const { productId, name } = dto;
-      const parsedUserId = JSON.parse(productId.toString()).user_id;
+      const parsedProductId = JSON.parse(productId.toString()).productId;
       const parsedName = JSON.parse(name).name;
       if(file) {
         await this.modelsRepository.save({
-          Productid: parsedUserId,
+          Productid: parsedProductId,
           name: parsedName,
           file: file.path,
         });
       } else {
         await this.modelsRepository.save({
-          Productid: parsedUserId,
+          Productid: parsedProductId,
           name: parsedName,
           file: null,
         });

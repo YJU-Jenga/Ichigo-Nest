@@ -5,8 +5,6 @@ import { basename, extname } from 'path';
 // import * as fileType from 'file-type';
 
 const imageFileFilter = /\/(jpg|jpeg|png|gif)$/;
-const audioFileFilter = /\/(m4a|mp3|wav|flac|3gp)$/
-const modelFileFilter = /\/(gltf|glb)$/
 
 export const multerDiskOptions = {
   /**
@@ -76,8 +74,8 @@ export const multerAudioOptions = {
     const allowedExtensions = ['.m4a', '.mp3', '.wav', '.flac', '.3gp'];
     const fileExt = extname(file.originalname).toLowerCase();
 
-    console.log(file);
-    console.log(fileExt);
+    // console.log(file);
+    // console.log(fileExt);
 
     if (!allowedExtensions.includes(fileExt)) {
       callback(
@@ -188,20 +186,23 @@ export const multerClothesOptions = {
 
 export const multerModelsOptions = {
   fileFilter: (request, file, callback) => {
-    if (file.mimetype.match(modelFileFilter)) {
-      callback(null, true);
-    } else {
+    const allowedExtensions = ['.gltf', '.glb', '.wav', '.flac', '.3gp'];
+    const fileExt = extname(file.originalname).toLowerCase();
+    // console.log(file);
+    // console.log(fileExt);
+
+    if (!allowedExtensions.includes(fileExt)) {
       callback(
         new HttpException(
-          {
-            message: 1,
-            error: '지원하지 않는 파일 형식입니다.',
-          },
+          '지원하지 않는 파일 형식입니다.',
           HttpStatus.BAD_REQUEST,
         ),
         false,
       );
+      return;
     }
+
+    callback(null, true);
   },
   storage: diskStorage({
     destination: (request, file, callback) => {
