@@ -240,9 +240,11 @@ export class CartService {
       // console.log(ctpId);
       if(ctpId != null) {
         const delOpIds = await this.cartToProductOptionRepository.find({where: {cartToProductId: ctpId.cartToProductId}});
-        delOpIds.forEach(async(delOpId)=>{
-          await this.cartToProductOptionRepository.delete(delOpId.id);
-        })
+        if(delOpIds != null) {
+          delOpIds.forEach(async(delOpId)=>{
+            await this.cartToProductOptionRepository.delete(delOpId.id);
+          });
+        }
       }
 
       return await this.cartToProductRepository

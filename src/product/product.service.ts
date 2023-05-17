@@ -33,7 +33,7 @@ export class ProductService {
     }
   }
 
-  async findOne (id): Promise<Product> {
+  async findOne (id:number): Promise<Product> {
     try {
       return await this.productRepository.findOneBy({id})
     } catch (error) {
