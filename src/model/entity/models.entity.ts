@@ -7,7 +7,7 @@ export class Models extends BaseEntity {
   id: number;
 
   @Column()
-  Productid: number;
+  productId: number;
 
   @Column({comment:"파일 이름"})
   name: string;
@@ -24,6 +24,6 @@ export class Models extends BaseEntity {
   // 관계 설정
 
   @ManyToOne(() => Product, (product) => product.models, { cascade:true, nullable: false, onDelete: 'CASCADE' })
-  @JoinColumn({name:"Productid"})
+  @JoinColumn({name:"productId"})
   product:Product;
-}
+} 

@@ -39,13 +39,13 @@ export class ModelsController {
  
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @Get("/getOne/:id")
+  @Get("/getModel/:productId")
   @ApiOperation({
     summary: '상품의 모델 파일 조회',
     description: '상품의 모델 파일 조회 API'
   })
-  async getOne(@Param('id', ParseIntPipe) id:number,  @Res() res: Response){
-    const data = await this.modelsService.getOne(id)
+  async getModel(@Param('productId', ParseIntPipe) productId:number,  @Res() res: Response){
+    const data = await this.modelsService.getModel(productId)
     return res.json(data);
   }
 
