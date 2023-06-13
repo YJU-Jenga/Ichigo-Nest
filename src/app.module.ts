@@ -22,12 +22,12 @@ import * as Joi from 'joi';
 
 
 
-@Module({
+@Module({ // モジュールを定義
   imports: [
-    TypeOrmModule.forRoot(TypeOrmConfig),
-    ConfigModule.forRoot({
+    TypeOrmModule.forRoot(TypeOrmConfig), // TypeORMの設定を使用してデータベースの接続を確立するためのモジュールをインポート
+    ConfigModule.forRoot({ // 環境変数の設定
       isGlobal: true,
-      envFilePath: process.env.NODE_ENV  === 'dev' ? '.env.dev' : '.env.local',
+      envFilePath: process.env.NODE_ENV  === 'dev' ? '.env.dev' : '.env.local', // .env.devまたは.env.localファイルから環境変数を読み込みます。
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().valid('dev', 'local').required(),
         ACCESS_SECRET_KEY: Joi.string().required(),
@@ -37,8 +37,13 @@ import * as Joi from 'joi';
       }),
       validationOptions: {
         abortEarly: true
+        // trueに設定すると、バリデーションエラーが発生するとすぐにバリデーションプロセスが停止し、エラーメッセージが返される。
+        // 最初のエラーが検出された時点でバリデーションが終了する。
+        // falseに設定すると、バリデーションエラーが発生しても全てのバリデーションルールをチェックし、複数のエラーメッセージを収集する。
+        // その後、すべてのエラーメッセージが返される。
       }
     }),
+    // 他のアプリケーションモジュールをインポート
     UserModule,
     BoardModule,
     PostModule,
@@ -58,11 +63,12 @@ import * as Joi from 'joi';
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
       consumer
+        // Middleware設定
         .apply(AuthMiddleware)
-        //exclude 함수는 제외 하고싶은 라우터를 등록합니다.
-        .exclude({ path: 'user/create_user', method: RequestMethod.POST }) // 유저 생성
-        .exclude({ path: 'user/user_all', method: RequestMethod.GET }) // 유저 전체 조회
-        .forRoutes(UserController); // 1.유저 컨트롤러 등록
-        // .forRoutes('user'); // 2.유저 컨트롤러 경로 등록 -> 위 1번과 동일
+        // exclude 関数は除外したいルータを登録
+        .exclude({ path: 'user/create_user', method: RequestMethod.POST }) // ユーザー登録
+        .exclude({ path: 'user/user_all', method: RequestMethod.GET }) // ユーザー全体検索
+        .forRoutes(UserController); // 1.ユーザーコントローラー登録
+        // .forRoutes('user'); // 2.ユーザーコントローラーのパス登録 => 1.と同じ効果
   }
 }

@@ -12,19 +12,21 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   const uploadPath = 'uploads';
-
-  if (!existsSync(uploadPath)) {
-    // uploads 폴더가 존재하지 않을시, 생성합니다.
+  if (!existsSync(uploadPath)) { // uploadsフォルダが存在しない場合、生成します。
     mkdirSync(uploadPath);
   }
 
+  // /uploadsディレクトリを静的ファイルのルートとして設定
   app.useStaticAssets('/uploads');
 
+  // https://docs.nestjs.com/techniques/mvc
+  // 静的ファイルにアクセスするためのURLパスにプレフィックスを追加
   app.useStaticAssets(join(__dirname, '../', 'uploads'), {
     prefix: '/uploads'
   });
   
-  // Global Middleware 설정 -> Cors 속성 활성화
+  // Global Middleware設定 
+  // Corsを有効化
   app.enableCors({
     origin: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
@@ -32,18 +34,17 @@ async function bootstrap() {
     credentials: true,
   });
   
-  // 예외 필터 연결
+  // 例外フィルター設定
   app.useGlobalPipes(
     new ValidationPipe({
     /**
      * https://docs.nestjs.com/techniques/validation
      * 
-     * whitelist: DTO에 없는 속성은 무조건 거른다.
-     * forbidNonWhitelisted: 전달하는 요청 값 중에 정의 되지 않은 값이 있으면 Error를 발생합니다.
-     * transform: 네트워크를 통해 들어오는 데이터는 일반 JavaScript 객체입니다.
-     *            객체를 자동으로 DTO로 변환을 원하면 transform 값을 true로 설정한다.
-     * disableErrorMessages: Error가 발생 했을 때 Error Message를 표시 여부 설정(true: 표시하지 않음, false: 표시함)
-     *                       배포 환경에서는 true로 설정하는 걸 추천합니다.
+     * whitelist: DTOにないプロパティは無視します。
+     * forbidNonWhitelisted: 渡すリクエスト値の中に定義されていない値がある場合、Errorを発生します。
+     * transform: ネットワークを通じて入ってくるデータは一般的なJavaScriptオブジェクトです。
+     *            オブジェクトを自動的にDTOに変換したい場合は、transform値をtrueに設定します。
+     * disableErrorMessages: Errorが発生したときにError Messageを表示するかどうかを設定(true: 表示しない、false: 表示する)
      */
 
       whitelist: true,
@@ -53,10 +54,13 @@ async function bootstrap() {
     }),
   );
 
+  // cookieParser 設定
   app.use(cookieParser());
 
+  // Swagger 環境設定
   setupSwagger(app);
 
+  // ポート設定
   await app.listen(5000);
 }
 bootstrap();

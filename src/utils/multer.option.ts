@@ -2,28 +2,28 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { existsSync, mkdirSync } from 'fs';
 import { diskStorage, memoryStorage } from 'multer';
 import { basename, extname } from 'path';
-// import * as fileType from 'file-type';
 
+// 受け入れる画像ファイル形式を変数に格納
 const imageFileFilter = /\/(jpg|jpeg|png|gif)$/;
 
 export const multerDiskOptions = {
   /**
-   * @description 클라이언트로 부터 전송 받은 파일 정보를 필터링 한다
+   * @author ckcic
+   * @description クライアントからアップロードされたファイル(画像ファイル)情報をフィルタリングします。
    *
-   * @param request Request 객체
-   * @param file 파일 정보
-   * @param callback 성공 및 실패 콜백함수
+   * @param request Express Requestオブジェクト
+   * @param file  ファイルの情報を含むオブジェクト
+   * @param callback フィルターを通過した時と失敗した時のコールバック関数
    */
   fileFilter: (request, file, callback) => {
-    if (file.mimetype.match(imageFileFilter)) {
-      // 이미지 형식은 jpg, jpeg, png, gif만 허용합니다.
+    if (file.mimetype.match(imageFileFilter)) { // フィルターを通過した時
       callback(null, true);
-    } else {
+    } else { // 失敗した時
       callback(
         new HttpException(
           {
-            message: 1,
-            error: '지원하지 않는 파일 형식입니다.',
+            message: '画像ファイル形式 エラー',
+            error: '対応していないファイル形式です。',
           },
           HttpStatus.BAD_REQUEST,
         ),
@@ -32,55 +32,69 @@ export const multerDiskOptions = {
     }
   },
   /**
-   * @description Disk 저장 방식 사용
-   *
-   * destination 옵션을 설정 하지 않으면 운영체제 시스템 임시 파일을 저정하는 기본 디렉토리를 사용합니다.
-   * filename 옵션은 폴더안에 저장되는 파일 이름을 결정합니다. (디렉토리를 생성하지 않으면 에러가 발생!! )
+   * @author ckcic
+   * @description diskStorageを使用
    */
   storage: diskStorage({
+    /**
+     * @author ckcic
+     * @description destinationオプションを設定しないと、オペレーティングシステム(OS)のシステム一時ファイルを保存するデフォルトのディレクトリを使います。
+     * 
+     * @param req Express Requestオブジェクト
+     * @param file ファイルの情報を含むオブジェクト
+     * @param callback 送信先パスを決定するためのコールバック
+     */
     destination: (request, file, callback) => {
       const uploadPath = 'uploads';
-      if (!existsSync(uploadPath)) {
-        // uploads 폴더가 존재하지 않을시, 생성합니다.
+      if (!existsSync(uploadPath)) { // uploadsフォルダが存在しない場合、生成します。
         mkdirSync(uploadPath);
       }
       callback(null, uploadPath);
     },
+    /**
+     * @author ckcic
+     * @description filenameオプションはフォルダ内に保存されるファイル名を決定します。 (ディレクトリが存在しないとエラーが発生する!!)
+     * 
+     * @param req Express Requestオブジェクト
+     * @param file ファイルの情報を含むオブジェクト
+     * @param callback アップロードされたファイルの名前を決定するためのコールバック
+     */
     filename: (request, file, callback) => {
-      //파일 이름 설정
       const ext = extname(file.originalname);
       const base = basename(file.originalname, ext);
       callback(null, `${base}_${Date.now()}${ext}`);
     },
   }),
   limits: {
-    fieldNameSize: 200, // 필드명 사이즈 최대값 (기본값 100bytes)
-    filedSize: 10* 1024 * 1024, // 필드 사이즈 값 설정 (기본값 10MB)
-    // fields: 2, // 파일 형식이 아닌 필드의 최대 개수 (기본 값 무제한)
-    // fileSize: 16777216, //multipart 형식 폼에서 최대 파일 사이즈(bytes) "16MB 설정" (기본 값 무제한)
-    // files: 10, //multipart 형식 폼에서 파일 필드 최대 개수 (기본 값 무제한)
+    fieldNameSize: 200, // フィールド名サイズの最大値 (デフォルト 100bytes)
+    filedSize: 10* 1024 * 1024, // フィールドサイズの値設定 (デフォルト10MB)
+    // fields: 2, // ファイル形式以外のフィールドの最大数 (デフォルト無制限)
+    // fileSize: 16777216, //multipart形式のフォームの最大ファイルサイズ(bytes) (デフォルト無制限)
+    // files: 10, //multipart 形式フォームのファイルフィールドの最大数 (デフォルト無制限)
   },
 };
 
 export const multerAudioOptions = {
   /**
-   * @description 클라이언트로 부터 전송 받은 파일 정보를 필터링 한다
+   * @author ckcic
+   * @description クライアントからアップロードされたファイル(音声ファイル)情報をフィルタリングします。
    *
-   * @param request Request 객체
-   * @param file 파일 정보
-   * @param callback 성공 및 실패 콜백함수
+   * @param request Express Requestオブジェクト
+   * @param file  ファイルの情報を含むオブジェクト
+   * @param callback フィルターを通過した時と失敗した時のコールバック関数
    */
   fileFilter: async (request, file, callback) => {
+    // 受け入れる音声ファイル形式を配列に格納
     const allowedExtensions = ['.m4a', '.mp3', '.wav', '.flac', '.3gp'];
     const fileExt = extname(file.originalname).toLowerCase();
 
-    // console.log(file);
-    // console.log(fileExt);
-
-    if (!allowedExtensions.includes(fileExt)) {
+    if (!allowedExtensions.includes(fileExt)) { // 配列にいない場合
       callback(
         new HttpException(
-          '지원하지 않는 파일 형식입니다.',
+          {
+            message: '音声ファイル形式 エラー',
+            error: '対応していないファイル形式です。',
+          },
           HttpStatus.BAD_REQUEST,
         ),
         false,
@@ -88,59 +102,64 @@ export const multerAudioOptions = {
       return;
     }
 
-    // const buffer = await file.buffer;
-    // const fileInfo = await fileType(buffer);
-
-    // if (!fileInfo || !allowedExtensions.includes(`.${fileInfo.ext}`)) {
-    //   callback(
-    //     new HttpException(
-    //       '지원하지 않는 파일 형식입니다.',
-    //       HttpStatus.BAD_REQUEST,
-    //     ),
-    //     false,
-    //   );
-    //   return;
-    // }
-
     callback(null, true);
   },
-  /**
-   * @description Disk 저장 방식 사용
-   *
-   * destination 옵션을 설정 하지 않으면 운영체제 시스템 임시 파일을 저정하는 기본 디렉토리를 사용합니다.
-   * filename 옵션은 폴더안에 저장되는 파일 이름을 결정합니다. (디렉토리를 생성하지 않으면 에러가 발생!! )
+   /**
+   * @author ckcic
+   * @description diskStorageを使用
    */
   storage: diskStorage({
+    /**
+     * @author ckcic
+     * @description destinationオプションを設定しないと、オペレーティングシステム(OS)のシステム一時ファイルを保存するデフォルトのディレクトリを使います。
+     * 
+     * @param req Express Requestオブジェクト
+     * @param file ファイルの情報を含むオブジェクト
+     * @param callback 送信先パスを決定するためのコールバック
+     */
     destination: (request, file, callback) => {
       const uploadPath = 'uploads';
       const musicPath = 'uploads/music';
-      if (!existsSync(uploadPath)) {
-        // uploads 폴더가 존재하지 않을시, 생성합니다.
+      if (!existsSync(uploadPath)) { // uploadsフォルダが存在しない場合、生成します。
         mkdirSync(uploadPath);
       }
-      if (!existsSync(musicPath)) {
-        // music 폴더가 존재하지 않을시, 생성합니다.
+      if (!existsSync(musicPath)) { // musicフォルダが存在しない場合、生成します。
         mkdirSync(musicPath);
       }
       callback(null, musicPath);
     },
+    /**
+     * @author ckcic
+     * @description filenameオプションはフォルダ内に保存されるファイル名を決定します。 (ディレクトリが存在しないとエラーが発生する!!)
+     * 
+     * @param req Express Requestオブジェクト
+     * @param file ファイルの情報を含むオブジェクト
+     * @param callback アップロードされたファイルの名前を決定するためのコールバック
+     */
     filename: (request, file, callback) => {
-      //파일 이름 설정
       const ext = extname(file.originalname);
       const base = basename(file.originalname, ext);
       callback(null, `${base}_${Date.now()}${ext}`);
     },
   }),
   limits: {
-    fieldNameSize: 200, // 필드명 사이즈 최대값 (기본값 100bytes)
-    filedSize: 100* 1024 * 1024, // 필드 사이즈 값 설정 (기본값 10MB)
-    // fields: 2, // 파일 형식이 아닌 필드의 최대 개수 (기본 값 무제한)
-    // fileSize: 16777216, //multipart 형식 폼에서 최대 파일 사이즈(bytes) "16MB 설정" (기본 값 무제한)
-    // files: 10, //multipart 형식 폼에서 파일 필드 최대 개수 (기본 값 무제한)
+    fieldNameSize: 200, // フィールド名サイズの最大値 (デフォルト 100bytes)
+    filedSize: 100* 1024 * 1024, // フィールドサイズの値設定 (デフォルト10MB)
+    // fields: 2, // ファイル形式以外のフィールドの最大数 (デフォルト無制限)
+    // fileSize: 16777216, //multipart形式のフォームの最大ファイルサイズ(bytes) (デフォルト無制限)
+    // files: 10, //multipart 形式フォームのファイルフィールドの最大数 デフォルト無制限)
   },
 };
 
 export const multerClothesOptions = {
+    /**
+     * @author ckcic
+     * @description クライアントからアップロードされたファイル(画像ファイル)情報をフィルタリングします。
+     *
+     * @param request Express Requestオブジェクト
+     * @param file  ファイルの情報を含むオブジェクト
+     * @param callback フィルターを通過した時と失敗した時のコールバック関数
+     */
     fileFilter: (request, file, callback) => {
       if (file.mimetype.match(imageFileFilter)) {
         callback(null, true);
@@ -148,8 +167,8 @@ export const multerClothesOptions = {
         callback(
           new HttpException(
             {
-              message: 1,
-              error: '지원하지 않는 파일 형식입니다.',
+              message: '商品の衣装ファイル形式 エラー',
+              error: '対応していないファイル形式です。',
             },
             HttpStatus.BAD_REQUEST,
           ),
@@ -158,43 +177,66 @@ export const multerClothesOptions = {
       }
     },
     storage: diskStorage({
+      /**
+       * @author ckcic
+       * @description destinationオプションを設定しないと、オペレーティングシステム(OS)のシステム一時ファイルを保存するデフォルトのディレクトリを使います。
+       * 
+       * @param req Express Requestオブジェクト
+       * @param file ファイルの情報を含むオブジェクト
+       * @param callback 送信先パスを決定するためのコールバック
+       */
       destination: (request, file, callback) => {
         const uploadPath = 'uploads';
         const clothesPath = 'uploads/clothes';
-        if (!existsSync(uploadPath)) {
-          // uploads 폴더가 존재하지 않을시, 생성합니다.
+        if (!existsSync(uploadPath)) { // uploadsフォルダが存在しない場合、生成します。
           mkdirSync(uploadPath);
         }
-        if (!existsSync(clothesPath)) {
-          // cloth 폴더가 존재하지 않을시, 생성합니다.
+        if (!existsSync(clothesPath)) { // clothフォルダが存在しない場合、生成します。
           mkdirSync(clothesPath);
         }
         callback(null, clothesPath);
       },
+      /**
+       * @author ckcic
+       * @description filenameオプションはフォルダ内に保存されるファイル名を決定します。 (ディレクトリが存在しないとエラーが発生する!!)
+       * 
+       * @param req Express Requestオブジェクト
+       * @param file ファイルの情報を含むオブジェクト
+       * @param callback アップロードされたファイルの名前を決定するためのコールバック
+       */
       filename: (request, file, callback) => {
-        //파일 이름 설정
         const ext = extname(file.originalname);
         const base = basename(file.originalname, ext);
         callback(null, `${base}_${Date.now()}${ext}`);
       },
     }),
     limits: {
-      fieldNameSize: 200, // 필드명 사이즈 최대값 (기본값 100bytes)
-      filedSize: 10* 1024 * 1024, // 필드 사이즈 값 설정 (기본값 10MB)
+      fieldNameSize: 200, // フィールド名サイズの最大値 (デフォルト 100bytes)
+      filedSize: 10* 1024 * 1024, // フィールドサイズの値設定(デフォルト10MB)
     },
   };
 
 export const multerModelsOptions = {
+  /**
+   * @author ckcic
+   * @description クライアントからアップロードされたファイル(3Dモデルのファイル)情報をフィルタリングします。
+   *
+   * @param request Express Requestオブジェクト
+   * @param file  ファイルの情報を含むオブジェクト
+   * @param callback フィルターを通過した時と失敗した時のコールバック関数
+   */
   fileFilter: (request, file, callback) => {
-    const allowedExtensions = ['.gltf', '.glb', '.wav', '.flac', '.3gp'];
+    // 受け入れる3Dモデルのファイル形式を配列に格納
+    const allowedExtensions = ['.gltf', '.glb'];
     const fileExt = extname(file.originalname).toLowerCase();
-    // console.log(file);
-    // console.log(fileExt);
 
-    if (!allowedExtensions.includes(fileExt)) {
+    if (!allowedExtensions.includes(fileExt)) { // 配列にいない場合
       callback(
         new HttpException(
-          '지원하지 않는 파일 형식입니다.',
+          {
+            message: '3Dモデルのファイル形式 エラー',
+            error: '対応していないファイル形式です。',
+          },
           HttpStatus.BAD_REQUEST,
         ),
         false,
@@ -205,97 +247,65 @@ export const multerModelsOptions = {
     callback(null, true);
   },
   storage: diskStorage({
+    /**
+     * @author ckcic
+     * @description destinationオプションを設定しないと、オペレーティングシステム(OS)のシステム一時ファイルを保存するデフォルトのディレクトリを使います。
+     * 
+     * @param req Express Requestオブジェクト
+     * @param file ファイルの情報を含むオブジェクト
+     * @param callback 送信先パスを決定するためのコールバック
+     */
     destination: (request, file, callback) => {
       const uploadPath = 'uploads';
       const modelsPath = 'uploads/models';
-      if (!existsSync(uploadPath)) {
-        // uploads 폴더가 존재하지 않을시, 생성합니다.
+      if (!existsSync(uploadPath)) { // uploadsフォルダが存在しない場合、生成します。
         mkdirSync(uploadPath);
       }
-      if (!existsSync(modelsPath)) {
-        // models 폴더가 존재하지 않을시, 생성합니다.
+      if (!existsSync(modelsPath)) { // modelsフォルダが存在しない場合、生成します。
         mkdirSync(modelsPath);
       }
       callback(null, modelsPath);
     },
+    /**
+     * @author ckcic
+     * @description filenameオプションはフォルダ内に保存されるファイル名を決定します。 (ディレクトリが存在しないとエラーが発生する!!)
+     * 
+     * @param req Express Requestオブジェクト
+     * @param file ファイルの情報を含むオブジェクト
+     * @param callback アップロードされたファイルの名前を決定するためのコールバック
+     */
     filename: (request, file, callback) => {
-      //파일 이름 설정
       const ext = extname(file.originalname);
       const base = basename(file.originalname, ext);
       callback(null, `${base}_${Date.now()}${ext}`);
     },
   }),
   limits: {
-    fieldNameSize: 200, // 필드명 사이즈 최대값 (기본값 100bytes)
-    filedSize: 100* 1024 * 1024, // 필드 사이즈 값 설정 (기본값 10MB)
+    fieldNameSize: 200, // フィールド名サイズの最大値 (デフォルト 100bytes)
+    filedSize: 10* 1024 * 1024, // フィールドサイズの値設定(デフォルト10MB)
   },
 };
 
-export const multerDiskDestinationOutOptions = {
-  /**
-   * @description 클라이언트로 부터 전송 받은 파일 정보를 필터링 한다
-   *
-   * @param request Request 객체
-   * @param file 파일 정보
-   * @param callback 성공 및 실패 콜백함수
-   */
-  fileFilter: (request, file, callback) => {
-    if (file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
-      // 이미지 형식은 jpg, jpeg, png만 허용합니다.
-      callback(null, true);
-    } else {
-      callback(
-        new HttpException(
-          {
-            message: 1,
-            error: '지원하지 않는 이미지 형식입니다.',
-          },
-          HttpStatus.BAD_REQUEST,
-        ),
-        false,
-      );
-    }
-  },
-  /**
-   * @description Disk 저장 방식 사용
-   *
-   * destination 옵션을 설정 하지 않으면 운영체제 시스템 임시 파일을 저정하는 기본 디렉토리를 사용합니다.
-   * filename 옵션은 폴더안에 저장되는 파일 이름을 결정합니다. (디렉토리를 생성하지 않으면 에러가 발생!! )
-   */
-  storage: diskStorage({
-    filename: (request, file, callback) => {
-      //파일 이름 설정
-      callback(null, `${Date.now()}${extname(file.originalname)}`);
-    },
-  }),
-  limits: {
-    fieldNameSize: 200, // 필드명 사이즈 최대값 (기본값 100bytes)
-    filedSize: 10* 1024 * 1024, // 필드 사이즈 값 설정 (기본값 10MB)
-    fields: 2, // 파일 형식이 아닌 필드의 최대 개수 (기본 값 무제한)
-    fileSize: 16777216, //multipart 형식 폼에서 최대 파일 사이즈(bytes) "16MB 설정" (기본 값 무제한)
-    files: 10, //multipart 형식 폼에서 파일 필드 최대 개수 (기본 값 무제한)
-  },
-};
 
-export const multerMemoryOptions = {
+export const multerMemoryOptions = { // memoryStorageを使う場合
   /**
-   * @description 클라이언트로 부터 전송 받은 파일 정보를 필터링 한다
+   * @author ckcic
+   * @description クライアントからアップロードされたファイル(画像ファイル)情報をフィルタリングします。
    *
-   * @param request Request 객체
-   * @param file 파일 정보
-   * @param callback 성공 및 실패 콜백함수
+   * @param request Express Requestオブジェクト
+   * @param file  ファイルの情報を含むオブジェクト
+   * @param callback フィルターを通過した時と失敗した時のコールバック関数
    */
   fileFilter: (request, file, callback) => {
     console.log('multerMemoryOptions : fileFilter');
-    if (file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
-      // 이미지 형식은 jpg, jpeg, png만 허용합니다.
+    if (file.mimetype.match(imageFileFilter)) {
       callback(null, true);
     } else {
       callback(
         new HttpException(
           {
-            message: 1,
-            error: '지원하지 않는 이미지 형식입니다.',
+            message: 'ファイル形式 エラー',
+            error: '対応していないファイル形式です。',
           },
           HttpStatus.BAD_REQUEST,
         ),
@@ -304,23 +314,26 @@ export const multerMemoryOptions = {
     }
   },
   /**
-   * @description Memory 저장 방식 사용
+   * @author ckcic
+   * @description memoryStorageを使用
    */
   stroage: memoryStorage(),
   limits: {
-    fieldNameSize: 200, // 필드명 사이즈 최대값 (기본값 100bytes)
-    filedSize: 10* 1024 * 1024, // 필드 사이즈 값 설정 (기본값 10MB)
-    fields: 2, // 파일 형식이 아닌 필드의 최대 개수 (기본 값 무제한)
-    fileSize: 16777216, //multipart 형식 폼에서 최대 파일 사이즈(bytes) "16MB 설정" (기본 값 무제한)
-    files: 10, //multipart 형식 폼에서 파일 필드 최대 개수 (기본 값 무제한)
+    fieldNameSize: 200, // フィールド名サイズの最大値 (デフォルト 100bytes)
+    filedSize: 10* 1024 * 1024, // フィールドサイズの値設定(デフォルト10MB)
+    fields: 2, // ファイル形式以外のフィールドの最大数 (デフォルト無制限)
+    fileSize: 16777216, //multipart形式のフォームの最大ファイルサイズ(bytes) "16MB設定" (デフォルト無制限)
+    files: 10, //multipart 形式フォームのファイルフィールドの最大数(デフォルト無制限)
   },
 };
 
+
 /**
- * @description 파일 업로드 경로
- * @param file 파일 정보
+ * @author ckcic
+ * @description ファイルアップロードパス
+ * @param file ファイルの情報
  *
- * @returns {String} 파일 업로드 경로
+ * @returns {String} ファイルアップロードパス
  */
 export const uploadFileURL = (fileName): string =>
   `http://localhost:3000/${fileName}`;

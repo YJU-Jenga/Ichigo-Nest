@@ -3,16 +3,17 @@ import { Request, Response, NextFunction } from "express";
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
+  /**
+   * @author ckcic
+   * @description ミドルウェアの設定の練習をしました。ビジネスロジックの部分に検定のロジックを追加して利用
+   * 
+   * @param req ユーザーからリクエスト情報を受け取る際に使用
+   * @param res ユーザーにレスポンスする時に使用
+   * @param next 次のルーターに行く時に使用
+   * 
+   */
   use(req: Request, res: Response, next: NextFunction) {
-    // // 논리합 연산자 -> 왼쪽 피연산자가 false라면 오른쪽 피연산자가 실행
-    // const name: string = req.query.name || req.body.name;
-
-    // if(name == "ckcic") {
-    //   next();
-    // } else {
-    //   // Ryan 유저가 아니라면 허가 받지 않은 유저이기 때문에 401 Error 반환
-    //   throw new UnauthorizedException();
-    // }
+    // ビジネスロジック
 
     next();
   }

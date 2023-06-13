@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder, SwaggerCustomOptions } from '@nestjs/swagger';
 
-//웹 페이지를 새로고침을 해도 Token 값 유지
+// ウェブページを更新してもToken値は維持するオプション
 const swaggerCustomOptions: SwaggerCustomOptions = {
   swaggerOptions: {
     persistAuthorization: true,
@@ -9,16 +9,17 @@ const swaggerCustomOptions: SwaggerCustomOptions = {
 };
 
 /**
- * Swagger 세팅
- *
+ * @author ckcic
+ * @description Swagger 設定
+ * Swagger（スワッガー）はAPIの設計とドキュメンテーションをサポートするためのオープンソースのフレームワーク
  * @param {INestApplication} app
  */
 export function setupSwagger(app: INestApplication): void {
   const options = new DocumentBuilder()
     .setTitle('🍓 API Docs')
-    .setDescription('🍓 Swagger API 서버')
+    .setDescription('🍓 Swagger API サーバー')
     .setVersion('1.0.0')
-    //JWT 토큰 설정
+    //JWT 設定
     .addBearerAuth(
       {
         type: 'http',
@@ -31,5 +32,6 @@ export function setupSwagger(app: INestApplication): void {
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
+  // パス：http://localhost:5000/api-docs
   SwaggerModule.setup('api-docs', app, document, swaggerCustomOptions);
 }

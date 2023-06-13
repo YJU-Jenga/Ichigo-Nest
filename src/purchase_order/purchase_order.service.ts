@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PurchaseOrder, OrderToProduct, OrderToProductOption } from 'src/model/entity';
+import {
+  PurchaseOrder,
+  OrderToProduct,
+  OrderToProductOption,
+} from 'src/model/entity';
 import { Repository } from 'typeorm';
 import { CreateOrderDto, UpdateOrderDto } from './dto';
 import { CartService } from 'src/cart/cart.service';
@@ -9,56 +13,66 @@ import { DeleteAddedProductDto } from 'src/cart/dto';
 @Injectable()
 export class PurchaseOrderService {
   constructor(
-    @InjectRepository(PurchaseOrder) private readonly orderRepository: Repository<PurchaseOrder>,
-    @InjectRepository(OrderToProduct) private readonly orderToProductRepository: Repository<OrderToProduct>,
-    @InjectRepository(OrderToProductOption) private readonly orderToProductOptionRepository: Repository<OrderToProductOption>,
+    @InjectRepository(PurchaseOrder)
+    private readonly orderRepository: Repository<PurchaseOrder>,
+    @InjectRepository(OrderToProduct)
+    private readonly orderToProductRepository: Repository<OrderToProduct>,
+    @InjectRepository(OrderToProductOption)
+    private readonly orderToProductOptionRepository: Repository<OrderToProductOption>,
     private readonly cartService: CartService,
-  ){}
-  
+  ) {}
+
   async createOrder(dto: CreateOrderDto) {
     try {
-      const { userId, postalCode, address, productIds, counts, productOptions } = dto;
+      const {
+        userId,
+        postalCode,
+        address,
+        productIds,
+        counts,
+        productOptions,
+      } = dto;
       // console.log(dto);
       const newOrder = await this.orderRepository.save({
         userId,
         postalCode,
-        address
+        address,
       });
 
-      const find_cart = await this.cartService.findCartId(userId)
+      const find_cart = await this.cartService.findCartId(userId);
 
-      productIds.forEach(async (productId, idx)=>{
+      productIds.forEach(async (productId, idx) => {
         const newOrderToProduct = await this.orderToProductRepository.save({
           orderId: newOrder.id,
           productId,
-          count: counts[idx]
+          count: counts[idx],
         });
 
-        if(productOptions.length != 0) {
-          productOptions.forEach(async (productOption)=> {
-            const {productId, clothesIds, colors, optionCounts} = productOption;
-    
-            clothesIds.forEach(async (clothesId, idx)=>{
-              if(newOrderToProduct.productId == productId) {
+        if (productOptions.length != 0) {
+          productOptions.forEach(async (productOption) => {
+            const { productId, clothesIds, colors, optionCounts } =
+              productOption;
+
+            clothesIds.forEach(async (clothesId, idx) => {
+              if (newOrderToProduct.productId == productId) {
                 await this.orderToProductOptionRepository.save({
                   orderToProductId: newOrderToProduct.orderToProductId,
                   clothesId,
                   color: colors[idx],
-                  count: optionCounts[idx]
+                  count: optionCounts[idx],
                 });
               }
             });
           });
         }
-        
+
         let delete_dto: DeleteAddedProductDto = {
           cartId: find_cart.id,
-          productId
-        }
-        
+          productId,
+        };
+        // console.log("dto",delete_dto);
         await this.cartService.deleteAddedProduct(delete_dto);
       });
-
     } catch (error) {
       console.log(error);
     }
@@ -67,11 +81,11 @@ export class PurchaseOrderService {
   async findAllOrder(): Promise<PurchaseOrder[]> {
     try {
       return await this.orderRepository
-      .createQueryBuilder('purchaseOrder')
-      .leftJoinAndSelect('purchaseOrder.orderToProducts', 'orderToProducts')
-      .leftJoinAndSelect('orderToProducts.product', 'product')
-      .orderBy("purchaseOrder.created_at","DESC")
-      .getMany();
+        .createQueryBuilder('purchaseOrder')
+        .leftJoinAndSelect('purchaseOrder.orderToProducts', 'orderToProducts')
+        .leftJoinAndSelect('orderToProducts.product', 'product')
+        .orderBy('purchaseOrder.created_at', 'DESC')
+        .getMany();
     } catch (error) {
       console.log(error);
     }
@@ -79,13 +93,13 @@ export class PurchaseOrderService {
 
   async findAllUserOrder(userId: number): Promise<PurchaseOrder[]> {
     try {
-      return await this.orderRepository.
-      createQueryBuilder('purchaseOrder')
-      .leftJoinAndSelect('purchaseOrder.orderToProducts', 'orderToProducts')
-      .leftJoinAndSelect('orderToProducts.product', 'product')
-      .where("userId = :userId", {userId})
-      .orderBy("purchaseOrder.created_at","DESC")
-      .getMany();
+      return await this.orderRepository
+        .createQueryBuilder('purchaseOrder')
+        .leftJoinAndSelect('purchaseOrder.orderToProducts', 'orderToProducts')
+        .leftJoinAndSelect('orderToProducts.product', 'product')
+        .where('userId = :userId', { userId })
+        .orderBy('purchaseOrder.created_at', 'DESC')
+        .getMany();
     } catch (error) {
       console.log(error);
     }
@@ -94,12 +108,12 @@ export class PurchaseOrderService {
   async findOneOrder(id: number): Promise<PurchaseOrder> {
     try {
       return await this.orderRepository
-      .createQueryBuilder('purchaseOrder')
-      .where("purchaseOrder.id=:id", {id})
-      .leftJoinAndSelect('purchaseOrder.orderToProducts', 'orderToProducts')
-      .leftJoinAndSelect('orderToProducts.product', 'product')
-      .orderBy("purchaseOrder.created_at","DESC")
-      .getOne();
+        .createQueryBuilder('purchaseOrder')
+        .where('purchaseOrder.id=:id', { id })
+        .leftJoinAndSelect('purchaseOrder.orderToProducts', 'orderToProducts')
+        .leftJoinAndSelect('orderToProducts.product', 'product')
+        .orderBy('purchaseOrder.created_at', 'DESC')
+        .getOne();
     } catch (error) {
       console.log(error);
     }
@@ -108,11 +122,11 @@ export class PurchaseOrderService {
   async updateOrder(id: number, dto: UpdateOrderDto) {
     try {
       const { userId, postalCode, address, state } = dto;
-      await this.orderRepository.update(id ,{
+      await this.orderRepository.update(id, {
         userId,
         postalCode,
         address,
-        state
+        state,
       });
     } catch (error) {
       console.log(error);
@@ -121,8 +135,8 @@ export class PurchaseOrderService {
 
   async deleteOrder(id: number) {
     try {
-      await this.orderToProductRepository.delete({orderId:id})
-      return await this.orderRepository.delete({id});
+      await this.orderToProductRepository.delete({ orderId: id });
+      return await this.orderRepository.delete({ id });
     } catch (error) {
       console.log(error);
     }

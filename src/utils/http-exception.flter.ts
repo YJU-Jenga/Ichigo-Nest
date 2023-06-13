@@ -1,17 +1,16 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from "@nestjs/common";
 
 /**
- * @Catch(HttpException)
- * 해당 데코레이터는 필요한 메타 데이터를 ExceptionFilter에 바인딩하여,
- * 필터가 HttpException 타입의 예외만 찾고 있다는 것을 Nset.js에 알리기 위해 선언한다.
+ * このデコレータは、必要なメタデータをExceptionFilterにバインドして、
+ * フィルターがHttpException型の例外のみを検知していることをNest.jsに伝えるために宣言されます。
  */
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
   /**
-   * @description 예외 처리 함수
+   * @description 例外処理関数
    *
-   * @param exception 현재 처리 중인 예외 객체
-   * @param host ArgumentsHost 객체 -> 핸들러에 전달되는 인수를 검색하는 메서드를 제공한다 (Express를 사용하는 경우 - Response & Request & Next 제공)
+   * @param exception 現在処理中の例外オブジェクト
+   * @param host ArgumentsHostオブジェクト -> ハンドラに渡される引数を検索するメソッドを提供します（Expressを使用する場合、Response＆Request＆Nextが提供されます）
    */
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -24,20 +23,20 @@ export class HttpExceptionFilter implements ExceptionFilter {
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
     /**
-     * @description HttpException에서 전송한 데이터를 추출할 때 사용
+     * @description HttpExceptionから送信されたデータを抽出する際に使用します。
      */
     const res: any = exception.getResponse();
 
-    // 요청 URL 및 에러 정보
+    // リクエストのURLとエラー情報
     const url: string = request.url;
     const error: string = res.error;
     const timestamp: string = new Date().toLocaleString();
 
-    console.log('요청 url : ', url);
-    console.log('error 정보 : ', error);
-    console.log('발생 시간 : ', timestamp);
+    console.log('リクエストURL：', url);
+    console.log('エラー情報：', error);
+    console.log('発生時刻：', timestamp);
 
-    /* 클라이언트에게 정보를 전달한다. */
+    /* クライアントに情報を返します。 */
     response.status(status).json({
       success: false,
       message: res.message,
