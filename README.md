@@ -1,10 +1,4 @@
-도커 설치 운영체제에 맞게
-
-[WINDOW(WSL, Docker)](https://mire-snowflake-b04.notion.site/WINDOW-WSL-Docker-adb8feadfd1441a4ae0de5f71202b26b?pvs=4)
-
-[MacOS (Docker)](https://mire-snowflake-b04.notion.site/MacOS-Docker-7104617bd85e4091bdbc0cecac724c98?pvs=4)
-
-도커를 설치한 후
+도커 설치 운영체제에 맞게 도커를 설치한 후
 
 ## 1. 프로젝트 디렉토리 작성
 
