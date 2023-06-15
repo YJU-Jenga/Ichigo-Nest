@@ -24,7 +24,7 @@ touch ichigo/db/logs/mysql-slow.log
 touch ichigo/db/conf/my.cnf
 ```
 
-![1](~@source/readme_image/1.png)
+![1](https://raw.githubusercontent.com/YJU-Jenga/Ichigo-Nest/main/readme_image/1.png)
 
 ## 2. docker-compose.yml 파일 편집
 
@@ -97,7 +97,7 @@ volumes:
 
 ## 3. my.cnf 편집
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/5bf222f9-c698-4920-a679-5a44ad434b33/Untitled.png)
+![2](https://raw.githubusercontent.com/YJU-Jenga/Ichigo-Nest/main/readme_image/2.png)
 
 `ichigo/db/conf/my.cnf`를 다음과 같이 작성한다.
 
@@ -177,7 +177,7 @@ npm i
 exit
 ```
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/42716de0-c351-4de5-be3a-b87c31c5a929/Untitled.png)
+![3](https://raw.githubusercontent.com/YJU-Jenga/Ichigo-Nest/main/readme_image/3.png)
 
 `ichigo/api/.env.dev`파일을 다음과 같이 편집한다.
 
@@ -188,7 +188,7 @@ REFRESH_SECRET_KEY=rt-secretKey
 REFRESH_EXPIRES_IN=7
 ```
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/001a89ca-4dd3-4844-b55c-fb235328b036/Untitled.png)
+![4](https://raw.githubusercontent.com/YJU-Jenga/Ichigo-Nest/main/readme_image/4.png)
 
 `ichigo/api/.env.local`파일을 다음과 같이 편집한다.
 
@@ -259,7 +259,7 @@ mysql -u root -p ichigo < /var/lib/mysql-files/backup.sql
 
 `ichigo/web/package.json` 에서 scripts 안에 serve를 아래와 같이  수정한다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/66f47e1d-ae91-4fec-af5e-eb081e21fca3/Untitled.png)
+![5](https://raw.githubusercontent.com/YJU-Jenga/Ichigo-Nest/main/readme_image/5.png)
 
 ```bash
 "scripts": {
@@ -271,7 +271,7 @@ mysql -u root -p ichigo < /var/lib/mysql-files/backup.sql
   },
 ```
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d9e7c409-c9ba-42f7-bc9f-beb47d9d80c0/Untitled.png)
+![6](https://raw.githubusercontent.com/YJU-Jenga/Ichigo-Nest/main/readme_image/6.png)
 
 [참조](https://7942yongdae.tistory.com/4)
 
@@ -279,7 +279,7 @@ mysql -u root -p ichigo < /var/lib/mysql-files/backup.sql
 
 `ichigo/web/src/config.ts` 에서 주소를 변경해준다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/cea11338-d2f0-4d2c-96a7-d00f4491d86f/Untitled.png)
+![7](https://raw.githubusercontent.com/YJU-Jenga/Ichigo-Nest/main/readme_image/7.png)
 
 ```bash
 export const API_URL = "http://{배포한 곳의 IP주소}:5000";
@@ -289,4 +289,4 @@ export const API_URL = "http://{배포한 곳의 IP주소}:5000";
 
 `ichigo/docker-compose.yml`파일을 다음과 같이 편집한다.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0f40346b-158a-474f-8efb-80b242a7fd36/Untitled.png)
+![8](https://raw.githubusercontent.com/YJU-Jenga/Ichigo-Nest/main/readme_image/8.png)
