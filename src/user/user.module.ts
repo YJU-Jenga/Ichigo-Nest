@@ -6,9 +6,9 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Cart, CartToProduct, CartToProductOption])],
-  controllers: [UserController], 
-  providers: [UserService, CartService],
-  exports: [UserService],
+  imports: [TypeOrmModule.forFeature([User, Cart, CartToProduct, CartToProductOption])], // エンティティをインポート
+  controllers: [UserController], // コントローラはクライアントへのリクエストとレスポンスを担当
+  providers: [UserService, CartService], // プロバイダーにサービスを登録、サービスはビジネスロジックを担当
+  exports: [UserService], // 他のモジュールで使えるようにエクスポート
 })
 export class UserModule {}

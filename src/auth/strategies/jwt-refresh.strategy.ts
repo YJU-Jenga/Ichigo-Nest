@@ -7,16 +7,24 @@ import { Request } from "express";
 export class JwtRefreshStrategy extends PassportStrategy(Strategy,'jwt-refresh') {
   constructor() {
     super({
-      //Request에서 JWT 토큰을 추출하는 방법을 설정 -> Authorization에서 Bearer Token에 JWT 토큰을 담아 전송해야한다.
+      // RequestでJWTトークンを抽出する方法を設定 -> AuthorizationでBearer TokenにJWTトークンを入れて送信する必要がある
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      //true로 설정하면 Passport에 토큰 검증을 위임하지 않고 직접 검증, false는 Passport에 검증 위임
+      //trueに設定するとPassportにトークン検証を委任せずに直接検証、falseはPassportに検証を委任します。
       ignoreExpiration: false,
-      //검증 비밀 값(유출 주위)
+      /// 検証秘密値(流出注意)
       secretOrKey: process.env.REFRESH_SECRET_KEY,
       passReqToCallback: true,
     });
   }
 
+  /**
+   * @author ckcic
+   * @description JWTの有効性を検証するためのメソッド
+   *
+   * @param req リクエストオブジェクト－クライアントからのHTTPリクエストに関する情報を含むオブジェクト
+   * @param payload 転送されたトークンの内容
+   * @returns トークンの内容とリフレッシュトークンを戻り値として返す
+   */
   async validate(req: Request, payload: any) {
     const refreshToken = req.get('authorization').replace('Bearer', '').trim();
     return {

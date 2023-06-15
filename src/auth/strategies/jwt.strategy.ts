@@ -11,21 +11,23 @@ type JwtPayload = {
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor() {
     super({
-      //Request에서 JWT 토큰을 추출하는 방법을 설정 -> Authorization에서 Bearer Token에 JWT 토큰을 담아 전송해야한다.
+      // RequestでJWTトークンを抽出する方法を設定 -> AuthorizationでBearer TokenにJWTトークンを入れて送信する必要がある
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      //true로 설정하면 Passport에 토큰 검증을 위임하지 않고 직접 검증, false는 Passport에 검증 위임
+      //trueに設定するとPassportにトークン検証を委任せずに直接検証、falseはPassportに検証を委任します。
       ignoreExpiration: false,
-      //검증 비밀 값(유출 주위) 
+      // 検証秘密値(流出注意)
       secretOrKey: process.env.ACCESS_SECRET_KEY,
     });
   }
 
   /**
-   * @description 클라이언트가 전송한 Jwt 토큰 정보
+   * @author ckcic
+   * @description JWTの有効性を検証するためのメソッド
    *
-   * @param payload 토큰 전송 내용
+   * @param payload 転送されたトークンの内容
+   * @returns {Promise<JwtPayload>} トークンの内容を戻り値として返す
    */
-  async validate(payload: JwtPayload) {
+  async validate(payload: JwtPayload): Promise<JwtPayload> {
     return payload;
   }
 }

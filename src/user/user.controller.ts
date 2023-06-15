@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UsePipes, ValidationPipe, UseGuards, Request, Res, HttpStatus} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Query, UsePipes, ValidationPipe, UseGuards, Res} from '@nestjs/common';
 import { UserService } from "./user.service";
 import { UpdateUserDto } from "./dto/update_user.dto";
 import { User } from '../model/entity/user.entity';
@@ -7,30 +7,26 @@ import { ApiCreatedResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestj
 import { JwtAuthGuard, JwtRefreshAuthGuard } from 'src/auth/guards';
 
 @Controller('user')
-@ApiTags('User')  // Swagger Tag 설정
+@ApiTags('User')  // Swaggerタグの設定
 export class UserController {
-  constructor(private readonly userService: UserService) {}
-  /**
-   * 1. Body (@Body() 변수명: 자료형) -> @Body() body -> 전체 처리방식 
-   * 2. Body (@Body('키') 키_변수: 자료형) -> @Body('id') id : number - 단일 처리 방식
-   *    (Body에서 데이터를 처리하는 방식은 위와 같이 "묶어서" 처리하는 방식과 "하나씩" 단일로 처리하는 방식이 있습니다.)
-   * 3. Query Params (@Query('키') 키_변수: 자료형) -> @Query('id') id: number 
-   * 4. Path Variables (@Param('키') 키_변수: 자료형) -> @Param('id') id: number
-   * 5. 그리고 위 방식을 혼합해서 사용할 수 있습니다.
-  */
-  // @Body 방식 - @Body 어노테이션 여러개를 통해 요청 객체를 접근할 수 있습니다.
+  constructor(private readonly userService: UserService) {} // 依存性の注入、UserServiceクラスのインスタンスを注入
   
-
-  // 전체 유저 조회
-  @UseGuards(JwtAuthGuard)  // 검증된 유저만 접근 가능 - 토큰 발행 된 유저
-  @ApiBearerAuth('access-token') //JWT 토큰 키 설정
-  @Get('/user_all')
+  /**
+   * @author ckcic
+   * @description ユーザー全体を取得するメソッド
+   *
+   * @param res データを返すためのパラメーター
+   * @returns ユーザー全体のデータをJSON形式で戻り値として返す
+   */
+  @UseGuards(JwtAuthGuard)  // 検証済みのユーザーのみアクセス可能 - トークン発行済みのユーザー
+  @ApiBearerAuth('access-token') // SwaggerでのJWTトークンキーの設定
+  @Get('/user_all') // localhost:5000/user/user_all
   @ApiOperation({
-    summary: '전체 유저 조회',
-    description: '전체 유저 조회 API',
+    summary: 'ユーザー全体を取得',
+    description: 'ユーザー全体を取得するAPI',
   })
   @ApiCreatedResponse({
-    description: '성공여부',
+    description: '成功かどうか',
     schema: {
       example: {
         success: true,
@@ -55,28 +51,60 @@ export class UserController {
     return res.json(data);
   }
 
-  // @Query 방식 - 단일 유저 조회
+
+  /**
+   * @author ckcic
+   * @description @Query 方式 - ユーザーのデータを取得するメソッド
+   * 
+   * @param id ユーザーの固有ID
+   * @returns {Promise<User>} ユーザーデータを戻り値として返す
+   */ 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
   @ApiOperation({
-    summary: '@Query 방식 - 단일 유저 조회',
-    description: '@Query 방식 - 단일 유저 조회 API',
+    summary: '@Query 方式 - ユーザーのデータを取得',
+    description: '@Query 方式 - ユーザーのデータを取得するAPI',
   })
-  @Get('/user')
+  @Get('/user') // localhost:5000/user/user?id=1
   findByUserOne1(@Query('id') id: number): Promise<User> {
+    return this.userService.findOne(id);
+  }
+  
+  
+  /** 
+   * @author ckcic
+   * @description @Param 方式 - ユーザーのデータ取得するメソッド
+   * 
+   * @param id ユーザーの固有ID
+   * @returns {Promise<User>} ユーザーデータを戻り値として返す
+   */
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: '@Param 方式 - ユーザーのデータを取得',
+    description: '@Param 方式 - ユーザーのデータを取得するAPI',
+  })
+  @Get('/user/:id') // localhost:5000/user/user/1
+  findByUserOne2(@Param('id') id: number): Promise<User> {
     return this.userService.findOne(id);
   }
 
 
-
+  /**
+   * @author ckcic
+   * @description @Param 方式 - ログインしたユーザーのデータ取得するメソッド
+   * 
+   * @param email ユーザーのメール
+   * @returns  ユーザーデータでpassword,refreshTokenを除いてを戻り値として返す
+   */ 
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token') //JWT 토큰 키 설정
+  @ApiBearerAuth('access-token')
   @ApiOperation({
-    summary: '로그인 유저 조회',
-    description: '로그인 유저 조회 API',
+    summary: 'ログインしたユーザーのデータ取得',
+    description: 'ログインしたユーザーのデータ取得するAPI',
   })
   @ApiCreatedResponse({
-    description: '유저의 로그인으로 확인',
+    description: 'ログインしたユーザーのデータ取得',
     schema: {
       example: {
         success: true,
@@ -95,46 +123,49 @@ export class UserController {
       },
     },
   })
-  @Get('/:email')
+  @Get('/:email') // localhost:5000/user/client@gmail.com
   findUser(@Param('email') email: string){
     return this.userService.findUser(email);
   }
 
-  // @Param 방식 - 단일 유저 조회
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
-  @ApiOperation({
-    summary: '@Param 방식 - 단일 유저 조회',
-    description: '@Param 방식 - 단일 유저 조회 API',
-  })
-  @Get('/user/:id')
-  findByUserOne2(@Param('id') id: number): Promise<User> {
-    return this.userService.findOne(id);
-  }
 
-  // @Param & @Body 혼합 방식 - 단일 유저 수정
+  /** 
+   * @author ckcic
+   * @description @Param & @Body 混合方式 - ユーザーのデータを修正するメソッド
+   * 
+   * @param id ユーザーの固有ID
+   * @param updateUserDto ユーザー情報更新DTO
+   * @returns {Promise<void>}
+   */
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
   @ApiOperation({
-    summary: '유저 수정',
-    description: '유저 수정 API',
+    summary: 'ユーザーのデータを修正',
+    description: 'ユーザーのデータを修正するAPI',
   })
-  @Patch('/user/:id')
-  @UsePipes(ValidationPipe)
+  @Patch('/user/:id') // localhost:5000/user/user/1
+  @UsePipes(ValidationPipe) // updateUserDtoがバリデーションルールに従っているか検証
   setUser(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: number, // idが整数型なのか検証
     @Body() updateUserDto : UpdateUserDto,
   ): Promise<void> {
     return this.userService.updateUser(id, updateUserDto);
   }
 
+  /** 
+   * @author ckcic
+   * @description @Query 方式 - ユーザーのでーたを削除するメソッド
+   * 
+   * @param id ユーザーの固有ID
+   * @returns {Promise<void>}
+   */
   @UseGuards(JwtRefreshAuthGuard)
   @ApiBearerAuth('refresh-token')
   @ApiOperation({
-    summary: '@Query 방식 - 단일 유저 삭제',
-    description: '@Query 방식 - 단일 유저 삭제 API',
+    summary: '@Query 方式 - ユーザーのでーたを削除',
+    description: '@Query 方式 - ユーザーのでーたを削除するAPI',
   })
-  @Delete('/delete_user')
+  @Delete('/delete_user') // localhost:5000/user/delete_user?id=1
   deleteUser(@Query('id') id: number): Promise<void> {
     return this.userService.deleteUser(id);
   }

@@ -11,9 +11,9 @@ import { CartService } from 'src/cart/cart.service';
 import { User, Cart, CartToProduct, CartToProductOption } from '../model/entity';
 
 @Module({
-  imports: [UserModule, PassportModule, HttpModule, JwtModule.register({}), TypeOrmModule.forFeature([User, Cart, CartToProduct, CartToProductOption])],
-  providers: [AuthService, JwtStrategy, JwtRefreshStrategy, CartService],
-  exports: [AuthService],
-  controllers: [AuthController],
+  imports: [UserModule, PassportModule, HttpModule, JwtModule.register({}), TypeOrmModule.forFeature([User, Cart, CartToProduct, CartToProductOption])], // モジュールとエンティティをインポート
+  controllers: [AuthController], // コントローラはクライアントへのリクエストとレスポンスを担当
+  providers: [AuthService, JwtStrategy, JwtRefreshStrategy, CartService], // プロバイダーにサービスを登録、サービスはビジネスロジックを担当
+  exports: [AuthService], // 他のモジュールで使えるようにエクスポート
 })
 export class AuthModule {}

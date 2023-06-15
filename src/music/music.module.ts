@@ -5,8 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Music } from 'src/model/entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Music])],
-  providers: [MusicService],
-  controllers: [MusicController]
+  imports: [TypeOrmModule.forFeature([Music])], // エンティティをインポート
+  controllers: [MusicController], // コントローラはクライアントへのリクエストとレスポンスを担当
+  providers: [MusicService], // プロバイダーにサービスを登録、サービスはビジネスロジックを担当
 })
 export class MusicModule {}

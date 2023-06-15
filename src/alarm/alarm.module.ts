@@ -5,8 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Alarm } from 'src/model/entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Alarm])],
-  controllers: [AlarmController],
-  providers: [AlarmService]
+  imports: [TypeOrmModule.forFeature([Alarm])], // エンティティをインポート
+  controllers: [AlarmController], // コントローラはクライアントへのリクエストとレスポンスを担当
+  providers: [AlarmService] // プロバイダーにサービスを登録、サービスはビジネスロジックを担当
 })
 export class AlarmModule {}

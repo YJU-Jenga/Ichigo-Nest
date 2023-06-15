@@ -1,53 +1,50 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsString, MinLength } from "class-validator";
+import { IsNotEmpty, IsString, MinLength } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class UpdateProductDto {
   @ApiProperty({ 
-    example: '상품명',
-    description: '상품이름',
+    example: 'くまさん',
+    description: '商品名',
     required: true
    })
   @IsString()
-  @MinLength(12, {message: '상품명을 입력해주세요.'})
-  @IsNotEmpty({message: '상품명을 입력해주세요.'})
+  @MinLength(12, {message: '商品名を記入してください。'}) // フロントエンドで JSON.stringify({ name: form.name })してデータを送るので実際のデータが空いているか確認
+  @IsNotEmpty({message: '商品名を記入してください。'})
   name: string;
 
   @ApiProperty({ 
     example: 15000,
-    description: '상품가격',
+    description: '商品価格',
     required: true
    })
-   // @IsNumber()
-  @MinLength(11, {message: '상품가격을 입력해주세요.'})
-  @IsNotEmpty({message: '상품가격을 입력해주세요.'})
+  @MinLength(11, {message: '商品価格を記入してください。'}) // フロントエンドで JSON.stringify({ price: form.price })してデータを送るので実際のデータが空いているか確認
+  @IsNotEmpty({message: '商品価格を記入してください。'})
   price: number; 
 
   @ApiProperty({ 
-    example: '상품내용',
-    description: '상품설명',
+    example: 'かわいいくまさん',
+    description: '商品の説明',
     required: true
    })
   @IsString()
-  @MinLength(19, {message: '상품설명을 입력해주세요.'})
-  @IsNotEmpty({message: '상품설명을 입력해주세요.'})
+  @MinLength(19, {message: '商品の説明を記入してください。'}) // フロントエンドで JSON.stringify({ description: form.description })してデータを送るので実際のデータが空いているか確認
+  @IsNotEmpty({message: '商品の説明を記入してください。'})
   description: string;
 
   @ApiProperty({ 
     example: 1000,
-    description: '상품재고',
+    description: '商品の在庫',
     required: true
    })
-  // @IsNumber()
-  @MinLength(11, {message: '상품재고를 입력해주세요.'})
-  @IsNotEmpty({message: '상품재고를 입력해주세요.'})
+  @MinLength(11, {message: '商品の在庫を記入してください。'}) // フロントエンドで JSON.stringify({ stock: form.stock })してデータを送るので実際のデータが空いているか確認
+  @IsNotEmpty({message: '商品の在庫を記入してください。'})
   stock: number;
   
   @ApiProperty({ 
     example: true,
-    description: '상품종류(남,녀)',
+    description: '商品種類(男・女)',
     required: true
    })
-  // @IsBoolean()
   @IsNotEmpty()
   type: boolean;
 }

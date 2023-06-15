@@ -3,8 +3,8 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateDeviceDto {
   @ApiProperty({ 
-    example: '딸기인형1',
-    description: '기기이름',
+    example: 'イチゴちゃん',
+    description: 'デバイスの名前',
     required: true
    })
   @IsNotEmpty()
@@ -12,7 +12,7 @@ export class CreateDeviceDto {
 
   @ApiProperty({ 
     example: '12:34:56:78:90:AB',
-    description: '기기의 MAC주소',
+    description: 'デバイスのMACアドレス',
     required: true
    })
   @IsNotEmpty()

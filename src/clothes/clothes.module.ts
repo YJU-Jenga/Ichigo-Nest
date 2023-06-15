@@ -5,8 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Clothes } from 'src/model/entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Clothes])],
-  controllers: [ClothesController],
-  providers: [ClothesService]
+  imports: [TypeOrmModule.forFeature([Clothes])], // エンティティをインポート
+  controllers: [ClothesController], // コントローラはクライアントへのリクエストとレスポンスを担当
+  providers: [ClothesService] // プロバイダーにサービスを登録、サービスはビジネスロジックを担当
 })
 export class ClothesModule {}

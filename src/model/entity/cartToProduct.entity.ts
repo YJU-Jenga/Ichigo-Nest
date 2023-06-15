@@ -2,7 +2,7 @@ import { Entity, Column, ManyToOne, PrimaryGeneratedColumn, BaseEntity, OneToMan
 import { Cart, Product, Clothes, CartToProductOption } from "./index"
 
 @Entity()
-export class CartToProduct extends BaseEntity {
+export class CartToProduct extends BaseEntity { // カートに入っている商品をエンティティで定義
     @PrimaryGeneratedColumn()
     cartToProductId!: number
 
@@ -12,9 +12,10 @@ export class CartToProduct extends BaseEntity {
     @Column()
     productId!: number
 
-    @Column()
+    @Column({comment: '商品の数量'})
     count!: number
 
+    // 関係定義
     @ManyToOne(() => Cart, (cart) => cart.cartToProducts)
     cart!: Cart
 

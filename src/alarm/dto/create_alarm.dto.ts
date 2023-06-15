@@ -4,31 +4,31 @@ import { ApiProperty } from "@nestjs/swagger";
 export class CreateAlarmDto {
   @ApiProperty({ 
     example: 1,
-    description: '유저아이디',
+    description: 'ユーザーのid',
     required: true
    })
-  @IsNotEmpty({message: '유저정보가 비어있습니다.'})
+  @IsNotEmpty({message: 'ユーザー情報が記入してください。'})
   user_id: number;
   
   @ApiProperty({ 
     example: '1200',
-    description: '알람 등록 시간',
+    description: 'アラーム登録時間',
     required: true
   })
-  @IsNotEmpty({message: '유저정보가 비어있습니다.'})
+  @IsNotEmpty({message: 'ユーザー情報が記入してください。'})
   time_id: string;
   
   @ApiProperty({ 
-    example: '잠잘시간',
-    description: '알람이름',
+    example: '寝る時間',
+    description: 'アラームの名前',
     required: true
   })
-  @IsNotEmpty({message: '알람의 이름을 적어 주세요'})
+  @IsNotEmpty({message: 'アラームの名前を記入してください。'})
   name: string;
   
   @ApiProperty({ 
-    example: '○○야 잘시간이야~',
-    description: 'tts용 문자',
+    example: '○○君 眠る時間だよ~',
+    description: 'tts用文字',
     required: false
   })
   @IsOptional()
@@ -36,7 +36,7 @@ export class CreateAlarmDto {
 
   @ApiProperty({ 
     example: 'uploads/music/asdf.mp3',
-    description: '파일경로',
+    description: 'ファイルパス',
     required: false
   })
   @IsOptional()
@@ -44,7 +44,7 @@ export class CreateAlarmDto {
   
   @ApiProperty({ 
     example: true,
-    description: '상태, 꺼저있냐, 켜저있나',
+    description: '状態、オフか、オンか',
     required: true
   })
   @IsNotEmpty()
@@ -52,7 +52,7 @@ export class CreateAlarmDto {
  
   @ApiProperty({ 
     example: '0000000',
-    description: '0000000 1로 바꾸면 반복, 일~월 반복 확인용',
+    description: '0000000 1に変更すると繰り返し、日~月繰り返し確認用',
     required: true
    })
   @IsNotEmpty()

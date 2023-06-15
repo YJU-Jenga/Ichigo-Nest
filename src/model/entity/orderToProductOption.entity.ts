@@ -2,7 +2,7 @@ import { Entity, Column, ManyToOne, PrimaryGeneratedColumn, BaseEntity, JoinColu
 import { Clothes, OrderToProduct } from "./index"
 
 @Entity()
-export class OrderToProductOption extends BaseEntity {
+export class OrderToProductOption extends BaseEntity { // 注文に入っている商品のオプションをエンティティで定義
     @PrimaryGeneratedColumn()
     id!: number
 
@@ -12,12 +12,13 @@ export class OrderToProductOption extends BaseEntity {
     @Column()
     clothesId!: number
 
-    @Column()
+    @Column({comment: '商品の注文数'})
     color!: string
     
-    @Column({comment: '주문 개수'})
+    @Column({comment: 'オプションの数量'})
     count: number;
 
+    // 関係定義
     @ManyToOne(() => OrderToProduct, (orderToProduct) => orderToProduct.orderToProductOption)
     @JoinColumn({name: "orderToProductId"})
     orderToProduct!: OrderToProduct

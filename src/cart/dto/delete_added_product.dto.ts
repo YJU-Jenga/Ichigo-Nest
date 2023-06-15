@@ -4,7 +4,7 @@ import { ApiProperty } from "@nestjs/swagger";
 export class DeleteAddedProductDto {
   @ApiProperty({ 
     example: 1,
-    description: '장바구니 고유 아이디',
+    description: 'ユーザーのカートの固有ID',
     required: true
    })
   @IsNumber()
@@ -13,7 +13,7 @@ export class DeleteAddedProductDto {
 
   @ApiProperty({ 
     example: 1,
-    description: '상품 고유 아이디',
+    description: '商品の固有ID',
     required: true
    })
   @IsNumber()

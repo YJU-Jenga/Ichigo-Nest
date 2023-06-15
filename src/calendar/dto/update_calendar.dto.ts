@@ -4,7 +4,7 @@ import { ApiProperty } from "@nestjs/swagger";
 export class UpdateCalendarDto {
   @ApiProperty({ 
     example: "Meeting with clients",
-    description: '제목',
+    description: 'スケジュールのタイトル',
     required: true
    })
   @IsNotEmpty()
@@ -12,7 +12,7 @@ export class UpdateCalendarDto {
 
   @ApiProperty({ 
     example: "2023-04-17T09:00:00.000Z",
-    description: '시작',
+    description: 'スケジュール開始時間',
     required: true
    })
   @IsNotEmpty()
@@ -20,7 +20,7 @@ export class UpdateCalendarDto {
 
   @ApiProperty({ 
     example: "2023-04-17T11:00:00.000Z",
-    description: '끝',
+    description: 'スケジュール終了時間',
     required: true
    })
   @IsNotEmpty()
@@ -28,7 +28,7 @@ export class UpdateCalendarDto {
 
   @ApiProperty({ 
     example: "Conference room A",
-    description: '장소',
+    description: '場所',
     required: false
    })
   @IsOptional()
@@ -36,7 +36,7 @@ export class UpdateCalendarDto {
 
   @ApiProperty({ 
     example: "Meeting",
-    description: '내용',
+    description: 'スケジュールの内容',
     required: false
    })
   @IsOptional()

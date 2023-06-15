@@ -9,28 +9,28 @@ export class Calendar extends BaseEntity {
   @Column()
   userId:number;
 
-  @Column()
+  @Column({comment:"スケジュールのタイトル"})
   title: string;
 
-  @Column()
+  @Column({comment:"スケジュール開始時間"})
   start: Date;
 
-  @Column()
+  @Column({comment:"スケジュール終了時間"})
   end: Date;
 
-  @Column({nullable: true})
+  @Column({comment:"場所", nullable: true})
   location?: string;
 
-  @Column({nullable: true})
+  @Column({comment:"スケジュールの内容", nullable: true})
   description?: string;
 
-  @CreateDateColumn({name: 'created_at', comment: '생성일'})
+  @CreateDateColumn({name: 'created_at', comment: '作成日'})
   createdAt: Date;
 
-  @UpdateDateColumn({name: 'updated_at', comment: '수정일'})
+  @UpdateDateColumn({name: 'updated_at', comment: '修正日'})
   updatedAt: Date;
 
-  // 관계 설정
+  // 関係定義
   @ManyToOne(
     () => User,
     (user) => user.post, { cascade:true, nullable: false, onDelete: 'CASCADE' }

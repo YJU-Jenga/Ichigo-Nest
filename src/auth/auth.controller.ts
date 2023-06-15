@@ -8,51 +8,83 @@ import { SignUpDto, SignInDto } from './dto';
 import { GetCurrentUser, GetCurrentUserId } from './decorators';
 
 @Controller('auth')
-@ApiTags('Auth')
+@ApiTags('Auth') // Swaggerタグの設定
 export class AuthController {
-  constructor(private readonly authService: AuthService){}
+  constructor(private readonly authService: AuthService){} // 依存性の注入、AuthServiceクラスのインスタンスを注入
   
-  @Post('/local/signup')
+  /**
+   * @author ckcic
+   * @description 会員登録するメソッド
+   *
+   * @param dto 会員登録DTO
+   * @returns {Promise<Tokens>} JWTトークンを戻り値として返す
+   */
+  @Post('/local/signup') // localhost:5000/auth/local/signup
   @ApiOperation({
-    summary: '회원가입',
-    description: '회원가입 API'
+    summary: '会員登録',
+    description: '会員登録するAPI'
   })
   @HttpCode(HttpStatus.CREATED)
   async singupLocal(@Body() dto: SignUpDto): Promise<Tokens> {
     return this.authService.singupLocal(dto);
   }
   
-  @Post('/local/signin')
+
+  /**
+   * @author ckcic
+   * @description ログインするメソッド
+   *
+   * @param dto ログインDTO
+   * @returns {Promise<Tokens>} JWTトークンを戻り値として返す
+   */
+  @Post('/local/signin') // localhost:5000/auth/local/signin
   @ApiOperation({
-    summary: '로그인',
-    description: '로그인 API'
+    summary: 'ログイン',
+    description: 'ログインするAPI'
   })
   @HttpCode(HttpStatus.OK)
   async singinLocal(@Body() dto: SignInDto): Promise<Tokens> {
     return this.authService.singinLocal(dto);
   }
   
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
-  @Post('/logout')
+
+  /**
+   * @author ckcic
+   * @description ログアウトするメソッド
+   *
+   * @param userId ユーザーの固有id
+   * @returns {Promise<void>}
+   */
+  @UseGuards(JwtAuthGuard) // 検証済みのユーザーのみアクセス可能 - トークン発行済みのユーザー
+  @ApiBearerAuth('access-token') // SwaggerでのJWTトークンキーの設定
+  @Post('/logout') // localhost:5000/auth/logout
   @ApiOperation({
-    summary: '로그아웃',
-    description: '로그아웃 API'
+    summary: 'ログアウト',
+    description: 'ログアウトするAPI'
   })
   @HttpCode(HttpStatus.OK)
-  async logout(@GetCurrentUserId() userId: number){
+  async logout(@GetCurrentUserId() userId: number): Promise<void>{
     return this.authService.logout(userId);
   }
   
+
+  /**
+   * @author ckcic
+   * @description JWTトークンを再発行するメソッド
+   *
+   * @param userId ユーザーの固有id
+   * @param refreshToken リフレッシュトークン
+   * @returns {Promise<Tokens>} JWTトークンを戻り値として返す
+   */
   @UseGuards(JwtRefreshAuthGuard)
   @ApiBearerAuth('refresh-token')
-  @Post('/refresh')
+  @Post('/refresh') // localhost:5000/auth/refresh
   @ApiOperation({
-    summary: '토큰 재발급',
-    description: '토큰 재발급 API'
+    summary: 'JWTトークンを再発行',
+    description: 'JWTトークンを再発行するAPI'
   })
   @HttpCode(HttpStatus.OK)
-  async refreshTokens(@GetCurrentUserId() userId: number, @GetCurrentUser('refreshToken') refreshToken: string){
+  async refreshTokens(@GetCurrentUserId() userId: number, @GetCurrentUser('refreshToken') refreshToken: string): Promise<Tokens>{
     return this.authService.refreshTokens(userId, refreshToken); 
   }
 

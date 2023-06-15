@@ -13,22 +13,36 @@ import {
 @Injectable()
 export class CartService {
   constructor(
-    @InjectRepository(Cart) private readonly cartRepository: Repository<Cart>,
-    @InjectRepository(CartToProduct)
-    private readonly cartToProductRepository: Repository<CartToProduct>,
-    @InjectRepository(CartToProductOption)
-    private readonly cartToProductOptionRepository: Repository<CartToProductOption>,
-  ) {}
+    @InjectRepository(Cart) private readonly cartRepository: Repository<Cart>, // Cartリポジトリを注入
+    @InjectRepository(CartToProduct) private readonly cartToProductRepository: Repository<CartToProduct>, // CartToProductリポジトリを注入
+    @InjectRepository(CartToProductOption) private readonly cartToProductOptionRepository: Repository<CartToProductOption>, // CartToProductOptionリポジトリを注入
+  ) {} // 依存性の注入
 
-  async createCart(userId: number) {
+
+  /**
+   * @author ckcic
+   * @description カートを作成するメソッド
+   *
+   * @param userId ユーザーの固有id
+   * @returns {Promise<void>}
+   */
+  async createCart(userId: number): Promise<void> {
     try {
-      return await this.cartRepository.save({ userId });
+      await this.cartRepository.save({ userId });
     } catch (error) {
       console.log(error);
     }
   }
 
-  async findCartId(userId: number) {
+
+  /**
+   * @author ckcic
+   * @description ユーザーのカートの固有idを取得するメソッド
+   *
+   * @param userId ユーザーの固有id
+   * @returns {Promise<Cart>} カートのデータを戻り値として返す
+   */
+  async findCartId(userId: number): Promise<Cart> {
     try {
       return await this.cartRepository.findOneBy({ userId });
     } catch (error) {
@@ -36,6 +50,13 @@ export class CartService {
     }
   }
 
+  /**
+   * @author ckcic
+   * @description カートを取得するメソッド
+   *
+   * @param cartId カートの固有id
+   * @returns {Promise<Cart>} カートのデータを戻り値として返す
+   */
   async findOneCart(cartId: number): Promise<Cart> {
     try {
       return await this.cartRepository.findOneBy({ id: cartId });
@@ -44,9 +65,17 @@ export class CartService {
     }
   }
 
-  async deleteCart(userId: number) {
+
+  /**
+   * @author ckcic
+   * @description カートを削除するメソッド
+   *
+   * @param userId ユーザーの固有id
+   * @returns {Promise<void>}
+   */
+  async deleteCart(userId: number): Promise<void> {
     try {
-      return await this.cartRepository
+      await this.cartRepository
         .createQueryBuilder('cart')
         .where('cart.userId=:userId', { userId })
         .delete()
@@ -56,18 +85,19 @@ export class CartService {
     }
   }
 
-  // async findCTPID (cartId:number, productId:number) {
-  //   try {
-  //     return await this.cartToProductRepository.findOneBy({cartId, productId});
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
 
-  async addProduct(dto: AddProductDto) {
+  /**
+   * @author ckcic
+   * @description カートに商品を追加するメソッド
+   *
+   * @param dto カートに商品追加DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
+   * @returns {Promise<void>}
+   */
+  async addProduct(dto: AddProductDto): Promise<void> {
     try {
       const { cartId, productId, count } = dto;
 
+      // 追加する商品がカートに既に存在するのか確認
       const flag = await this.cartToProductRepository.findOneBy({
         cartId,
         productId,
@@ -76,12 +106,12 @@ export class CartService {
       console.log(flag);
 
       if (flag != null) {
-        return await this.cartToProductRepository.update(flag.cartToProductId, {
+        await this.cartToProductRepository.update(flag.cartToProductId, {
           count: flag.count + 1,
         });
       }
 
-      return await this.cartToProductRepository.save({
+      await this.cartToProductRepository.save({
         cartId,
         productId,
         count,
@@ -91,18 +121,19 @@ export class CartService {
     }
   }
 
-  // async findCTP (cartId: number, productId: number) {
-  //   return await this.cartToProductRepository.findBy({cartId, productId});
-  // }
 
-  // async findOption (cartToProductId: number, clothesId: number) {
-  //   return await this.cartToProductOptionRepository.findOne({where: [{cartToProductId}, {clothesId}]});
-  // }
-
-  async addProductWithOption(dto: AddProductWithOptionDto) {
+  /**
+   * @author ckcic
+   * @description カートに商品とオプションを追加するメソッド
+   *
+   * @param dto カートに商品とオプション追加DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
+   * @returns {Promise<void>}
+   */
+  async addProductWithOption(dto: AddProductWithOptionDto): Promise<void> {
     try {
       const { cartId, productId, count, clothesIds, colors } = dto;
 
+      // 追加する商品がカートに既に存在するのか確認
       const cTP = await this.cartToProductRepository.findOneBy({
         cartId,
         productId,
@@ -158,6 +189,15 @@ export class CartService {
     }
   }
 
+
+  /**
+   * @author ckcic
+   * @description カートの中にいる商品とオプションを更新するメソッド
+   *
+   * @param ctpId カートの中にいる商品の固有id
+   * @param dto カートの中にいる商品とオプション更新DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
+   * @returns {Promise<void>} 
+   */
   async updateProductWithOption(
     ctpId: number,
     dto: UpdateProductWithOptionDto,
@@ -226,7 +266,14 @@ export class CartService {
     }
   }
 
-  async findAllProductInCart(cartId: number) {
+  /**
+   * @author ckcic
+   * @description カートの中にいる商品を全て取得するメソッド
+   *
+   * @param cartId カートの固有id
+   * @returns {Promise<Cart[]>} カートの中にいる商品全てのデータを戻り値として返す
+   */
+  async findAllProductInCart(cartId: number): Promise<Cart[]> {
     try {
       return await this.cartRepository
         .createQueryBuilder('cart')
@@ -243,10 +290,19 @@ export class CartService {
     }
   }
 
-  async updateAddedProduct(cartId: number, dto: UpdateAddedProductDto) {
+
+  /**
+   * @author ckcic
+   * @description カートの中にいる商品を更新するメソッド
+   *
+   * @param cartId カートの中にいる商品の固有id
+   * @param dto カートの中にいる商品更新DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
+   * @returns {Promise<void>} 
+   */
+  async updateAddedProduct(cartId: number, dto: UpdateAddedProductDto): Promise<void> {
     try {
       const { productId, count } = dto;
-      return await this.cartToProductRepository.update(cartId, {
+      await this.cartToProductRepository.update(cartId, {
         productId,
         count,
       });
@@ -255,7 +311,15 @@ export class CartService {
     }
   }
 
-  async deleteAddedProduct(dto: DeleteAddedProductDto) {
+
+  /**
+   * @author ckcic
+   * @description カートの中にいる商品を削除するメソッド
+   *
+   * @param dto カートの中にいる商品削除DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
+   * @returns {Promise<void>} 
+   */
+  async deleteAddedProduct(dto: DeleteAddedProductDto): Promise<void> {
     try {
       const { cartId, productId } = dto;
       // console.log(dto);
@@ -275,7 +339,7 @@ export class CartService {
         }
       }
 
-      return await this.cartToProductRepository
+      await this.cartToProductRepository
         .createQueryBuilder('cartToProduct')
         .where('cartId=:cartId', { cartId })
         .where('productId=:productId', { productId })

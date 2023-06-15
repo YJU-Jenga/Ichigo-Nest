@@ -11,38 +11,35 @@ export class Post extends BaseEntity {
   
   @Column()
   boardId: number;
-  
 
-  @Column({type: 'varchar', length: 100, comment: '제목'})
+  @Column({type: 'varchar', length: 100, comment: '投稿のタイトル'})
   title: string;
   
-  @Column({type: 'varchar', length: 4, nullable: true, comment: '비밀번호'})
+  @Column({type: 'varchar', length: 4, nullable: true, comment: '投稿のパスワード - 整数 4文字'})
   password: string;
 
-  @Column({type: 'varchar', length: 1000, comment: '내용'})
+  @Column({type: 'varchar', length: 1000, comment: '投稿の内容'})
   content: string;
 
-  @Column({default: 0, comment: '조회수'})
+  @Column({default: 0, comment: '閲覧回数'})
   hit: number;
 
-  @Column({default: false, comment: '응답상태'})
+  @Column({default: false, comment: '応答状態'})
   state: boolean;
 
-  @Column({comment: '비밀글 여부'})
+  @Column({comment: '非公開設定'})
   secret: boolean;
 
-  @Column({type: 'varchar', length: 100, nullable: true, comment: '이미지 주소'})
+  @Column({type: 'varchar', length: 100, nullable: true, comment: 'イメージファイルパス'})
   image: string;
 
-  @CreateDateColumn({name: 'created_at', comment: '생성일'})
+  @CreateDateColumn({name: 'created_at', comment: '作成日'})
   createdAt: Date;
 
-  @UpdateDateColumn({name: 'updated_at', comment: '수정일'})
+  @UpdateDateColumn({name: 'updated_at', comment: '修正日'})
   updatedAt: Date;
 
-
-  // 관계 설정
-
+  // 関係定義
   @ManyToOne(
     () => User,
     (user) => user.post, { cascade:true, nullable: false, onDelete: 'CASCADE' }

@@ -4,7 +4,7 @@ import { ApiProperty } from "@nestjs/swagger";
 export class UpdateProductWithOptionDto {
   @ApiProperty({ 
     example: 1,
-    description: '유저의 장바구니 고유 아이디',
+    description: 'ユーザーのカートの固有ID',
     required: true
    })
   @IsNotEmpty()
@@ -12,7 +12,7 @@ export class UpdateProductWithOptionDto {
 
   @ApiProperty({ 
     example: 1,
-    description: '상품 고유 아이디',
+    description: '商品の固有ID',
     required: true
    })
   @IsNumber()
@@ -21,7 +21,7 @@ export class UpdateProductWithOptionDto {
 
   @ApiProperty({ 
     example: 1,
-    description: '상품 개수',
+    description: '商品の数',
     required: true
    })
   @IsNumber()
@@ -30,7 +30,7 @@ export class UpdateProductWithOptionDto {
 
   @ApiProperty({ 
     example: [1,2,3],
-    description: '주문 상품의 옷 번호들',
+    description: '商品の服(オプション)のid配列',
     required: true
    })
   @IsOptional()
@@ -38,7 +38,7 @@ export class UpdateProductWithOptionDto {
 
   @ApiProperty({ 
     example: ["ff4040","FF0000","FF3366"],
-    description: '옷들의 색들',
+    description: '人形の服のカラーコード配列',
     required: true
    })
   @IsOptional()
@@ -46,7 +46,7 @@ export class UpdateProductWithOptionDto {
 
   @ApiProperty({ 
     example: [1,2,3],
-    description: '상품 옵션의 개수',
+    description: '注文した商品のオプションの数配列',
     required: true
    })
   @IsNumber()

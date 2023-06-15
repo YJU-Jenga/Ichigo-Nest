@@ -7,11 +7,18 @@ import { UpdateCommentDto, WriteCommentDto } from './dto';
 @Injectable()
 export class CommentService {
   constructor(
-    @InjectRepository(Comment) private commentRepository: Repository<Comment>,
-    @InjectRepository(Post) private postRepository: Repository<Post>,
-  ){}
+    @InjectRepository(Comment) private commentRepository: Repository<Comment>, // Commentリポジトリを注入
+    @InjectRepository(Post) private postRepository: Repository<Post>, // Postリポジトリを注入
+  ){} // 依存性の注入
 
-  async write(dto: WriteCommentDto){
+  /**
+   * @author ckcic
+   * @description コメントを作成するメソッド
+   *
+   * @param dto コメント作成DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
+   * @returns {Promise<void>}
+   */
+  async write(dto: WriteCommentDto): Promise<void>{
     try {
       const { writer, postId, content } = dto;
       await this.commentRepository.save({
@@ -25,6 +32,14 @@ export class CommentService {
     }
   }
 
+
+  /**
+   * @author ckcic
+   * @description 投稿のコメントを全て取得するメソッド
+   *
+   * @param postId 投稿の固有id
+   * @returns {Promise<Comment[]>} 全てのコメントのデータを戻り値として返す
+   */
   async getAll(postId: number): Promise<Comment[]>{
     try {
       return await this.commentRepository.find({where: {postId}, order: {'createdAt': 'desc'}})
@@ -33,6 +48,14 @@ export class CommentService {
     }
   }
 
+
+  /**
+   * @author ckcic
+   * @description コメントを取得するメソッド
+   *
+   * @param id コメントの固有id
+   * @returns {Promise<Comment>} コメントのデータを戻り値として返す
+   */
   async getOne(id: number): Promise<Comment>{
     try {
       return await this.commentRepository.findOneBy({id})
@@ -41,7 +64,16 @@ export class CommentService {
     }
   }
 
-  async update(id: number, dto: UpdateCommentDto){
+
+  /**
+   * @author ckcic
+   * @description コメントを更新するメソッド
+   *
+   * @param id コメントの固有id 
+   * @param dto コメント更新DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
+   * @returns {Promise<void>} 
+   */
+  async update(id: number, dto: UpdateCommentDto): Promise<void>{
     try {
       const { writer, postId, content } = dto;
       await this.commentRepository.update(id, {
@@ -54,7 +86,15 @@ export class CommentService {
     }
   }
 
-  async delete(id: number){
+
+  /**
+   * @author ckcic
+   * @description コメントを削除するメソッド
+   *
+   * @param id コメントの固有id
+   * @returns {Promise<void>} 
+   */
+  async delete(id: number): Promise<void>{
     try {
       const { postId } = await this.commentRepository
       .createQueryBuilder('comment')
@@ -69,7 +109,7 @@ export class CommentService {
       .groupBy('comment.postId')
       .getRawOne();
 
-      if(countComments <= 1) {
+      if(countComments <= 1) { // コメントの数で応答状態を変える
         await this.postRepository.update(postId, {state: false})
       }
 

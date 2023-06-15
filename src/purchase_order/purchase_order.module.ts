@@ -6,8 +6,8 @@ import { PurchaseOrder, OrderToProduct, Cart, CartToProduct, CartToProductOption
 import { CartService } from 'src/cart/cart.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PurchaseOrder, OrderToProduct, OrderToProductOption, Cart, CartToProduct, CartToProductOption])],
-  providers: [PurchaseOrderService, CartService],
-  controllers: [PurchaseOrderController]
+  imports: [TypeOrmModule.forFeature([PurchaseOrder, OrderToProduct, OrderToProductOption, Cart, CartToProduct, CartToProductOption])], // エンティティをインポート
+  controllers: [PurchaseOrderController], // コントローラはクライアントへのリクエストとレスポンスを担当
+  providers: [PurchaseOrderService, CartService], // プロバイダーにサービスを登録、サービスはビジネスロジックを担当
 })
 export class PurchaseOrderModule {}

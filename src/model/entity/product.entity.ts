@@ -7,32 +7,31 @@ export class Product extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({type: 'varchar', length: 50, comment: '상품이름'})
+  @Column({type: 'varchar', length: 50, comment: '商品名'})
   name: string;
 
-  @Column({comment: '상품가격'})
+  @Column({comment: '商品価格'})
   price: number;
 
-  @Column({type: 'varchar', length: 1000, comment: '상품설명'})
+  @Column({type: 'varchar', length: 1000, comment: '商品の説明'})
   description: string;
 
-  @Column({comment: '상품재고'})
+  @Column({comment: '商品の在庫'})
   stock: number;
 
-  @Column({comment: '상품종류(남,녀)'})
+  @Column({comment: '商品種類(男・女)'})
   type: boolean;
 
-  @Column({type: 'varchar', length: 100, nullable: true, comment: '상품 이미지 주소'})
+  @Column({type: 'varchar', length: 100, nullable: true, comment: 'イメージファイルパス'})
   image: string;
 
-  @CreateDateColumn({name: 'created_at', comment: '생성일'})
+  @CreateDateColumn({name: 'created_at', comment: '作成日'})
   createdAt: Date;
 
-  @UpdateDateColumn({name: 'updated_at', comment: '수정일'})
+  @UpdateDateColumn({name: 'updated_at', comment: '修正日'})
   updatedAt: Date;
 
-  // 관계 설정
-
+  // 関係定義
   @OneToMany(() => CartToProduct, (cartToProduct) => cartToProduct.product, { cascade:true, nullable: false, onDelete: 'CASCADE' })
   cartToproducts: CartToProduct;
   

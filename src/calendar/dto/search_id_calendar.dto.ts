@@ -4,7 +4,7 @@ import { ApiProperty } from "@nestjs/swagger";
 export class SearchIdCalendarDto {
   @ApiProperty({ 
     example: 1,
-    description: '유저 아이디',
+    description: 'ユーザーのid',
     required: true
    })
   @IsNotEmpty()

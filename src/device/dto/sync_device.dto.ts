@@ -4,7 +4,7 @@ import { ApiProperty } from "@nestjs/swagger";
 export class SyncDeviceDto {
   @ApiProperty({ 
     example: '12:34:56:78:90:AB',
-    description: '기기의 MAC주소',
+    description: 'デバイスのMACアドレス',
     required: true
    })
   @IsNotEmpty()
@@ -12,7 +12,7 @@ export class SyncDeviceDto {
 
   @ApiProperty({ 
     example: '1',
-    description: '연동하는 유저의 아이디',
+    description: '連動するユーザーのid',
    })
   @IsOptional()
   userId: number|null;

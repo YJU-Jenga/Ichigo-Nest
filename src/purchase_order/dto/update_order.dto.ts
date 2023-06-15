@@ -4,7 +4,7 @@ import { ApiProperty } from "@nestjs/swagger";
 export class UpdateOrderDto {
   @ApiProperty({ 
     example: 1,
-    description: '주문자 고유 아이디',
+    description: 'ユーザーの固有id',
     required: true
    })
   @IsNotEmpty()
@@ -12,7 +12,7 @@ export class UpdateOrderDto {
 
   @ApiProperty({ 
     example: '12345',
-    description: '주문자 우편번호',
+    description: '注文者の郵便番号',
     required: true
    })
   @IsString()
@@ -20,8 +20,8 @@ export class UpdateOrderDto {
   postalCode: string;
 
   @ApiProperty({ 
-    example: '경기도 ~~~',
-    description: '주문자 주소',
+    example: '東京都中央区~~~',
+    description: '注文者の住所',
     required: true
    })
   @IsString()
@@ -30,7 +30,7 @@ export class UpdateOrderDto {
 
   @ApiProperty({ 
     example: true,
-    description: '주문자 상태',
+    description: '注文状況',
     required: true
    })
   @IsNotEmpty()

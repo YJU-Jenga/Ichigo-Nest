@@ -9,20 +9,19 @@ export class Music extends BaseEntity {
   @Column()
   user_id: number;
 
-  @Column({comment:"파일 이름"})
+  @Column({comment:"音声ファイルの名前"})
   name: string;
 
-  @Column({comment:"파일 경로"})
+  @Column({comment:"ファイルパス"})
   file: string;
 
-  @CreateDateColumn({name: 'created_at', comment: '생성일'})
+  @CreateDateColumn({name: 'created_at', comment: '作成日'})
   createdAt: Date;
 
-  @UpdateDateColumn({name: 'updated_at', comment: '수정일'})
+  @UpdateDateColumn({name: 'updated_at', comment: '修正日'})
   updatedAt: Date;
 
-  // 관계 설정
-
+  // 関係定義
   @ManyToOne(
     () => User,
     (user) => user.music, { cascade:true, nullable: false, onDelete: 'CASCADE' }

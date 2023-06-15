@@ -7,12 +7,19 @@ import { CreateAlarmDto, UpdateAlarmDto } from './dto';
 
 @Injectable()
 export class AlarmService {
-  constructor(@InjectRepository(Alarm) private alarmRepository: Repository<Alarm>){}
+  constructor(@InjectRepository(Alarm) private alarmRepository: Repository<Alarm>){} // 依存性の注入、Alarmリポジトリを注入
 
-  async create(dto: CreateAlarmDto){
+  /**
+   * @author ckcic
+   * @description アラームを登録するメソッド
+   *
+   * @param dto アラーム登録DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
+   * @returns {Promise<void>}
+   */
+  async create(dto: CreateAlarmDto): Promise<void>{
     try {
       const { user_id, time_id, name, sentence, file, state, repeat } = dto;
-      return await this.alarmRepository.save({
+      await this.alarmRepository.save({
           user_id,
           time_id,
           name,
@@ -26,6 +33,14 @@ export class AlarmService {
     }
   }
 
+
+  /**
+   * @author ckcic
+   * @description ユーザーが登録したアラームを全て取得するメソッド
+   *
+   * @param user_id ユーザーの固有id
+   * @returns {Promise<Alarm[]>} 全てのユーザーが登録したアラームのデータを戻り値として返す
+   */
   async getAll(user_id:number): Promise<Alarm[]>{
     try {
       return await this.alarmRepository.find({ where: { user_id }, order: {'time_id': 'asc'}})
@@ -34,6 +49,14 @@ export class AlarmService {
     }
   }
 
+
+  /**
+   * @author ckcic
+   * @description アラームを取得するメソッド
+   *
+   * @param id アラームの固有id
+   * @returns {Promise<Alarm>} アラームのデータを戻り値として返す
+   */
   async getOne(id: number): Promise<Alarm>{
     try {
       return await this.alarmRepository.findOneBy({id})
@@ -42,9 +65,18 @@ export class AlarmService {
     }
   }
 
-  async update(id: number, dto: UpdateAlarmDto){
+
+  /**
+   * @author ckcic
+   * @description アラームを更新するメソッド
+   *
+   * @param id アラームの固有id
+   * @param dto アラーム更新DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
+   * @returns {Promise<void>}
+   */
+  async update(id: number, dto: UpdateAlarmDto): Promise<void>{
     const { user_id, time_id, name, sentence, file, state, repeat } = dto;
-    return await this.alarmRepository.update(id, {
+    await this.alarmRepository.update(id, {
         user_id,
         time_id,
         name,
@@ -55,7 +87,15 @@ export class AlarmService {
       });
   }
 
-  async delete(id: number){
+  
+  /**
+   * @author ckcic
+   * @description アラームを削除するメソッド
+   *
+   * @param id アラームの固有id
+   * @returns {Promise<void>}
+   */
+  async delete(id: number): Promise<void>{
     try {
       await this.alarmRepository.delete({id});
     } catch (error) {

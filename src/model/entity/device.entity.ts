@@ -9,16 +9,16 @@ export class Device extends BaseEntity {
   @Column({unique: true})
   macAddress: string;
 
-  @Column({comment:"기기 이름"})
+  @Column({comment:"デバイスの名前"})
   name: string;
 
   @Column({nullable: true})
   userId: number;
 
-  @CreateDateColumn({name: 'created_at', comment: '생성일'})
+  @CreateDateColumn({name: 'created_at', comment: '作成日'})
   createdAt: Date;
 
-  @UpdateDateColumn({name: 'updated_at', comment: '수정일'})
+  @UpdateDateColumn({name: 'updated_at', comment: '修正日'})
   updatedAt: Date;
 
   // 관계 설정

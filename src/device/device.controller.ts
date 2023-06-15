@@ -4,103 +4,167 @@ import { Response } from 'express';
 import { DeviceService } from './device.service';
 import { JwtAuthGuard } from 'src/auth/guards';
 import { CreateDeviceDto, SyncDeviceDto, UpdateDeviceDto } from './dto';
+import { Device } from 'src/model/entity';
 
 @Controller('device')
-@ApiTags('Device')
+@ApiTags('Device') // Swaggerタグの設定
 export class DeviceController {
-  constructor(private readonly deviceService: DeviceService){}
+  constructor(private readonly deviceService: DeviceService){} // 依存性の注入、DeviceServiceクラスのインスタンスを注入
   
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
-  @Post("/create")
+  /**
+   * @author ckcic
+   * @description 販売するデバイスを登録するメソッド
+   *
+   * @param dto デバイス登録DTO
+   * @returns {Promise<void>}
+   */
+  @UseGuards(JwtAuthGuard) // 検証済みのユーザーのみアクセス可能 - トークン発行済みのユーザー
+  @ApiBearerAuth('access-token') // SwaggerでのJWTトークンキーの設定
+  @Post("/create") // localhost:5000/device/create
   @ApiOperation({
-    summary: '기기 등록',
-    description: '기기 등록 API'
+    summary: 'デバイスを登録',
+    description: 'デバイスを登録するAPI'
   })
-  @UsePipes(ValidationPipe)
-  async write(@Body() dto: CreateDeviceDto){
+  @UsePipes(ValidationPipe) // dtoがバリデーションルールに従っているか検証
+  async write(@Body() dto: CreateDeviceDto): Promise<void>{
     return this.deviceService.create(dto);
   }
 
+
+  /**
+   * @author ckcic
+   * @description 登録されたデバイスを全て取得するメソッド
+   *
+   * @returns {Promise<Device[]>} 全ての登録されたデバイスのデータを戻り値として返す
+   */
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @Get("/getAll")
+  @Get("/getAll") // localhost:5000/device/getAll
   @ApiOperation({
-    summary: '등록된 기기 전체 조회',
-    description: '등록된 기기 전체 조회 API'
+    summary: '登録されたデバイスを全て取得',
+    description: '登録されたデバイスを全て取得するAPI'
   })
-  async getAll(){
+  async getAll(): Promise<Device[]>{
     return this.deviceService.getAll();
   }
 
-  // id로 조회
+
+  /**
+   * @author ckcic
+   * @description デバイスをidで取得するメソッド
+   *
+   * @param id デバイスの固有id
+   * @returns {Promise<Device>} デバイスのデータを戻り値として返す
+   */
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @Get("/getOne/:id")
+  @Get("/getOne/:id")  // localhost:5000/device/getOne/1
   @ApiOperation({
-    summary: '기기 id 조회',
-    description: '기기 id 조회 API'
+    summary: 'デバイスをidで取得',
+    description: 'デバイスをidで取得するAPI'
   })
-  async getOne(@Param('id', ParseIntPipe) id:number ){
+  async getOne(@Param('id', ParseIntPipe) id:number ): Promise<Device>{ // idが整数型なのか検証
     return this.deviceService.getOne(id);
   }
 
-  // 맥주소로 조회
+
+  /**
+   * @author ckcic
+   * @description デバイスをMACアドレスで取得するメソッド
+   *
+   * @param id デバイスの固有id
+   * @param res データを返すためのパラメーター
+   * @returns デバイスのデータをJSON形式で戻り値として返す
+   */
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @Get("/getDevice/:macAddress")
+  @Get("/getDevice/:macAddress") // localhost:5000/device/getOne/12:34:56:78:90:AB
   @ApiOperation({
-    summary: '기기 맥주소 조회',
-    description: '기기 맥주소 조회 API'
+    summary: 'デバイスをMACアドレスで取得',
+    description: 'デバイスをMACアドレスで取得するAPI'
   })
   async getDevice(@Param('macAddress') macAddress:string,  @Res() res: Response){
     const data = await this.deviceService.getDevice(macAddress)
     return res.json(data);
   }
   
-  // 유저아이디로 조회
+  
+  /**
+   * @author ckcic
+   * @description ユーザーに連動されているデバイスを全て取得するメソッド
+   *
+   * @param id ユーザーの固有id
+   * @param res データを返すためのパラメーター
+   * @returns 全てのユーザーに連動されているデバイスのデータをJSON形式で戻り値として返す
+   */
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @Get("/syncedDevice/:id")
+  @Get("/syncedDevice/:id") // localhost:5000/device/syncedDevice/1
   @ApiOperation({
-    summary: '유저에게 연동된 기기 조회',
-    description: '유저에게 연동된 기기 API'
+    summary: 'ユーザーに連動されているデバイスを全て取得',
+    description: 'ユーザーに連動されているデバイスを全て取得するAPI'
   })
-  async syncedDevice(@Param('id', ParseIntPipe) id:number,  @Res() res: Response){
+  async syncedDevice(@Param('id', ParseIntPipe) id:number,  @Res() res: Response){ // idが整数型なのか検証
     const data = await this.deviceService.syncedDevice(id);
     return res.json(data);
   }
   
+
+  /**
+   * @author ckcic
+   * @description デバイスを更新するメソッド
+   *
+   * @param id デバイスの固有id
+   * @param dto デバイス更新DTO
+   * @returns {Promise<void>}
+   */
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @Patch("/update/:id")
+  @Patch("/update/:id") // localhost:5000/device/update/1
   @ApiOperation({
-    summary: '기기 정보 수정',
-    description: '기기 수정 API'
+    summary: 'デバイスを更新',
+    description: 'デバイスを更新するAPI'
   })
-  async update(@Param('id', ParseIntPipe) id:number, @Body() dto: UpdateDeviceDto){
+  @UsePipes(ValidationPipe)
+  async update(@Param('id', ParseIntPipe) id:number, @Body() dto: UpdateDeviceDto): Promise<void>{ // idが整数型なのか検証
     return this.deviceService.update(id, dto);
   }
 
+
+  /**
+   * @author ckcic
+   * @description デバイスを連動するメソッド
+   *
+   * @param dto デバイス連動DTO
+   * @returns {Promise<void>}
+   */
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @Post("/sync")
+  @Post("/sync") // localhost:5000/device/sync
   @ApiOperation({
-    summary: '기기 연동',
-    description: '기기 연동 API'
+    summary: 'デバイスを連動',
+    description: 'デバイスを連動するAPI'
   })
-  async sync(@Body() dto: SyncDeviceDto){
+  async sync(@Body() dto: SyncDeviceDto): Promise<void>{
     return this.deviceService.sync(dto);
   }
 
+
+  /**
+   * @author ckcic
+   * @description デバイスを削除するメソッド
+   *
+   * @param id デバイスの固有id
+   * @returns {Promise<void>}
+   */
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @Delete("/delete/:id")
+  @Delete("/delete/:id") // localhost:5000/device/delete/1
   @ApiOperation({
-    summary: '기기 삭제',
-    description: '기기 삭제 API'
+    summary: 'デバイスを削除',
+    description: 'デバイスを削除するAPI'
   })
-  async delete(@Param('id', ParseIntPipe) id:number){
+  async delete(@Param('id', ParseIntPipe) id:number): Promise<void>{ // idが整数型なのか検証
     return this.deviceService.delete(id);
   }
 }

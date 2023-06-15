@@ -4,18 +4,18 @@ import { ApiProperty } from "@nestjs/swagger";
 export class CreateMusicDto {
   @ApiProperty({ 
     example: 1,
-    description: '유저아이디',
+    description: 'ユーザーのid',
     required: true
    })
-  @IsNotEmpty({message: '유저정보가 비어있습니다.'})
+  @IsNotEmpty({message: 'ユーザー情報が記入してください。'})
   user_id: number;
 
   @ApiProperty({ 
-    example: '음악1',
-    description: '알람등록용 파일 이름',
+    example: '童謡_海',
+    description: 'アラーム登録用の音声ファイルの名前',
     required: true
   })
-  @IsNotEmpty({message: '파일의 이름을 적어 주세요'})
+  @IsNotEmpty({message: '音声ファイルの名前を記入してください。'})
   name: string;
 }
   

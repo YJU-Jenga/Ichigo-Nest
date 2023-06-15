@@ -9,20 +9,13 @@ export class Cart extends BaseEntity {
   @Column()
   userId:number;
 
-  // @Column({comment: '수량'})
-  // count: number;
-
-  // @Column({name:"totoal_price", comment: '총 가격'})
-  // totalPrice: number;
-
-  @CreateDateColumn({name: 'created_at', comment: '생성일'})
+  @CreateDateColumn({name: 'created_at', comment: '作成日'})
   createdAt: Date;
 
-  @UpdateDateColumn({name: 'updated_at', comment: '수정일'})
+  @UpdateDateColumn({name: 'updated_at', comment: '修正日'})
   updatedAt: Date;
 
-  // 관계 설정
-
+  // 関係定義
   @OneToOne(() => User, {nullable: false} )
   @JoinColumn()
   user:User;

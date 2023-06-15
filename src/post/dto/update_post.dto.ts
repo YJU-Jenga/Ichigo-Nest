@@ -2,56 +2,53 @@ import { IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength} from "
 import { ApiProperty} from "@nestjs/swagger";
 
 export class UpdatePostDto {
-
   @ApiProperty({ 
     example: '1',
-    description: '작성자',
+    description: 'ユーザーのid',
     required: true
    })
   @IsNotEmpty()
   writer: number;
 
   @ApiProperty({ 
-    example: '제목 01',
-    description: '게시글 제목',
+    example: 'タイトル01',
+    description: '投稿のタイトル',
     required: true
    })
-  @MinLength(13, {message: '제목을 입력해주세요'})
+  @MinLength(13, {message: 'タイトルを記入してください。'}) // フロントエンドで JSON.stringify({ title: form.title })してデータを送るので実際のデータが空いているか確認
   @IsNotEmpty()
   title: string;
   
   @ApiProperty({ 
     example: '0000',
-    description: '게시글 비밀번호 - 숫자 4글자',
+    description: '投稿のパスワード - 整数 4文字',
    })
   @IsString()
   @IsOptional()
-  // @MinLength(15)
-  // @MaxLength(19)
-  // // 숫자 4글자
+  // 整数 4文字
   @Matches(
     /^({.*")([0-9]{0}|[0-9]{4})("})$/,
     { 
-      message: '비밀번호 양식에 맞게 작성하세요.',
+      message: 'パスワードフォームに合わせて記入してください。',
     }
   )
   password: string;
 
   @ApiProperty({ 
     example: false,
-    description: '비밀글 설정',
+    description: '非公開設定',
     required: true
    })
   @IsNotEmpty()
   secret: boolean;
 
   @ApiProperty({ 
-    example: '내용',
-    description: '게시글 내용',
+    example: '内容です～',
+    description: '投稿の内容',
     required: true
    })
   @IsString()
-  @MinLength(15, {message: '글 내용을 입력해주세요'})
+  @MinLength(15, {message: '投稿の内容を記入してください'}) // フロントエンドで JSON.stringify({ content: form.content })してデータを送るので実際のデータが空いているか確認
   @IsNotEmpty()
   content: string;
 }

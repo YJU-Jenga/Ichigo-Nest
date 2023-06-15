@@ -32,9 +32,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const error: string = res.error;
     const timestamp: string = new Date().toLocaleString();
 
-    console.log('リクエストURL：', url);
-    console.log('エラー情報：', error);
-    console.log('発生時刻：', timestamp);
+    console.log('リクエストURL:', url);
+    console.log('エラー情報:', error);
+    console.log('発生時刻:', timestamp);
 
     /* クライアントに情報を返します。 */
     response.status(status).json({

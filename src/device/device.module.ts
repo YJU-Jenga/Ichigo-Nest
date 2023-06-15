@@ -5,8 +5,8 @@ import { Device } from 'src/model/entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Device])],
-  controllers: [DeviceController],
-  providers: [DeviceService]
+  imports: [TypeOrmModule.forFeature([Device])], // エンティティをインポート
+  controllers: [DeviceController], // コントローラはクライアントへのリクエストとレスポンスを担当
+  providers: [DeviceService] // プロバイダーにサービスを登録、サービスはビジネスロジックを担当
 })
 export class DeviceModule {}

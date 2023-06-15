@@ -13,12 +13,19 @@ import { CartService } from 'src/cart/cart.service';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
-    private readonly cartService: CartService,
-    @InjectRepository(User) private readonly usersRepository: Repository<User>,
-    ) {}
+    private readonly jwtService: JwtService, // JwtServiceクラスのインスタンスを注入
+    private readonly configService: ConfigService, // ConfigServiceクラスのインスタンスを注入
+    private readonly cartService: CartService, // CartServiceクラスのインスタンスを注入
+    @InjectRepository(User) private readonly usersRepository: Repository<User>, // Userリポジトリを注入
+    ) {} // 依存性の注入
 
+  /**
+   * @author ckcic
+   * @description 会員登録するメソッド
+   *
+   * @param dto 会員登録DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
+   * @returns {Promise<Tokens>} JWTトークンを戻り値として返す
+   */
   async singupLocal(dto: SignUpDto): Promise<Tokens> {
     try {
       const { name, email, password, phone } = dto;
@@ -36,48 +43,73 @@ export class AuthService {
       return tokens;
     } catch (error) {
       throw new HttpException({
-        message: "이미 등록된 이메일 입니다.",
+        message: "すでに登録済みのメールです。",
         error: error.sqlMessage,
       },
       HttpStatus.FORBIDDEN);
     }
   }
 
+
+  /**
+   * @author ckcic
+   * @description ログインするメソッド
+   *
+   * @param dto ログインDTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
+   * @returns {Promise<Tokens>} JWTトークンを戻り値として返す
+   */
   async singinLocal(dto: SignInDto): Promise<Tokens> {
     try {
       const { email, password } = dto;
       const user = await this.usersRepository.findOne({where: {email}});
-      if (!user) throw new ForbiddenException("아이디와 비밀번호를 제대로 입력하십시오.");
+      if (!user) throw new ForbiddenException("IDとパスワードを正しく記入してください。");
 
       const passwordMatches = await bcrypt.compare(password, user.password);
-      if (!passwordMatches) throw new ForbiddenException("아이디와 비밀번호를 제대로 입력하십시오.");
+      if (!passwordMatches) throw new ForbiddenException("IDとパスワードを正しく記入してください。");
 
       const tokens = await this.getTokens(user.id, user.email);
       await this.updateRefreshToken(user.id, tokens.refresh_token);
       return tokens;
     } catch (error) {
       throw new HttpException({
-        message: "아이디와 비밀번호를 제대로 입력하십시오.",
+        message: "IDとパスワードを正しく記入してください。",
         error: error.sqlMessage,
       },
       HttpStatus.FORBIDDEN);
     }
   }
 
-  async logout(id: number) {
+
+  /**
+   * @author ckcic
+   * @description ログアウトするメソッド
+   *
+   * @param id ユーザーの固有id
+   * @returns {Promise<void>}
+   */
+  async logout(id: number): Promise<void> {
     try {
       const user = await this.usersRepository.findOne({where: {id},});
       if (!user) throw new ForbiddenException("Access-Denied");
       await this.usersRepository.update(id, {refreshToken: null});
     } catch (error) {
       throw new HttpException({
-        message: "인증되지 않은 접근",
+        message: "認証されていないアクセス",
         error: error,
       },
       HttpStatus.FORBIDDEN);
     }
   }
 
+
+  /**
+   * @author ckcic
+   * @description JWTトークンを再発行するメソッド
+   *
+   * @param id ユーザーの固有id
+   * @param refreshToken リフレッシュトークン
+   * @returns {Promise<Tokens>} JWTトークンを戻り値として返す
+   */
   async refreshTokens(id: number, refreshToken: string): Promise<Tokens> {
     try {
       if(refreshToken == undefined) throw new ForbiddenException("Access-Denied");
@@ -101,14 +133,40 @@ export class AuthService {
     }
   }
 
-  async hashData(data: string) {
+
+  /**
+   * @author ckcic
+   * @description 渡されたデータをハッシュ化するメソッド
+   *
+   * @param data 渡されたデータ
+   * @returns {Promise<string>} ハッシュ化した結果を戻り値として返す
+   */
+  async hashData(data: string): Promise<string> {
     return bcrypt.hash(data, 10);
   }
 
-  async updateRefreshToken(id: number, refreshToken: string) {
+
+  /**
+   * @author ckcic
+   * @description ユーザーのリフレッシュトークンを更新するメソッド
+   *
+   * @param id ユーザーの固有id
+   * @param refreshToken リフレッシュトークン
+   * @returns {Promise<void>}
+   */
+  async updateRefreshToken(id: number, refreshToken: string): Promise<void> {
     await this.usersRepository.update(id, { refreshToken: await this.hashData(refreshToken)});
   }
 
+
+  /**
+   * @author ckcic
+   * @description JWTトークン生成するメソッド
+   *
+   * @param id ユーザーの固有id
+   * @param email ユーザーのメール
+   * @returns {Promise<Tokens>} JWTトークンを戻り値として返す
+   */
   async getTokens(id: number, email: string): Promise<Tokens> {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(

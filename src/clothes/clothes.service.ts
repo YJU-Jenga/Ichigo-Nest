@@ -6,14 +6,22 @@ import { CreateClothesDto, UpdateClothesDto } from './dto';
 
 @Injectable()
 export class ClothesService {
-  constructor(@InjectRepository(Clothes) private clothesRepository: Repository<Clothes>){}
+  constructor(@InjectRepository(Clothes) private clothesRepository: Repository<Clothes>){} // 依存性の注入、Clothesリポジトリを注入
 
-  async create(file: Express.Multer.File, dto: CreateClothesDto){
+  /**
+   * @author ckcic
+   * @description 商品の服(オプション)のイメージファイルを登録するメソッド
+   *
+   * @param file 服のイメージファイル
+   * @param dto 服のイメージファイル登録DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
+   * @returns {Promise<void>}
+   */
+  async create(file: Express.Multer.File, dto: CreateClothesDto): Promise<void>{
     try {
       const { productId, name } = dto;
       const parsedProductId = JSON.parse(productId.toString()).productId;
       const parsedName = JSON.parse(name).name;
-      if(file) {
+      if(file) { // 服のイメージファイルあるのか
         await this.clothesRepository.save({
           productId: parsedProductId,
           name: parsedName,
@@ -31,6 +39,14 @@ export class ClothesService {
     }
   }
 
+
+  /**
+   * @author ckcic
+   * @description 商品の服(オプション)のデータを全て取得するメソッド
+   *
+   * @param productId 商品の固有id
+   * @returns {Promise<Clothes[]>} 全ての服のイメージファイルのデータを戻り値として返す
+   */
   async getAll(productId:number): Promise<Clothes[]>{
     try {
       return await this.clothesRepository.find({ where: { productId }, order: {'name': 'asc'}})
@@ -39,6 +55,14 @@ export class ClothesService {
     }
   }
 
+
+  /**
+   * @author ckcic
+   * @description 商品の服(オプション)のイメージファイルを取得するメソッド
+   *
+   * @param id 服の固有id
+   * @returns {Promise<Clothes>} 服のデータをJSON形式で戻り値として返す
+   */
   async getOne(id: number): Promise<Clothes>{
     try {
       return await this.clothesRepository.findOneBy({id})
@@ -47,11 +71,20 @@ export class ClothesService {
     }
   }
 
-  async update(id: number, file: Express.Multer.File, dto: UpdateClothesDto){
+  /**
+   * @author ckcic
+   * @description 商品の服(オプション)のイメージファイルを更新するメソッド
+   *
+   * @param id 服の固有id
+   * @param file 服のイメージファイル
+   * @param dto 服のイメージファイル更新DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
+   * @returns {Promise<void>}
+   */
+  async update(id: number, file: Express.Multer.File, dto: UpdateClothesDto): Promise<void>{
     const { productId, name } = dto;
       const parsedUserId = JSON.parse(productId.toString()).productId;
       const parsedName = JSON.parse(name).name;
-      if(file) {
+      if(file) { // 服のイメージファイルあるのか
         await this.clothesRepository.update(id, {
           productId: parsedUserId,
           name: parsedName,
@@ -66,7 +99,15 @@ export class ClothesService {
       }
   }
 
-  async delete(id: number){
+
+  /**
+   * @author ckcic
+   * @description 商品の服(オプション)のイメージファイルを削除するメソッド
+   *
+   * @param id 服の固有id
+   * @returns {Promise<void>}
+   */
+  async delete(id: number): Promise<void>{
     try {
       await this.clothesRepository.delete({id});
     } catch (error) {

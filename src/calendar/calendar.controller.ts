@@ -7,39 +7,53 @@ import { JwtAuthGuard } from 'src/auth/guards';
 import { Response } from 'express';
 
 @Controller('calendar')
-@ApiTags('Calendar')  // Swagger Tag 설정
+@ApiTags('Calendar') // Swaggerタグの設定
 export class CalendarController {
-  constructor(private readonly calendarService: CalendarService) {}
+  constructor(private readonly calendarService: CalendarService) {} // 依存性の注入、CalendarServiceクラスのインスタンスを注入
 
-  // ----------- 생성 -----------
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
-  @Post('/create')
+  /**
+   * @author ckcic
+   * @description スケジュールを作成するメソッド
+   *
+   * @param dto スケジュール作成DTO
+   * @returns {Promise<void>}
+   */
+  @UseGuards(JwtAuthGuard) // 検証済みのユーザーのみアクセス可能 - トークン発行済みのユーザー
+  @ApiBearerAuth('access-token') // SwaggerでのJWTトークンキーの設定
+  @Post('/create') // localhost:5000/calendar/create
   @ApiOperation({
-    summary: '스케줄 생성',
-    description: '스케줄 생성 API'
+    summary: 'スケジュールを作成',
+    description: 'スケジュールを作成するAPI'
   })
   @ApiCreatedResponse({
-    description: '성공여부',
+    description: '成功かどうか',
     schema: {
       example: { success: true },
     }
   })
-  async createCalendar(@Body() dto:CreateCalendarDto) {
+  @UsePipes(ValidationPipe) // dtoがバリデーションルールに従っているか検証
+  async createCalendar(@Body() dto:CreateCalendarDto): Promise<void> {
     return await this.calendarService.createCalendar(dto);
   }
 
 
-  // ----------- 조회 -----------
-  @UseGuards(JwtAuthGuard)  // 검증된 유저만 접근 가능 - 토큰 발행 된 유저
-  @ApiBearerAuth('access-token') //JWT 토큰 키 설정
-  @Post('/all')
+  /**
+   * @author ckcic
+   * @description ユーザーのスケジュールを全て取得するメソッド
+   *
+   * @param dto スケジュール取得DTO
+   * @param res データを返すためのパラメーター
+   * @returns ユーザーのスケジュールのデータをJSON形式で戻り値として返す
+   */
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @Post('/all') // localhost:5000/calendar/all
   @ApiOperation({
-    summary: '스케줄 전체 조회',
-    description: '스케줄 전체 조회 API',
+    summary: 'ユーザーのスケジュールを全て取得',
+    description: 'ユーザーのスケジュールを全て取得するAPI',
   })
   @ApiCreatedResponse({
-    description: '성공여부',
+    description: '成功かどうか',
     schema: {
       example: {
         success: true,
@@ -61,15 +75,24 @@ export class CalendarController {
     return res.json(data);
   }
 
-  @UseGuards(JwtAuthGuard)  // 검증된 유저만 접근 가능 - 토큰 발행 된 유저
-  @ApiBearerAuth('access-token') //JWT 토큰 키 설정
-  @Post('/month')
+
+  /**
+   * @author ckcic
+   * @description ユーザーのスケジュールを月別で取得するメソッド
+   *
+   * @param dto スケジュール取得DTO
+   * @param res データを返すためのパラメーター
+   * @returns ユーザーのスケジュールのデータをJSON形式で戻り値として返す
+   */
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @Post('/month') // localhost:5000/calendar/month
   @ApiOperation({
-    summary: '스케줄 월간 조회',
-    description: '스케줄 월간 조회 API',
+    summary: 'ユーザーのスケジュールを月別で取得',
+    description: 'ユーザーのスケジュールを月別で取得するAPI',
   })
   @ApiCreatedResponse({
-    description: '성공여부',
+    description: '成功かどうか',
     schema: {
       example: {
         success: true,
@@ -91,15 +114,24 @@ export class CalendarController {
     return res.json(data);
   }
 
-  @UseGuards(JwtAuthGuard)  // 검증된 유저만 접근 가능 - 토큰 발행 된 유저
-  @ApiBearerAuth('access-token') //JWT 토큰 키 설정
-  @Post('/week')
+
+  /**
+   * @author ckcic
+   * @description ユーザーの一週間のスケジュールを取得するメソッド
+   *
+   * @param dto スケジュール取得DTO
+   * @param res データを返すためのパラメーター
+   * @returns ユーザーのスケジュールのデータをJSON形式で戻り値として返す
+   */
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @Post('/week') // localhost:5000/calendar/week
   @ApiOperation({
-    summary: '스케줄 주간 조회',
-    description: '스케줄 주간 조회 API',
+    summary: 'ユーザーの一週間のスケジュールを取得',
+    description: 'ユーザーの一週間のスケジュールを取得するAPI',
   })
   @ApiCreatedResponse({
-    description: '성공여부',
+    description: '成功かどうか',
     schema: {
       example: {
         success: true,
@@ -116,20 +148,30 @@ export class CalendarController {
       },
     },
   })
+  @UsePipes(ValidationPipe)
   async findWeek(@Body() dto: SearchCalendarDto, @Res() res: Response) {
     const data = await this.calendarService.findWeekCalendar(dto);
     return res.json(data);
   }
 
-  @UseGuards(JwtAuthGuard)  // 검증된 유저만 접근 가능 - 토큰 발행 된 유저
-  @ApiBearerAuth('access-token') //JWT 토큰 키 설정
-  @Post('/date')
+
+  /**
+   * @author ckcic
+   * @description ユーザーの一日のスケジュールを取得するメソッド
+   *
+   * @param dto スケジュール取得DTO
+   * @param res データを返すためのパラメーター
+   * @returns ユーザーのスケジュールのデータをJSON形式で戻り値として返す
+   */
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @Post('/date') // localhost:5000/calendar/date
   @ApiOperation({
-    summary: '스케줄 일간 조회',
-    description: '스케줄 일간 조회 API',
+    summary: 'ユーザーの一日のスケジュールを取得',
+    description: 'ユーザーの一日のスケジュールを取得するAPI',
   })
   @ApiCreatedResponse({
-    description: '성공여부',
+    description: '成功かどうか',
     schema: {
       example: {
         success: true,
@@ -146,48 +188,64 @@ export class CalendarController {
       },
     },
   })
+  @UsePipes(ValidationPipe)
   async findDate(@Body() dto: SearchCalendarDto, @Res() res: Response) {
     const data = await this.calendarService.findDateCalendar(dto);
     return res.json(data);
   }
 
-  // ----------- 수정 -----------
+  
+  /**
+   * @author ckcic
+   * @description スケジュールを更新するメソッド
+   *
+   * @param id スケジュールの固有id
+   * @param dto スケジュール更新DTO
+   * @returns {Promise<void>}
+   */
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @Patch('/update_calendar/:id')
+  @Patch('/update_calendar/:id') // localhost:5000/calendar/update_calendar/1
   @ApiOperation({
-    summary: '스케줄 수정',
-    description: '스케줄 수정 API'
+    summary: 'スケジュールを更新',
+    description: 'スケジュールを更新するAPI'
   })
   @ApiCreatedResponse({
-    description: '성공여부',
+    description: '成功かどうか',
     schema: {
       example: { success: true },
     }
   })
   @UsePipes(ValidationPipe)
   async updateCalendar(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: number, // idが整数型なのか検証
     @Body() dto:UpdateCalendarDto
   ) {
     return await this.calendarService.updateCalendar(id, dto);
   }
 
-  // ----------- 삭제 -----------
+  
+  /**
+   * @author ckcic
+   * @description スケジュールを削除するメソッド
+   *
+   * @param id スケジュールの固有id
+   * @returns {Promise<void>}
+   */
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @Delete('/delete_calendar/:id')
+  @Delete('/delete_calendar/:id') // localhost:5000/calendar/delete_calendar/1
   @ApiOperation({
-    summary: '스케줄 삭제',
-    description: '스케줄 삭제 API'
+    summary: 'スケジュールを削除',
+    description: 'スケジュールを削除するAPI'
   })
   @ApiCreatedResponse({
-    description: '성공여부',
+    description: '成功かどうか',
     schema: {
       example: { success: true },
     }
   })
-  async deleteCalendar(@Param('id') id: number) {
+  async deleteCalendar(@Param('id') id: number) { // idが整数型なのか検証
     return await this.calendarService.deleteCalendar(id);
   }
 }

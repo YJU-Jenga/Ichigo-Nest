@@ -7,10 +7,16 @@ import { CreateCalendarDto, SearchCalendarDto, SearchIdCalendarDto, UpdateCalend
 
 @Injectable()
 export class CalendarService {
-  constructor(@InjectRepository(Calendar) private readonly calendarRepository: Repository<Calendar>) {}
+  constructor(@InjectRepository(Calendar) private readonly calendarRepository: Repository<Calendar>) {} // 依存性の注入、Calendarリポジトリを注入
 
-  //crud
-  async createCalendar (dto:CreateCalendarDto) {
+  /**
+   * @author ckcic
+   * @description スケジュールを作成するメソッド
+   *
+   * @param dto スケジュール作成DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
+   * @returns {Promise<void>}
+   */
+  async createCalendar (dto:CreateCalendarDto): Promise<void> {
     try {
       const {userId, title, start, end, location, description, utcOffset} = dto;
       console.log(utcOffset);
@@ -18,7 +24,7 @@ export class CalendarService {
       const adjustedEnd = new Date(new Date(end).getTime() + (parseInt(utcOffset) * 60000)).toISOString();
       console.log("saveStart", adjustedStart);
       console.log("saveEnd", adjustedEnd);
-      return await this.calendarRepository.save({
+      await this.calendarRepository.save({
         userId,
         title,
         start: adjustedStart,
@@ -31,18 +37,26 @@ export class CalendarService {
     }
   }
 
+
+  /**
+   * @author ckcic
+   * @description ユーザーの一日のスケジュールを取得するメソッド
+   *
+   * @param dto スケジュール取得DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
+   * @returns {Promise<Calendar[]>} ユーザーのスケジュールのデータを戻り値として返す
+   */
   async findDateCalendar (dto:SearchCalendarDto): Promise<Calendar[]> {
     try {
       const {userId, dateString} = dto;
       const date = new Date(dateString);
-      const serverUtcTime = new Date(); // 서버의 UTC 시간
-      const serverUtcOffset = serverUtcTime.getTimezoneOffset() * -1; // 서버의 UTC offset
+      const serverUtcTime = new Date(); // サーバーのUTC時間
+      const serverUtcOffset = serverUtcTime.getTimezoneOffset() * -1; // サーバーのUTC offset
       const startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0 + (serverUtcOffset / 60), 0, 0);
       const endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 0 + (serverUtcOffset / 60), 0, 0);
       return await this.calendarRepository.find({
         where:[
           {
-            // 해당 날짜에만 일정이 있을 경우
+            // その日だけスケジュールがある場合
             userId,
             start: MoreThanOrEqual(startDate), 
             end: LessThanOrEqual(endDate)
@@ -67,12 +81,20 @@ export class CalendarService {
     }
   }
 
+
+  /**
+   * @author ckcic
+   * @description ユーザーの一週間のスケジュールを取得するメソッド
+   *
+   * @param dto スケジュール取得DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
+   * @returns {Promise<Calendar[]>} ユーザーのスケジュールのデータを戻り値として返す
+   */
   async findWeekCalendar (dto:SearchCalendarDto): Promise<Calendar[]> {
     try {
       const {userId, dateString} = dto;
       const date = new Date(dateString);
-      const serverUtcTime = new Date(); // 서버의 UTC 시간
-      const serverUtcOffset = serverUtcTime.getTimezoneOffset() * -1; // 서버의 UTC offset
+      const serverUtcTime = new Date(); // サーバーのUTC時間
+      const serverUtcOffset = serverUtcTime.getTimezoneOffset() * -1; // サーバーのUTC offset
       const weekStart = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay(), 0 + (serverUtcOffset / 60), 0, 0);
       const weekEnd = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay() + 7, 0 + (serverUtcOffset / 60) -1, 59, 59);
       return await this.calendarRepository.find({
@@ -92,12 +114,20 @@ export class CalendarService {
     }
   }
 
+
+  /**
+   * @author ckcic
+   * @description ユーザーのスケジュールを月別で取得するメソッド
+   *
+   * @param dto スケジュール取得DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
+   * @returns {Promise<Calendar[]>} ユーザーのスケジュールのデータを戻り値として返す
+   */
   async findMonthCalendar (dto:SearchCalendarDto): Promise<Calendar[]> {
     try {
       const {userId, dateString} = dto;
       const date = new Date(dateString);
-      const serverUtcTime = new Date(); // 서버의 UTC 시간
-      const serverUtcOffset = serverUtcTime.getTimezoneOffset() * -1; // 서버의 UTC offset
+      const serverUtcTime = new Date(); // サーバーのUTC時間
+      const serverUtcOffset = serverUtcTime.getTimezoneOffset() * -1; // サーバーのUTC offset
       const monthStart = new Date(date.getFullYear(), date.getMonth(), 1, 0 + (serverUtcOffset / 60), 0, 0);
       const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0, 0 + (serverUtcOffset / 60) - 1, 59, 59);
       return await this.calendarRepository.find({
@@ -115,8 +145,16 @@ export class CalendarService {
     } catch (error) {
       console.log(error);
     }
-}
+  }
 
+
+  /**
+   * @author ckcic
+   * @description ユーザーのスケジュールを全て取得するメソッド
+   *
+   * @param dto スケジュール取得DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
+   * @returns {Promise<Calendar[]>} ユーザーのスケジュールのデータを戻り値として返す
+   */
   async findAllCalendar (dto:SearchIdCalendarDto): Promise<Calendar[]> {
     try {
       const {userId} = dto;
@@ -124,9 +162,18 @@ export class CalendarService {
     } catch (error) {
       console.log(error);
     }
-}
+  }
 
-  async updateCalendar (calendarId:number, dto:UpdateCalendarDto) {
+
+  /**
+   * @author ckcic
+   * @description スケジュールを更新するメソッド
+   *
+   * @param calendarId スケジュールの固有id
+   * @param dto スケジュール更新DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
+   * @returns {Promise<void>}
+   */
+  async updateCalendar (calendarId:number, dto:UpdateCalendarDto): Promise<void> {
     try {
       const {title, start, end, location, description, utcOffset} = dto;
       console.log(utcOffset);
@@ -134,7 +181,7 @@ export class CalendarService {
       const adjustedEnd = new Date(new Date(end).getTime() + (parseInt(utcOffset) * 60000)).toISOString();
       console.log("updateStart", adjustedStart);
       console.log("updateEnd", adjustedEnd);
-      return await this.calendarRepository.update(calendarId, {
+      await this.calendarRepository.update(calendarId, {
        title,
        start: adjustedStart,
        end: adjustedEnd,
@@ -146,9 +193,17 @@ export class CalendarService {
     }
   }
 
-  async deleteCalendar (calendarId:number) {
+
+  /**
+   * @author ckcic
+   * @description スケジュールを削除するメソッド
+   *
+   * @param calendarId スケジュールの固有id
+   * @returns {Promise<void>}
+   */
+  async deleteCalendar (calendarId:number): Promise<void> {
     try {
-      return await this.calendarRepository.delete(calendarId);
+      await this.calendarRepository.delete(calendarId);
     } catch (error) {
       console.log(error);
     }

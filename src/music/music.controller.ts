@@ -8,69 +8,113 @@ import { multerAudioOptions } from 'src/utils/multer.option';
 import { CreateMusicDto, UpdateMusicDto } from './dto';
 
 @Controller('music')
-@ApiTags('Music')
+@ApiTags('Music') // Swaggerタグの設定
 export class MusicController {
-  constructor(private readonly musicService: MusicService){}
+  constructor(private readonly musicService: MusicService){} // 依存性の注入、MusicServiceクラスのインスタンスを注入
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
-  @Post("/create")
-  @UseInterceptors(FileInterceptor('file', multerAudioOptions))
+  /**
+   * @author ckcic
+   * @description アラーム登録用の音声ファイルを登録するメソッド
+   *
+   * @param file 音声ファイル
+   * @param dto 音声ファイル登録DTO
+   * @returns {Promise<void>}
+   */
+  @UseGuards(JwtAuthGuard) // 検証済みのユーザーのみアクセス可能 - トークン発行済みのユーザー
+  @ApiBearerAuth('access-token') // SwaggerでのJWTトークンキーの設定
+  @Post("/create") // localhost:5000/music/create
+  @UseInterceptors(FileInterceptor('file', multerAudioOptions)) // リクエストのファイル部分を処理
   @ApiOperation({
-    summary: '알람등록용 파일 등록',
-    description: '알람등록용 파일 등록 API'
+    summary: 'アラーム登録用の音声ファイルを登録',
+    description: 'アラーム登録用の音声ファイルを登録するAPI'
   })
-  @UsePipes(ValidationPipe)
-  async create(@UploadedFile() file: Express.Multer.File, @Body() dto: CreateMusicDto){
+  @UsePipes(ValidationPipe) // dtoがバリデーションルールに従っているか検証
+  async create(@UploadedFile() file: Express.Multer.File, @Body() dto: CreateMusicDto): Promise<void>{
     console.log(file);
     console.log(dto);
     return this.musicService.create(file ,dto)
   }
 
+  /**
+   * @author ckcic
+   * @description ユーザーがアラーム用に登録した全ての音声ファイルを取得するメソッド
+   *
+   * @param user_id ユーザーの固有id
+   * @param res データを返すためのパラメーター
+   * @returns 全ての音声ファイルのデータをJSON形式で戻り値として返す
+   */
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @Get("/getAll/:user_id")
+  @Get("/getAll/:user_id") // localhost:5000/music/getAll/1
   @ApiOperation({
-    summary: '유저의 알람등록용 파일 전체 조회',
-    description: '유저의 알람등록용 파일 전체 조회 API'
+    summary: 'ユーザーがアラーム用に登録した全て音声ファイルを取得',
+    description: 'ユーザーがアラーム用に登録した全て音声ファイルを取得するAPI'
   })
-  async getAll(@Param('user_id', ParseIntPipe) user_id: number, @Res() res: Response){
+  async getAll(@Param('user_id', ParseIntPipe) user_id: number, @Res() res: Response){ // user_idが整数型なのか検証
     const data = await this.musicService.getAll(user_id)
     return res.json(data);
   }
  
+
+  /**
+   * @author ckcic
+   * @description アラーム用に登録した音声ファイルを取得するメソッド
+   *
+   * @param id 音声ファイルの固有id
+   * @param res データを返すためのパラメーター
+   * @returns 音声ファイルのデータをJSON形式で戻り値として返す
+   */
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @Get("/getOne/:id")
+  @Get("/getOne/:id") // localhost:5000/music/getOne/1
   @ApiOperation({
-    summary: '알람등록용 파일 조회',
-    description: '알람등록용 파일 조회 API'
+    summary: 'アラーム用に登録した音声ファイルを取得',
+    description: 'アラーム用に登録した音声ファイルを取得するAPI'
   })
-  async getOne(@Param('id', ParseIntPipe) id:number,  @Res() res: Response){
+  async getOne(@Param('id', ParseIntPipe) id:number,  @Res() res: Response){ // idが整数型なのか検証
     const data = await this.musicService.getOne(id)
     return res.json(data);
   }
 
+
+  /**
+   * @author ckcic
+   * @description アラーム登録用の音声ファイルを更新するメソッド
+   *
+   * @param id 音声ファイルの固有id
+   * @param file 音声ファイル
+   * @param dto 音声ファイル更新DTO
+   * @returns {Promise<void>}
+   */
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @Patch("/update/:id")
+  @Patch("/update/:id") // localhost:5000/music/update/1
   @UseInterceptors(FileInterceptor('file', multerAudioOptions))
   @ApiOperation({
-    summary: '알람등록용 파일 수정',
-    description: '알람등록용 파일 수정 API'
+    summary: 'アラーム登録用の音声ファイルを更新',
+    description: 'アラーム登録用の音声ファイルを更新するAPI'
   })
-  async update(@Param('id', ParseIntPipe) id:number, @UploadedFile() file: Express.Multer.File,  @Body() dto: UpdateMusicDto){
+  @UsePipes(ValidationPipe)
+  async update(@Param('id', ParseIntPipe) id:number, @UploadedFile() file: Express.Multer.File,  @Body() dto: UpdateMusicDto): Promise<void>{ // idが整数型なのか検証
     return this.musicService.update(id, file, dto)
   }
 
+
+  /**
+   * @author ckcic
+   * @description アラーム登録用の音声ファイルを削除するメソッド
+   *
+   * @param id 音声ファイルの固有id
+   * @returns {Promise<void>}
+   */
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @Delete("/delete/:id")
+  @Delete("/delete/:id") // localhost:5000/music/delete/1
   @ApiOperation({
-    summary: '알람등록용 파일 삭제',
-    description: '알람등록용 파일 삭제 API'
+    summary: 'アラーム登録用の音声ファイルを削除',
+    description: 'アラーム登録用の音声ファイルを削除するAPI'
   })
-  async delete(@Param('id', ParseIntPipe) id:number){
+  async delete(@Param('id', ParseIntPipe) id:number){ // idが整数型なのか検証
     return this.musicService.delete(id)
   }
 }

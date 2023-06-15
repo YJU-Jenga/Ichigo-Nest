@@ -1,10 +1,10 @@
-import { IsNotEmpty, IsPhoneNumber, IsString, IsEmail, Matches, MaxLength, MinLength} from "class-validator";
-import { ApiProperty, PartialType } from "@nestjs/swagger";
+import { IsNotEmpty, IsString, IsEmail, Matches, MaxLength, MinLength} from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class UpdateUserDto {
   @ApiProperty({ 
     example: 'client@gmail.com',
-    description: '유저 아이디(이메일 형식)',
+    description: 'ユーザーID(メール形式)',
     required: true
    })
   @IsEmail()
@@ -13,25 +13,25 @@ export class UpdateUserDto {
   
   @ApiProperty({ 
     example: '1234qweR!!',
-    description: '유저 비밀번호 - 최소 8자 및 최대 16자, 하나 이상의 대문자, 하나의 소문자, 하나의 숫자 및 하나의 특수 문자',
+    description: 'ユーザーのパスワード:最小8文字、最大16文字、1つ以上の大文字、1つの小文字、1つの数字、1つの特殊文字。',
     required: true
    })
   @IsNotEmpty()
   @IsString()
   @MinLength(8)
   @MaxLength(16)
-  // 최소 8자 및 최대 16자, 하나 이상의 대문자, 하나의 소문자, 하나의 숫자 및 하나의 특수 문자
+  // 最小8文字、最大16文字、1つ以上の大文字、1つの小文字、1つの数字、1つの特殊文字。
   @Matches(
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/,
     { 
-      message: '비밀번호 양식에 맞게 작성하세요.',
+      message: 'パスワードフォームに合わせて記入してください。',
     }
   )
   password: string;
 
   @ApiProperty({ 
     example: 'client',
-    description: '유저 이름(닉네임)',
+    description: 'ユーザー名（ニックネーム）',
     required: true
    })
   @IsString()
@@ -40,7 +40,7 @@ export class UpdateUserDto {
 
   @ApiProperty({ 
     example: '010-1111-1111',
-    description: '유저 핸드폰번호',
+    description: 'ユーザーの電話番号',
     required: true
    })
   @IsString()

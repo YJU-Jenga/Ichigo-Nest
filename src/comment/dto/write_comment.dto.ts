@@ -4,7 +4,7 @@ import { ApiProperty } from "@nestjs/swagger";
 export class WriteCommentDto {
   @ApiProperty({ 
     example: '1',
-    description: '작성자',
+    description: 'ユーザーのid',
     required: true
    })
   @IsNotEmpty()
@@ -12,15 +12,15 @@ export class WriteCommentDto {
 
   @ApiProperty({ 
     example: '1',
-    description: '게시글 번호',
+    description: '投稿の固有id',
     required: true
    })
   @IsNotEmpty()
   postId: number;
 
   @ApiProperty({ 
-    example: '내용',
-    description: '댓글 내용',
+    example: '内容',
+    description: 'コメントの内容',
     required: true
    })
   @IsString()

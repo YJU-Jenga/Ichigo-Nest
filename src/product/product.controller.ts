@@ -1,32 +1,40 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { format } from 'path';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { multerDiskOptions } from '../utils/multer.option';
 import { CreateProductDto, UpdateProductDto } from './dto';
 import { ProductService } from './product.service';
 import { JwtAuthGuard } from 'src/auth/guards';
+import { Product } from 'src/model/entity';
 
 @Controller('product')
-@ApiTags('Product')
+@ApiTags('Product') // Swaggerタグの設定
 export class ProductController {
-  constructor(private readonly productService: ProductService){}
+  constructor(private readonly productService: ProductService){} // 依存性の注入、ProductServiceクラスのインスタンスを注入
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
-  @Post('/create')
-  @UsePipes(ValidationPipe)
+  /**
+   * @author ckcic
+   * @description 商品をショッピングモールに登録するメソッド
+   *
+   * @param file イメージファイル
+   * @param dto 商品登録DTO
+   * @returns {Promise<void>}
+   */
+  @UseGuards(JwtAuthGuard) // 検証済みのユーザーのみアクセス可能 - トークン発行済みのユーザー
+  @ApiBearerAuth('access-token') // SwaggerでのJWTトークンキーの設定
+  @Post('/create') // localhost:5000/product/create
+  @UsePipes(ValidationPipe) // dtoがバリデーションルールに従っているか検証
   @ApiOperation({
-    summary: '상품 등록',
-    description: '상품 등록 API',
+    summary: '商品をショッピングモールに登録',
+    description: '商品をショッピングモールに登録するAPI',
   })
-  @UseInterceptors(FileInterceptor('file', multerDiskOptions))
-  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('file', multerDiskOptions)) // リクエストのファイル部分を処理
+  @ApiConsumes('multipart/form-data') // Swaggerでの設定:リクエストのContent-Typeをmultipart/form-dataとして指定します。
   @ApiBody({
     schema: {
       type: 'object',
       properties: {
-        file: { // 👈 this property
+        file: {
           type:'string',
           format: 'binary'
         },
@@ -49,7 +57,7 @@ export class ProductController {
       },
     },
   })
-  async create (@UploadedFile() file: Express.Multer.File, @Body() dto:CreateProductDto) {
+  async create (@UploadedFile() file: Express.Multer.File, @Body() dto:CreateProductDto): Promise<void> {
     dto.name = JSON.parse(dto.name).name
     dto.price = JSON.parse(dto.price.toString()).price
     dto.description = JSON.parse(dto.description).description
@@ -58,31 +66,55 @@ export class ProductController {
     return await this.productService.create(file, dto);
   }
   
-  @Get('/getAll')
+
+  /**
+   * @author ckcic
+   * @description 全ての商品を取得するメソッド
+   *
+   * @returns {Promise<Product[]>} 全ての商品のデータを戻り値として返す
+   */
+  @Get('/getAll') // localhost:5000/product/getAll
   @ApiOperation({
-    summary: '상품 전체 조회',
-    description: '상품 전체 조회 API',
+    summary: '全ての商品を取得',
+    description: '全ての商品を取得するAPI',
   })
-  async findAll () {
+  async findAll (): Promise<Product[]> {
     return await this.productService.findAll();
   }
   
-  @Get('/getOne/:id')
+
+  /**
+   * @author ckcic
+   * @description 商品のデータを取得するメソッド
+   *
+   * @param id 商品の固有id
+   * @returns {Promise<Product>} 商品のデータを戻り値として返す
+   */
+  @Get('/getOne/:id') // localhost:5000/product/getOne/1
   @ApiOperation({
-    summary: '상품 조회',
-    description: '상품 조회 API',
+    summary: '商品のデータを取得',
+    description: '商品のデータを取得するAPI',
   })
-  async findOne (@Param('id', ParseIntPipe) id: number) {
+  async findOne (@Param('id', ParseIntPipe) id: number): Promise<Product> { // idが整数型なのか検証
     return await this.productService.findOne(id);
   }
   
+  /**
+   * @author ckcic
+   * @description 商品のデータを更新するメソッド
+   *
+   * @param id 商品の固有id
+   * @param file イメージファイル
+   * @param dto 商品更新DTO
+   * @returns {Promise<void>}
+   */
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @Patch('/update/:id')
+  @Patch('/update/:id') // localhost:5000/product/update/1
   @UsePipes(ValidationPipe)
   @ApiOperation({
-    summary: '상품 수정',
-    description: '상품 수정 API',
+    summary: '商品のデータを更新',
+    description: '商品のデータを更新するAPI',
   })
   @UseInterceptors(FileInterceptor('file', multerDiskOptions))
   @ApiConsumes('multipart/form-data')
@@ -90,7 +122,7 @@ export class ProductController {
     schema: {
       type: 'object',
       properties: {
-        file: { // 👈 this property
+        file: { 
           type:'string',
           format: 'binary'
         },
@@ -113,7 +145,7 @@ export class ProductController {
       },
     },
   })
-  async update (@Param('id', ParseIntPipe) id: number, @UploadedFile() file: Express.Multer.File, @Body() dto:UpdateProductDto) {
+  async update (@Param('id', ParseIntPipe) id: number, @UploadedFile() file: Express.Multer.File, @Body() dto:UpdateProductDto): Promise<void> {
     dto.name = JSON.parse(dto.name).name
     dto.price = JSON.parse(dto.price.toString()).price
     dto.description = JSON.parse(dto.description).description
@@ -122,14 +154,22 @@ export class ProductController {
     return await this.productService.update(id, file, dto);
   }
   
+
+  /**
+   * @author ckcic
+   * @description 商品のデータを削除するメソッド
+   *
+   * @param id 商品の固有id
+   * @returns {Promise<void>}
+   */
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
   @ApiOperation({
-    summary: '상품 삭제',
-    description: '상품 삭제 API',
+    summary: '商品のデータを削除',
+    description: '商品のデータを削除するAPI',
   })
-  @Delete('/delete/:id')
-  async delete (@Param('id', ParseIntPipe) id: number) {
+  @Delete('/delete/:id') // localhost:5000/product/delete/1
+  async delete (@Param('id', ParseIntPipe) id: number): Promise<void> { // idが整数型なのか検証
     return await this.productService.delete(id);
   }
 }
