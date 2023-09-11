@@ -29,6 +29,7 @@ export class ProductController {
     description: '商品をショッピングモールに登録するAPI',
   })
   @UseInterceptors(FileInterceptor('file', multerDiskOptions)) // リクエストのファイル部分を処理
+  // @UseInterceptors(FileInterceptor('file')) // リクエストのファイル部分を処理
   @ApiConsumes('multipart/form-data') // Swaggerでの設定:リクエストのContent-Typeをmultipart/form-dataとして指定します。
   @ApiBody({
     schema: {
@@ -117,6 +118,7 @@ export class ProductController {
     description: '商品のデータを更新するAPI',
   })
   @UseInterceptors(FileInterceptor('file', multerDiskOptions))
+  // @UseInterceptors(FileInterceptor('file'))
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {

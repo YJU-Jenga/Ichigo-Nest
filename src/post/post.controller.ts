@@ -4,7 +4,7 @@ import { WritePostDto, UpdatePostDto } from "./dto";
 import { ApiCreatedResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { PostService } from './post.service';
 import { Response } from 'express';
-import { multerDiskOptions } from '../utils/multer.option';
+import { multerDiskOptions, multerS3Options } from '../utils/multer.option';
 import { AxiosError } from 'axios';
 import { JwtAuthGuard } from 'src/auth/guards';
 
@@ -31,7 +31,8 @@ export class PostController {
   @ApiBearerAuth('access-token') // SwaggerでのJWTトークンキーの設定
   @Post('write_product_inquiry') // localhost:5000/post/write_product_inquiry
   @UsePipes(ValidationPipe) // writePostDtoがバリデーションルールに従っているか検証
-  @UseInterceptors(FileInterceptor('file', multerDiskOptions)) // リクエストのファイル部分を処理
+  // @UseInterceptors(FileInterceptor('file', multerDiskOptions)) // リクエストのファイル部分を処理
+  @UseInterceptors(FileInterceptor('file', multerS3Options)) // リクエストのファイル部分を処理
   @ApiOperation({
     summary: '商品お問い合わせを作成',
     description: '商品お問い合わせを作成するAPI'
@@ -42,7 +43,7 @@ export class PostController {
       example: { success: true },
     }
   })
-  async writeProductInquiryPost( @UploadedFile() file: Express.Multer.File, @Body() writePostDto: WritePostDto, @Res() res: Response) {
+  async writeProductInquiryPost( @UploadedFile() file: Express.MulterS3.File, @Body() writePostDto: WritePostDto, @Res() res: Response) {
     try {
       writePostDto.writer = JSON.parse(writePostDto.writer.toString()).writer
       writePostDto.title = JSON.parse(writePostDto.title).title
@@ -119,7 +120,8 @@ export class PostController {
   @ApiBearerAuth('access-token')
   @Post('write_q&a') // localhost:5000/post/write_q&a
   @UsePipes(ValidationPipe)
-  @UseInterceptors(FileInterceptor('file', multerDiskOptions))
+  // @UseInterceptors(FileInterceptor('file', multerDiskOptions))
+  @UseInterceptors(FileInterceptor('file', multerS3Options))
   @ApiOperation({
     summary: 'Q & Aを作成',
     description: 'Q & Aを作成するAPI'
@@ -130,7 +132,7 @@ export class PostController {
       example: { success: true },
     }
   })
-  async writeQAPost( @UploadedFile() file: Express.Multer.File, @Body() writePostDto: WritePostDto, @Res() res: Response) {
+  async writeQAPost( @UploadedFile() file: Express.MulterS3.File, @Body() writePostDto: WritePostDto, @Res() res: Response) {
     try {
       writePostDto.writer = JSON.parse(writePostDto.writer.toString()).writer
       writePostDto.title = JSON.parse(writePostDto.title).title
@@ -207,7 +209,8 @@ export class PostController {
   @ApiBearerAuth('access-token')
   @Post('write_item_use') // localhost:5000/post/write_item_use
   @UsePipes(ValidationPipe)
-  @UseInterceptors(FileInterceptor('file', multerDiskOptions))
+  // @UseInterceptors(FileInterceptor('file', multerDiskOptions))
+  @UseInterceptors(FileInterceptor('file', multerS3Options))
   @ApiOperation({
     summary: '商品レビューを作成',
     description: '商品レビューを作成するAPI'
@@ -218,7 +221,7 @@ export class PostController {
       example: { success: true },
     }
   })
-  async writeItemUsePost( @UploadedFile() file: Express.Multer.File, @Body() writePostDto: WritePostDto, @Res() res: Response) {
+  async writeItemUsePost( @UploadedFile() file: Express.MulterS3.File, @Body() writePostDto: WritePostDto, @Res() res: Response) {
     try {
       writePostDto.writer = JSON.parse(writePostDto.writer.toString()).writer
       writePostDto.title = JSON.parse(writePostDto.title).title
@@ -336,7 +339,8 @@ export class PostController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
   @Patch('/update/:id') // localhost:5000/post/update/1
-  @UseInterceptors(FileInterceptor('file', multerDiskOptions))
+  // @UseInterceptors(FileInterceptor('file', multerDiskOptions))
+  @UseInterceptors(FileInterceptor('file', multerS3Options))
   @ApiOperation({
     summary: '投稿の内容を更新',
     description: '投稿の内容を更新するAPI'
@@ -349,7 +353,7 @@ export class PostController {
   })
   @UsePipes(ValidationPipe)
   async updatePost(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: Express.MulterS3.File,
     @Param('id', ParseIntPipe) id: number, // idが整数型なのか検証
     @Body() updatePostDto : UpdatePostDto,
     @Res() res:Response

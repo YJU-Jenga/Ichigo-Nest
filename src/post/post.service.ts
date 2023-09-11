@@ -24,9 +24,9 @@ export class PostService {
    * @param writePostDto 投稿作成DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
    * @returns {Promise<HttpException|boolean>} 成功またはエラーを戻り値として返す
    */
-  async write(file: Express.Multer.File, boardId: number, writePostDto: WritePostDto): Promise<HttpException|boolean> {
+  async write(file: Express.MulterS3.File, boardId: number, writePostDto: WritePostDto): Promise<HttpException|boolean> {
     try {
-      
+      // console.log(file);
       if(file) { // イメージファイルがあるのか
         const { writer, secret, title, content, password} = writePostDto;
 
@@ -38,7 +38,7 @@ export class PostService {
             content,
             password,
             secret: true,
-            image: file.path,
+            image: file.key,
           });
         }
         else {
@@ -49,7 +49,7 @@ export class PostService {
             content,
             password: null,
             secret: false,
-            image: file.path
+            image: file.key
           });
         }
       } else {
@@ -161,7 +161,7 @@ export class PostService {
    * @param updatePostDto 投稿更新DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
    * @returns {Promise<HttpException|boolean>} 成功またはエラーを戻り値として返す
    */
-  async update(file: Express.Multer.File, postId: number, updatePostDto: UpdatePostDto): Promise<HttpStatus|boolean> {
+  async update(file: Express.MulterS3.File, postId: number, updatePostDto: UpdatePostDto): Promise<HttpStatus|boolean> {
     try {
       
       if(file) { // イメージファイルがあるのか
@@ -174,7 +174,7 @@ export class PostService {
             content,
             password,
             secret: true,
-            image: file.path,
+            image: file.key,
           });
         }
         else {
@@ -184,7 +184,7 @@ export class PostService {
             content,
             password: null,
             secret: false,
-            image: file.path
+            image: file.key
           });
         }
       } else {

@@ -19,6 +19,7 @@ export class ProductService {
   async create (file: Express.Multer.File, dto:CreateProductDto): Promise<void> {
     try {
       const { name, price, description, stock, type } = dto
+      console.log("asdfasdfdsa",file, dto);
 
       await this.productRepository.save({
         name,

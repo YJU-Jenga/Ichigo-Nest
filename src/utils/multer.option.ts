@@ -3,6 +3,43 @@ import { existsSync, mkdirSync } from 'fs';
 import { diskStorage, memoryStorage } from 'multer';
 import { basename, extname } from 'path';
 
+import { S3Client } from "@aws-sdk/client-s3";
+import { MulterOptions } from "@nestjs/platform-express/multer/interfaces/multer-options.interface";
+import * as multerS3 from 'multer-s3';
+
+export const multerS3Options:MulterOptions = {
+  storage: multerS3({
+    s3: new S3Client({
+      region: process.env.AWS_S3_REGION,
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      }
+    }),
+    bucket: process.env.AWS_S3_BUCKET_NAME,
+    // bucket: "ichigobucket",
+    // contentType: multerS3.AUTO_CONTENT_TYPE,
+    contentType: (req, file, callback) => {
+      callback(null, file.mimetype);
+    },
+    // acl: 'public-read',
+    metadata(req, file, callback) {
+      callback(null, { owner: 'it' });
+    },
+    key(req, file, callback) {
+      const ext = extname(file.originalname);
+      const base = basename(file.originalname, ext);
+      const fileName = `${base}_${Date.now()}${ext}`;
+      callback(null, fileName);
+    }
+  }),
+  limits: {
+    fileSize: 100 * 1024 * 1024 // 100MB
+  }
+}
+
+
+
 // 受け入れる画像ファイル形式を変数に格納
 const imageFileFilter = /\/(jpg|jpeg|png|gif)$/;
 
