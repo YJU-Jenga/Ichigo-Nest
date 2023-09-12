@@ -49,7 +49,7 @@ export class ClothesService {
    */
   async getAll(productId:number): Promise<Clothes[]>{
     try {
-      return await this.clothesRepository.find({ where: { productId }, order: {'name': 'asc'}})
+      return await this.clothesRepository.find({ where: { productId }, order: {'createdAt': 'asc'}})
     } catch (error) {
       console.log(error);
     }
