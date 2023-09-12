@@ -4,7 +4,7 @@ import { JwtAuthGuard } from 'src/auth/guards';
 import { Response } from 'express';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { multerAudioOptions } from 'src/utils/multer.option';
+import { multerS3Options } from 'src/utils/multer.option';
 import { CreateMusicDto, UpdateMusicDto } from './dto';
 
 @Controller('music')
@@ -23,13 +23,13 @@ export class MusicController {
   @UseGuards(JwtAuthGuard) // 検証済みのユーザーのみアクセス可能 - トークン発行済みのユーザー
   @ApiBearerAuth('access-token') // SwaggerでのJWTトークンキーの設定
   @Post("/create") // localhost:5000/music/create
-  @UseInterceptors(FileInterceptor('file', multerAudioOptions)) // リクエストのファイル部分を処理
+  @UseInterceptors(FileInterceptor('file', multerS3Options)) // リクエストのファイル部分を処理
   @ApiOperation({
     summary: 'アラーム登録用の音声ファイルを登録',
     description: 'アラーム登録用の音声ファイルを登録するAPI'
   })
   @UsePipes(ValidationPipe) // dtoがバリデーションルールに従っているか検証
-  async create(@UploadedFile() file: Express.Multer.File, @Body() dto: CreateMusicDto): Promise<void>{
+  async create(@UploadedFile() file: Express.MulterS3.File, @Body() dto: CreateMusicDto): Promise<void>{
     console.log(file);
     console.log(dto);
     return this.musicService.create(file ,dto)
@@ -89,13 +89,13 @@ export class MusicController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
   @Patch("/update/:id") // localhost:5000/music/update/1
-  @UseInterceptors(FileInterceptor('file', multerAudioOptions))
+  @UseInterceptors(FileInterceptor('file', multerS3Options))
   @ApiOperation({
     summary: 'アラーム登録用の音声ファイルを更新',
     description: 'アラーム登録用の音声ファイルを更新するAPI'
   })
   @UsePipes(ValidationPipe)
-  async update(@Param('id', ParseIntPipe) id:number, @UploadedFile() file: Express.Multer.File,  @Body() dto: UpdateMusicDto): Promise<void>{ // idが整数型なのか検証
+  async update(@Param('id', ParseIntPipe) id:number, @UploadedFile() file: Express.MulterS3.File,  @Body() dto: UpdateMusicDto): Promise<void>{ // idが整数型なのか検証
     return this.musicService.update(id, file, dto)
   }
 

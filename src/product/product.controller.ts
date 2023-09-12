@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { multerDiskOptions } from '../utils/multer.option';
+import { multerS3Options } from '../utils/multer.option';
 import { CreateProductDto, UpdateProductDto } from './dto';
 import { ProductService } from './product.service';
 import { JwtAuthGuard } from 'src/auth/guards';
@@ -28,7 +28,7 @@ export class ProductController {
     summary: '商品をショッピングモールに登録',
     description: '商品をショッピングモールに登録するAPI',
   })
-  @UseInterceptors(FileInterceptor('file', multerDiskOptions)) // リクエストのファイル部分を処理
+  @UseInterceptors(FileInterceptor('file', multerS3Options)) // リクエストのファイル部分を処理
   // @UseInterceptors(FileInterceptor('file')) // リクエストのファイル部分を処理
   @ApiConsumes('multipart/form-data') // Swaggerでの設定:リクエストのContent-Typeをmultipart/form-dataとして指定します。
   @ApiBody({
@@ -58,7 +58,7 @@ export class ProductController {
       },
     },
   })
-  async create (@UploadedFile() file: Express.Multer.File, @Body() dto:CreateProductDto): Promise<void> {
+  async create (@UploadedFile() file: Express.MulterS3.File, @Body() dto:CreateProductDto): Promise<void> {
     dto.name = JSON.parse(dto.name).name
     dto.price = JSON.parse(dto.price.toString()).price
     dto.description = JSON.parse(dto.description).description
@@ -117,7 +117,7 @@ export class ProductController {
     summary: '商品のデータを更新',
     description: '商品のデータを更新するAPI',
   })
-  @UseInterceptors(FileInterceptor('file', multerDiskOptions))
+  @UseInterceptors(FileInterceptor('file', multerS3Options))
   // @UseInterceptors(FileInterceptor('file'))
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -147,7 +147,7 @@ export class ProductController {
       },
     },
   })
-  async update (@Param('id', ParseIntPipe) id: number, @UploadedFile() file: Express.Multer.File, @Body() dto:UpdateProductDto): Promise<void> {
+  async update (@Param('id', ParseIntPipe) id: number, @UploadedFile() file: Express.MulterS3.File, @Body() dto:UpdateProductDto): Promise<void> {
     dto.name = JSON.parse(dto.name).name
     dto.price = JSON.parse(dto.price.toString()).price
     dto.description = JSON.parse(dto.description).description

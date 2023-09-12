@@ -16,7 +16,7 @@ export class ClothesService {
    * @param dto 服のイメージファイル登録DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
    * @returns {Promise<void>}
    */
-  async create(file: Express.Multer.File, dto: CreateClothesDto): Promise<void>{
+  async create(file: Express.MulterS3.File, dto: CreateClothesDto): Promise<void>{
     try {
       const { productId, name } = dto;
       const parsedProductId = JSON.parse(productId.toString()).productId;
@@ -25,7 +25,7 @@ export class ClothesService {
         await this.clothesRepository.save({
           productId: parsedProductId,
           name: parsedName,
-          file: file.path,
+          file: file.key,
         });
       } else {
         await this.clothesRepository.save({
@@ -80,7 +80,7 @@ export class ClothesService {
    * @param dto 服のイメージファイル更新DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
    * @returns {Promise<void>}
    */
-  async update(id: number, file: Express.Multer.File, dto: UpdateClothesDto): Promise<void>{
+  async update(id: number, file: Express.MulterS3.File, dto: UpdateClothesDto): Promise<void>{
     const { productId, name } = dto;
       const parsedUserId = JSON.parse(productId.toString()).productId;
       const parsedName = JSON.parse(name).name;
@@ -88,7 +88,7 @@ export class ClothesService {
         await this.clothesRepository.update(id, {
           productId: parsedUserId,
           name: parsedName,
-          file: file.path,
+          file: file.key,
         });
       } else {
         await this.clothesRepository.update(id, {

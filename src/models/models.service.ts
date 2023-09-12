@@ -16,7 +16,7 @@ export class ModelsService {
    * @param dto 3Dモデルファイル登録DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
    * @returns {Promise<void>}
    */
-  async create(file: Express.Multer.File, dto: CreateModelsDto): Promise<void>{
+  async create(file: Express.MulterS3.File, dto: CreateModelsDto): Promise<void>{
     try {
       const { productId, name } = dto;
       const parsedProductId = JSON.parse(productId.toString()).productId;
@@ -27,7 +27,7 @@ export class ModelsService {
           await this.modelsRepository.save({
             productId: parsedProductId,
             name: parsedName,
-            file: file.path,
+            file: file.key,
           });
         } else {
           await this.modelsRepository.save({
@@ -41,7 +41,7 @@ export class ModelsService {
           await this.modelsRepository.update(model.id, {
             productId: parsedProductId,
             name: parsedName,
-            file: file.path,
+            file: file.key,
           });
         } else {
           await this.modelsRepository.update(model.id, {
@@ -114,7 +114,7 @@ export class ModelsService {
    * @param dto 3Dモデルファイル更新DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
    * @returns {Promise<void>}
    */
-  async update(id: number, file: Express.Multer.File, dto: UpdateModelsDto): Promise<void>{
+  async update(id: number, file: Express.MulterS3.File, dto: UpdateModelsDto): Promise<void>{
     const { productId, name } = dto;
       const parsedUserId = JSON.parse(productId.toString()).productId;
       const parsedName = JSON.parse(name).name;
@@ -122,7 +122,7 @@ export class ModelsService {
         await this.modelsRepository.update(id, {
           productId: parsedUserId,
           name: parsedName,
-          file: file.path,
+          file: file.key,
         });
       } else {
         await this.modelsRepository.update(id, {

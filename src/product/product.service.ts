@@ -16,7 +16,7 @@ export class ProductService {
    * @param dto 商品登録DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
    * @returns {Promise<void>}
    */
-  async create (file: Express.Multer.File, dto:CreateProductDto): Promise<void> {
+  async create (file: Express.MulterS3.File, dto:CreateProductDto): Promise<void> {
     try {
       const { name, price, description, stock, type } = dto
       console.log("asdfasdfdsa",file, dto);
@@ -27,7 +27,7 @@ export class ProductService {
         description,
         stock,
         type,
-        image: file.path
+        image: file.key
       })
     } catch (error) {
       console.log(error);
@@ -75,7 +75,7 @@ export class ProductService {
    * @param dto 商品更新DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
    * @returns {Promise<void>}
    */
-  async update (id: number, file: Express.Multer.File, dto:UpdateProductDto): Promise<void> {
+  async update (id: number, file: Express.MulterS3.File, dto:UpdateProductDto): Promise<void> {
     try {
       const { name, price, description, stock, type } = dto
       await this.productRepository.update(id, {
@@ -84,7 +84,7 @@ export class ProductService {
         description,
         stock,
         type,
-        image: file.path
+        image: file.key
       })
     } catch (error) {
       console.log(error);

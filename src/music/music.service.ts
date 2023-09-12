@@ -16,7 +16,7 @@ export class MusicService {
    * @param dto 音声ファイル登録DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
    * @returns {Promise<void>}
    */
-  async create(file: Express.Multer.File, dto: CreateMusicDto): Promise<void>{
+  async create(file: Express.MulterS3.File, dto: CreateMusicDto): Promise<void>{
     try {
       const { user_id, name } = dto;
       const parsedUserId = JSON.parse(user_id.toString()).user_id;
@@ -25,7 +25,7 @@ export class MusicService {
         await this.musicRepository.save({
           user_id: parsedUserId,
           name: parsedName,
-          file: file.path,
+          file: file.key,
         });
       } else {
         await this.musicRepository.save({
@@ -80,7 +80,7 @@ export class MusicService {
    * @param dto 音声ファイル更新DTO、DTO(Data Transfer Object)にマッピングしてデータの受け渡しやバリデーションに使用
    * @returns {Promise<void>}
    */
-  async update(id: number, file: Express.Multer.File, dto: UpdateMusicDto): Promise<void>{
+  async update(id: number, file: Express.MulterS3.File, dto: UpdateMusicDto): Promise<void>{
     const { user_id, name } = dto;
       const parsedUserId = JSON.parse(user_id.toString()).user_id;
       const parsedName = JSON.parse(name).name;
@@ -88,7 +88,7 @@ export class MusicService {
         await this.musicRepository.update(id, {
           user_id: parsedUserId,
           name: parsedName,
-          file: file.path,
+          file: file.key,
         });
       } else {
         await this.musicRepository.update(id, {
