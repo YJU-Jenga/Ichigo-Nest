@@ -95,7 +95,15 @@ export class PostService {
    * @returns {Promise<Post[]>} 該当掲示板にある全ての投稿のデータをJSON形式で戻り値として返す
    */
   async findAll(boardId: number): Promise<Post[]> {
-    return this.postRepository.find({where: {boardId}, order: {'createdAt': 'desc'}});
+    // return await this.postRepository.find({where: {boardId}, order: {'createdAt': 'desc'}});
+    const posts = await this.postRepository
+    .createQueryBuilder('post')
+    .leftJoinAndSelect('post.user', 'user')
+    .select(['post', 'user.name'])
+    .where('boardId = :boardId', {boardId})
+    .orderBy('post.createdAt', 'DESC')
+    .getMany();
+    return posts;
   }
 
 
@@ -109,7 +117,7 @@ export class PostService {
    * @returns {Promise<Post[]>} 該当掲示板にある全ての投稿のデータをJSON形式で戻り値として返す
    */
   async findPosts(boardId:number, skip:number, take:number): Promise<Post[]> {
-    return this.postRepository
+    return await this.postRepository
     .createQueryBuilder('post')
     .leftJoinAndSelect('post.user', 'user')
     .select(['post', 'user.name'])
