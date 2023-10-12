@@ -95,7 +95,6 @@ export class PostService {
    * @returns {Promise<Post[]>} 該当掲示板にある全ての投稿のデータをJSON形式で戻り値として返す
    */
   async findAll(boardId: number): Promise<Post[]> {
-    // return await this.postRepository.find({where: {boardId}, order: {'createdAt': 'desc'}});
     const posts = await this.postRepository
     .createQueryBuilder('post')
     .leftJoinAndSelect('post.user', 'user')

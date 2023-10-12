@@ -42,7 +42,15 @@ export class CommentService {
    */
   async getAll(postId: number): Promise<Comment[]>{
     try {
-      return await this.commentRepository.find({where: {postId}, order: {'createdAt': 'desc'}})
+      let resCommtens = await this.commentRepository
+      .createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.user', 'user')
+      .select(['comment', 'user.name'])
+      .where('postId = :postId', {postId})
+      .orderBy('comment.createdAt', 'DESC')
+      .getMany();
+
+      return resCommtens;
     } catch (error) {
       console.log(error);
     }
